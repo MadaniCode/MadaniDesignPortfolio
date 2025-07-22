@@ -1,7 +1,7 @@
 /* === BASE STYLES === */
 body {
   font-family: 'Azeret Mono', monospace;
-  background: linear-gradient(to bottom, #ffffff 0%, #999999 50%, #4d4d4d 100%);
+  background: linear-gradient(to bottom, #ffffff 15%, #e0dcdc 70%, #a7a7a7 100%);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100% 100vh;
@@ -11,7 +11,7 @@ body {
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease-in forwards;
+  animation: fadeIn 0.4s ease-in forwards;
   opacity: 0;
 }
 
@@ -29,6 +29,35 @@ a {
 a:hover {
   opacity: 0.7;
 }
+
+h1 {
+  font-weight: 450;
+  margin-bottom: 0.3em;
+  letter-spacing: -0.02em;
+}
+
+h2, h3{
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+h4, h5, h6 {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+p {
+  font-size: 90%;
+  letter-spacing: -0.02em;
+}
+
+.grey-text {
+  color: #666666;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
 
 img {
   border-radius: 10px;
