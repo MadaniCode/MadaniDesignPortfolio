@@ -1,12 +1,13 @@
 /* === BASE STYLES === */
 body {
   font-family: 'Azeret Mono', monospace;
+  background: linear-gradient(to bottom, #ffffff 0%, #999999 50%, #4d4d4d 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100vh;
+  color: #000;
   margin: 0;
   padding: 0;
-  background: linear-gradient(to bottom, #ffffff, #999999, #4d4d4d);
-  color: #000;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .fade-in {
