@@ -10,6 +10,13 @@ body {
   padding: 0;
 }
 
+/* Specific body style for homepage (index.html) to prevent scrolling */
+body.homepage-locked {
+  overflow: hidden;
+  height: 100vh;
+}
+
+
 .fade-in {
   animation: fadeIn 0.4s ease-in forwards;
   opacity: 0;
@@ -34,20 +41,24 @@ h1 {
   font-weight: 450;
   margin-bottom: 0.3em;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 h2, h3{
   font-weight: 400;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 h4, h5, h6 {
   font-weight: 300;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 p {
   font-size: 90%;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .grey-text {
@@ -61,8 +72,8 @@ p {
 
 img {
   border-radius: 10px;
-  max-width: 100%;
-  height: auto;
+  max-width: 100%; /* General image rule, allows responsiveness by default */
+  height: auto;    /* General image rule, maintains aspect ratio by default */
 }
 
 /* === LAYOUT === */
@@ -72,13 +83,101 @@ header {
 
 main {
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.contact {
-  margin-top: 2rem;
+/* === HOMEPAGE (index.html) specific === */
+.intro {
+    display: flex;
+    flex-direction: column; /* Default for mobile: stacked vertically */
+    gap: 20px; /* Space between flex items */
+    align-items: flex-start; /* Align items to the start (left) */
 }
 
-/* === PORTFOLIO GRID === */
+/* New container for centering phone number and image on mobile */
+.contact-image-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    width: 100%; /* Take full width of its parent */
+    margin-top: 20px; /* Space from text above */
+}
+
+.phone-number {
+    text-align: center; /* Center the text itself */
+    margin-bottom: 10px; /* Space between phone number and image */
+    margin-top: 0; /* Remove default paragraph top margin */
+    width: 100%; /* Ensure it spans the width to center text within */
+}
+
+/* Mobile styles for .intro-image-container (applies below 768px) */
+.intro-image-container {
+    width: 55%; /* Keep 55% width on mobile as per your current setup */
+    max-width: 250px; /* Add a max-width to prevent it from becoming too large on tablets in portrait mode */
+    border: none;
+    background-color: transparent;
+    /* Removed margin-top as contact-image-group handles spacing */
+    /* No absolute positioning or height/width hacks here */
+}
+
+/* Mobile styles for the image *inside* .intro-image-container */
+.intro-image-container img {
+    width: 100%; /* Image fills its container on mobile */
+    height: auto; /* Maintains aspect ratio */
+    object-fit: contain; /* Ensures the whole image is visible */
+}
+
+
+/* Styles specifically for screens 768px wide or wider (desktop/tablet landscape) */
+@media (min-width: 768px) {
+    .intro {
+        flex-direction: row; /* Desktop: text and image side-by-side */
+        justify-content: space-between; /* Pushes text left, image right */
+        align-items: flex-start; /* Aligns items to the top */
+    }
+
+    /* On desktop, the contact-image-group should behave differently */
+    .contact-image-group {
+        display: block; /* Revert to block */
+        width: auto; /* Revert width */
+        margin-top: 0; /* Ensure no top margin */
+    }
+
+    /* On desktop, the phone number should revert to its default alignment within intro-text, */
+    /* unless it's intended to be next to the image. */
+    /* Assuming it should go back to left-aligned with text on desktop as before */
+    .phone-number {
+        text-align: left; /* Align text left on desktop */
+        margin-bottom: 0; /* Reset margin if needed */
+        order: initial; /* Reset order if it was changed */
+        width: auto; /* Revert width */
+    }
+
+    .intro-text {
+        flex: 1; /* Allows text to take available space */
+        padding-right: 20px; /* Space between text and image */
+    }
+    .intro-image-container {
+        flex-shrink: 0; /* Prevents it from shrinking */
+        margin-left: auto; /* Pushes it to the far right within the flex container */
+        border: none; /* No border on desktop */
+        background-color: transparent; /* No background on desktop */
+        overflow: hidden; /* Ensures border-radius on image clips correctly */
+        margin-top: 0; /* Align to the top of the flex container */
+    }
+    .intro-image-container img {
+        width: 100px; /* Set a specific, small fixed width */
+        height: auto; /* IMPORTANT: Maintain original aspect ratio */
+        object-fit: contain; /* Ensure the entire image is visible without cropping */
+        position: static;
+        top: auto;
+        left: auto;
+    }
+}
+
+
+/* === PORTFOLIO GRID (portfolio.html) === */
 .portfolio-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -90,6 +189,156 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.portfolio-item {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.portfolio-item:hover {
+    opacity: 0.8;
+}
+
+.portfolio-item a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.portfolio-item h2 {
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 450;
+}
+
+.portfolio-item .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.portfolio-item .tag {
+    background-color: #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: #333;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.portfolio-item .project-thumbnail { /* This is the CONTAINER for the image, making it square */
+    width: 100%;
+    height: 0; /* Important for padding-bottom trick */
+    padding-bottom: 100%; /* Makes the height equal to the width (100% of parent's width) for a square */
+    position: relative; /* Needed for absolute positioning of image inside */
+    overflow: hidden; /* To ensure image doesn't overflow */
+
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc; /* Maintain border for portfolio items */
+}
+
+.portfolio-item .project-thumbnail img { /* This styles the actual IMAGE inside the container */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the square area */
+    border-radius: 10px; /* Apply rounded corners to the image as well */
+}
+
+/* === BACK BUTTON === */
+.back-button {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 1.1em;
+  text-decoration: none;
+  color: #666666;
+  font-weight: 500;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+/* === Portfolio Page Heading === */
+main h1:first-of-type {
+  font-size: 2.5em;
+  margin-bottom: 40px;
+}
+
+
+/* === PROJECT DETAIL PAGE (project-X.html) === */
+.project-detail {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.project-detail h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+}
+
+.project-detail .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.project-detail .tag {
+    background-color: #e0e0e0;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.95em;
+    color: #333;
+    text-transform: capitalize;
+}
+
+.project-detail .main-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  margin: 1.5rem 0;
+  border: none;
+  background-color: transparent;
+}
+
+.project-detail .gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.project-detail .gallery img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+.project-detail .gallery img:hover {
+  transform: scale(1.03);
+}
+
 
 /* === LIGHTBOX === */
 .lightbox {
@@ -117,4 +366,5 @@ main {
   max-width: 90%;
   max-height: 90%;
   border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }

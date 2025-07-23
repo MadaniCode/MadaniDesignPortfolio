@@ -1,0 +1,35 @@
+[
+  {
+    "id": "keep-magazine",
+    "title": "Keep Magazine",
+    "tags": ["Web", "Branding", "Content Design", "Editorial"],
+    "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
+    "mainImage": "images/keep/keep-main.png",
+    "galleryImages": [
+      "images/keep/keep-img1.png",
+      "images/keep/keep-img2.png",
+      "images/keep/keep-img3.png",
+      "images/keep/keep-img4.png",
+      "images/keep/keep-img5.png"
+    ],
+    "externalLink": "https://keepmagazine.online/",
+    "externalLinkText": "See more at keepmagazine.online",
+    "localLink": "project-keep.html"
+  },
+  {
+    "id": "sui-generis",
+    "title": "Sui Generis",
+    "tags": ["Print", "Writing", "Type Design"],
+    "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally.",
+    "mainImage": "images/suigeneris/sui-generis-main.png",
+    "galleryImages": [
+      "images/suigeneris/sui-generis-img1.png",
+      "images/suigeneris/sui-generis-img2.png",
+      "images/suigeneris/sui-generis-img3.png",
+      "images/suigeneris/sui-generis-img4.png"
+    ],
+    "externalLink": "sui-generis-zine.pdf",
+    "externalLinkText": "Download the PDF",
+    "localLink": "project-suigeneris.html"
+  }
+]
