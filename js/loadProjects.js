@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Image path: images are in root, but this JS is in js/ folder, so prefix with '../'
         // If your images are NOT in the root (e.g., in an 'assets' folder), you must update 'project.mainImage' in the 'projects' array above.
-        const mainImagePath = project.mainImage ? `../${project.mainImage}` : 'placeholder.png'; 
+        const mainImagePath = project.mainImage ? `./${project.mainImage}` : 'placeholder.png';
 
         projectCard.innerHTML = `
             <a href="${project.localLink}" class="project-link">
