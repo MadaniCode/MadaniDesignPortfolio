@@ -1,7 +1,7 @@
 // js/loadProjects.js (This file is in the 'js' folder)
 document.addEventListener('DOMContentLoaded', () => {
     // PATH: JS is in 'js/' folder, projects.json is in root, so go up one level.
-    fetch('../projects.json') // Correct: Needs ../ to go up from js/ to root
+    fetch('projects.json') // For GitHub Pages: projects.json is in root
         .then(response => {
             if (!response.ok) {
                 console.error(`HTTP error! status: ${response.status} when fetching projects.json`);
@@ -32,17 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const projectCard = document.createElement('div');
         projectCard.classList.add('portfolio-item');
 
-        // Image path: images are in root, but this JS is in js/ folder, so prefix with '../'
-        const mainImagePath = project.mainImage ? `../${project.mainImage}` : 'placeholder.png'; // Use a default if no image
+        // Use 'image' and 'link' properties from projects.json
+        const imagePath = project.image ? `../${project.image}` : 'placeholder.png';
 
         projectCard.innerHTML = `
-            <a href="${project.localLink}" class="project-link">
+            <a href="${project.link}" class="project-link">
                 <h2>${project.title}</h2>
                 <div class="tags-container">
                     ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
                 </div>
                 <div class="project-thumbnail">
-                    <img src="${mainImagePath}" alt="${project.title} main image" />
+                    <img src="${imagePath}" alt="${project.title} main image" />
                 </div>
             </a>
         `;
