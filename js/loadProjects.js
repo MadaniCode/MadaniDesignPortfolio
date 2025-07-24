@@ -1,81 +1,51 @@
-const fallbackProjects = [
-  {
-    "id": "keep-magazine",
-    "title": "Keep Magazine",
-    "tags": ["Web", "Branding", "Content Design", "Editorial"],
-    "mainImage": "KeepMagazineImage.png",
-    "localLink": "project-keep.html"
-  },
-  {
-    "id": "sui-generis",
-    "title": "Sui Generis",
-    "tags": ["Print", "Writing", "Type Design"],
-    "mainImage": "SuiGenerisImage.png",
-    "localLink": "project-suigeneris.html"
-  }
-];
+// js/loadProjects.js (This file is in the 'js' folder)
+document.addEventListener('DOMContentLoaded', () => {
+    // PATH: JS is in 'js/' folder, projects.json is in root, so go up one level.
+    fetch('../projects.json') // Correct: Needs ../ to go up from js/ to root
+        .then(response => {
+            if (!response.ok) {
+                console.error(`HTTP error! status: ${response.status} when fetching projects.json`);
+                throw new Error('Could not load projects.json for portfolio.');
+            }
+            return response.json();
+        })
+        .then(projects => {
+            const projectsContainer = document.querySelector('.portfolio-grid');
+            if (projectsContainer) {
+                projectsContainer.innerHTML = ''; // Clear existing content
+                projects.forEach(project => {
+                    renderProjectCard(project, projectsContainer);
+                });
+            } else {
+                console.error('Element with class .portfolio-grid not found in portfolio.html.');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading projects:', error);
+            const projectsContainer = document.querySelector('.portfolio-grid');
+            if (projectsContainer) {
+                projectsContainer.innerHTML = '<p>Failed to load portfolio projects. Please try again later.</p>';
+            }
+        });
 
-// Try to load projects.json
-fetch('data/projects.json')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Could not load projects.json');
+    function renderProjectCard(project, container) {
+        const projectCard = document.createElement('div');
+        projectCard.classList.add('portfolio-item');
+
+        // Image path: images are in root, but this JS is in js/ folder, so prefix with '../'
+        const mainImagePath = project.mainImage ? `../${project.mainImage}` : 'placeholder.png'; // Use a default if no image
+
+        projectCard.innerHTML = `
+            <a href="${project.localLink}" class="project-link">
+                <h2>${project.title}</h2>
+                <div class="tags-container">
+                    ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
+                </div>
+                <div class="project-thumbnail">
+                    <img src="${mainImagePath}" alt="${project.title} main image" />
+                </div>
+            </a>
+        `;
+        container.appendChild(projectCard);
     }
-    return response.json();
-  })
-  .then(projects => {
-    renderProjects(projects);
-  })
-  .catch(error => {
-    console.error('Error loading projects:', error);
-    // Use fallback if fetch fails
-    renderProjects(fallbackProjects);
-  });
-
-// Render logic moved to its own function
-function renderProjects(projects) {
-  const grid = document.getElementById('portfolio-grid');
-  grid.innerHTML = ''; // Clear existing content if any
-
-  projects.forEach(project => {
-    const item = document.createElement('div');
-    item.className = 'portfolio-item';
-
-    // Create an anchor tag that wraps the entire project item
-    const link = document.createElement('a');
-    link.href = project.localLink; // Link to the specific project page
-
-    // Title
-    const title = document.createElement('h2');
-    title.textContent = project.title;
-    link.appendChild(title);
-
-    // Tags
-    const tagsContainer = document.createElement('div');
-    tagsContainer.className = 'tags-container';
-    project.tags.forEach(tagText => {
-      const tag = document.createElement('span');
-      tag.className = 'tag';
-      tag.textContent = tagText;
-      tagsContainer.appendChild(tag);
-    });
-    link.appendChild(tagsContainer);
-
-    // --- START OF CRUCIAL CHANGE FOR SQUARE THUMBNAILS ---
-    // Thumbnail Container for Square Aspect Ratio
-    const thumbnailContainer = document.createElement('div');
-    thumbnailContainer.className = 'project-thumbnail'; // Apply the container class here
-
-    const img = document.createElement('img');
-    img.src = project.mainImage || 'placeholder.png'; // Use mainImage or a generic placeholder
-    img.alt = project.title;
-    img.onerror = () => { img.src = 'placeholder.png'; }; // Fallback for missing images
-
-    thumbnailContainer.appendChild(img); // Append image to the new container
-    link.appendChild(thumbnailContainer); // Append the container to the link
-    // --- END OF CRUCIAL CHANGE ---
-    
-    item.appendChild(link); // Append the link wrapping all content to the item
-    grid.appendChild(item);
-  });
-}
+});
