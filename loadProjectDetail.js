@@ -5,35 +5,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- START HARDCODED PROJECT DATA (MUST BE IDENTICAL TO loadProjects.js) ---
     const projects = [
-{
+        {
             "id": "keep-magazine",
             "title": "Keep Magazine",
-            "tags": ["CD", "UI/UX", "Branding", "Editorial"],
-            "description": "Keep Magazine is a <em>digital first</em> magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
-            "mainImage": "KeepMagazineImage.png",
-            "galleryImages": [
+            "tags": ["Creative Direction", "UI/UX", "Branding", "Editorial"], // Changed "CD" to "Creative Direction"
+            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
+            "mainImage": ".../KeepMagazineGif.gif", // Image is in the root, so this path is fine
+            "galleryImages": [ // These paths are relevant for loadProjectDetail.js
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
                 { "src": "KeepMagazineImage2.png" },
                 { "src": "KeepMagazineImage3.png" },
             ],
-            "externalLink": "https://keepmagazine.online",
+            "externalLink": "https://keepmagazine.online/",
             "externalLinkText": "See more at keepmagazine.online",
-            "localLink": "project-keep.html"
+            "localLink": "project-keep.html" // Correct link for the HTML page
         },
         {
             "id": "sui-generis",
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
-            "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
-            "mainImage": "SuiGenerisGif.gif",
-            "galleryImages": [
+            "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally.",
+            "mainImage": "SuiGenerisGif.gif", // Image is in the root, so this path is fine
+            "galleryImages": [ // These paths are relevant for loadProjectDetail.js
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
                 { "src": "SuiGenerisGif.gif" },
                 { "src": "SuiGenerisImage2.png" },
-                { "src": "SuiGenerisImage3.png" }
+                { "src": "SuiGenerisImage3.png" },
             ],
-            "externalLink": "SuiGenerisPDF.pdf",
-            "externalLinkText": "Download the PDF"
+            "externalLink": "SuiGenerisPDF.pdf", // Link to PDF (in root)
+            "externalLinkText": "Download the PDF",
+            "localLink": "project-suigeneris.html" // Correct link for the HTML page
         }
     ];
     // --- END HARDCODED PROJECT DATA ---

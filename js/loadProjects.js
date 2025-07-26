@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             "id": "keep-magazine",
             "title": "Keep Magazine",
-            "tags": ["CD", "UI/UX", "Branding", "Editorial"],
+            "tags": ["Creative Direction", "UI/UX", "Branding", "Editorial"],
             "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
-            "mainImage": "KeepMagazineGif.gif", // Path relative to root (from portfolio.html)
-            "galleryImages": [ // These paths are relevant for loadProjectDetail.js
+            "mainImage": "KeepMagazineGif.gif",
+            "galleryImages": [
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
                 { "src": "KeepMagazineImage2.png" },
                 { "src": "KeepMagazineImage3.png" },
@@ -22,14 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
             "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
-            "mainImage": "SuiGenerisGif.gif", // Path relative to root (from portfolio.html)
-            "galleryImages": [ // These paths are relevant for loadProjectDetail.js
+            "mainImage": "SuiGenerisGif.gif",
+            "galleryImages": [
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
                 { "src": "SuiGenerisGif.gif" },
                 { "src": "SuiGenerisImage2.png" },
-                { "src": "SuiGenerisImage3.png" }
+                { "src": "SuiGenerisImage3.png" },
+                { "src": "SuiGenerisImage4.png" }
             ],
-            "externalLink": "SuiGenerisPDF.pdf", // Path relative to root (from project-suigeneris.html)
+            "externalLink": "SuiGenerisPDF.pdf",
             "externalLinkText": "Download the PDF",
             "localLink": "project-suigeneris.html"
         }
@@ -45,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         console.error('Element with class .portfolio-grid not found in portfolio.html. Displaying fallback message.');
-        // Fallback message if container not found
         const mainContent = document.querySelector('main');
         if (mainContent) {
             const errorDiv = document.createElement('div');
@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const projectCard = document.createElement('div');
         projectCard.classList.add('portfolio-item');
 
-        // Image path: images are in root, but this JS is in js/ folder, so prefix with '../'
-        // If your images are NOT in the root (e.g., in an 'assets' folder), you must update 'project.mainImage' in the 'projects' array above.
-        const mainImagePath = project.mainImage ? `./${project.mainImage}` : 'placeholder.png';
+        // Path is now relative to the root of the web server (or the directory of the HTML file itself)
+        // Since portfolio.html is in the root, and images are in the root, no prefix is needed here.
+        const mainImagePath = project.mainImage ? `${project.mainImage}` : 'placeholder.png'; // CORRECTED LINE
 
         projectCard.innerHTML = `
             <a href="${project.localLink}" class="project-link">
