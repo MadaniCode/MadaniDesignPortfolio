@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { "src": "KeepMagazineImage3.png" },
             ],
             "externalLink": "https://keepmagazine.online/",
-            "externalLinkText": "See more at keepmagazine.online",
+            "externalLinkHtml": `<span class="no-underline">See more at </span><a href="https://keepmagazine.online/">keepmagazine.online</a>`,
             "localLink": "project-keep.html"
         },
         {
@@ -28,15 +28,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 { "src": "SuiGenerisGif.gif" },
                 { "src": "SuiGenerisImage2.png" },
                 { "src": "SuiGenerisImage3.png" },
-                { "src": "SuiGenerisImage4.png" }
             ],
             "externalLink": "SuiGenerisPDF.pdf",
-            "externalLinkText": "Download the PDF",
+            "externalLinkHtml": `<a href="SuiGenerisPDF.pdf" target="_blank"><span class="no-underline">Download the </span>PDF</a>`,
             "localLink": "project-suigeneris.html"
+        },
+        // --- NEW PROJECT: EDITORIALS ---
+        {
+            "id": "editorials",
+            "title": "Editorials",
+            "tags": ["Writing", "Publishing", "Layout Design"], // Example tags
+            "description": "A collection of editorials I've written and contributed to, showcasing my ability to craft compelling narratives and insightful commentary.",
+            "mainImage": "editorialsgif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "galleryImages": [
+                // Add paths to your editorial images here. Create these files!
+                { "src": "EditorialImage1.png" },
+                { "src": "EditorialImage2.png" }
+            ],
+            // If there's an external link for all editorials or a main platform
+            "externalLink": "https://example.com/editorials",
+            "externalLinkHtml": `<span class="no-underline">Read more at </span><a href="https://example.com/editorials/" target="_blank">example.com/editorials</a>`,
+            "localLink": "project-editorials.html"
+        },
+        // --- NEW PROJECT: CONTENT DESIGN ---
+        {
+            "id": "content-design",
+            "title": "Content Design",
+            "tags": ["UX", "Journalism", "Strategy"], // Example tags
+            "description": "Projects focused on structuring, writing, and designing content to meet user needs and business goals effectively across various platforms.",
+            "mainImage": "contentdesigngif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "galleryImages": [
+                // Add paths to your content design images here. Create these files!
+                { "src": "ContentDesignImage1.png" },
+                { "src": "ContentDesignImage2.png" }
+            ],
+            // If there's an external link for all content design or a main platform
+            "externalLink": "https://example.com/content-design",
+            "externalLinkHtml": `<span class="no-underline">Learn more at </span><a href="https://example.com/content-design/" target="_blank">example.com/content-design</a>`,
+            "localLink": "project-contentdesign.html"
         }
     ];
     // --- END HARDCODED PROJECT DATA ---
 
+    // ... (rest of your loadProjects.js code remains the same) ...
 
     const projectsContainer = document.querySelector('.portfolio-grid');
     if (projectsContainer) {
@@ -58,9 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const projectCard = document.createElement('div');
         projectCard.classList.add('portfolio-item');
 
-        // Path is now relative to the root of the web server (or the directory of the HTML file itself)
-        // Since portfolio.html is in the root, and images are in the root, no prefix is needed here.
-        const mainImagePath = project.mainImage ? `${project.mainImage}` : 'placeholder.png'; // CORRECTED LINE
+        const mainImagePath = project.mainImage ? `${project.mainImage}` : 'placeholder.png';
 
         projectCard.innerHTML = `
             <a href="${project.localLink}" class="project-link">
