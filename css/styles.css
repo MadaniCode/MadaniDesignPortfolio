@@ -11,6 +11,7 @@ body {
 }
 
 /* Specific body style for homepage (index.html) to prevent scrolling */
+/* This class should ONLY be applied to the <body> tag of your homepage (e.g., index.html) */
 body.homepage-locked {
   overflow: hidden;
   height: 100vh;
@@ -82,9 +83,12 @@ header {
 }
 
 main {
-  padding: 2rem;
-  max-width: 1200px;
+  padding: 2rem 2rem 4rem 2rem; /* Added 4rem for bottom padding (top, right, bottom, left) */
+  max-width: 1200px; /* Consistent max-width for main content area */
   margin: 0 auto;
+  position: relative;
+  /* height: calc(100vh - 4rem); This line should be carefully considered if not on homepage */
+  box-sizing: border-box; /* Include padding in the height calculation */
 }
 
 /* === HOMEPAGE (index.html) specific === */
@@ -93,6 +97,7 @@ main {
     flex-direction: column; /* Default for mobile: stacked vertically */
     gap: 20px; /* Space between flex items */
     align-items: flex-start; /* Align items to the start (left) */
+    height: 100%; /* Make intro take full height of main */
 }
 
 /* New container for centering phone number and image on mobile */
@@ -102,6 +107,7 @@ main {
     align-items: center; /* Center horizontally */
     width: 100%; /* Take full width of its parent */
     margin-top: 20px; /* Space from text above */
+    flex-shrink: 0; /* Prevents this group from shrinking if space is tight */
 }
 
 .phone-number {
@@ -117,8 +123,6 @@ main {
     max-width: 250px; /* Add a max-width to prevent it from becoming too large on tablets in portrait mode */
     border: none;
     background-color: transparent;
-    /* Removed margin-top as contact-image-group handles spacing */
-    /* No absolute positioning or height/width hacks here */
 }
 
 /* Mobile styles for the image *inside* .intro-image-container */
@@ -132,47 +136,51 @@ main {
 /* Styles specifically for screens 768px wide or wider (desktop/tablet landscape) */
 @media (min-width: 768px) {
     .intro {
-        flex-direction: row; /* Desktop: text and image side-by-side */
-        justify-content: space-between; /* Pushes text left, image right */
-        align-items: flex-start; /* Aligns items to the top */
+        flex-direction: column; /* Desktop: stack text and image vertically */
+        justify-content: space-between; /* Pushes intro-text to top, contact-image-group to bottom */
+        align-items: flex-start; /* Align all items to the left */
+        height: 100%; /* Ensure intro takes full height of main */
     }
 
-    /* On desktop, the contact-image-group should behave differently */
+    /* On desktop, the contact-image-group should be at the bottom */
     .contact-image-group {
-        display: block; /* Revert to block */
-        width: auto; /* Revert width */
-        margin-top: 0; /* Ensure no top margin */
+        position: static; /* Ensure it behaves as a normal flex item */
+        margin-top: auto; /* This pushes the group to the bottom when using space-between on parent */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-shrink: 0; /* Prevent shrinking to ensure visibility */
     }
 
-    /* On desktop, the phone number should revert to its default alignment within intro-text, */
-    /* unless it's intended to be next to the image. */
-    /* Assuming it should go back to left-aligned with text on desktop as before */
+    /* On desktop, the phone number should be left-aligned and retain some margin */
     .phone-number {
-        text-align: left; /* Align text left on desktop */
-        margin-bottom: 0; /* Reset margin if needed */
-        order: initial; /* Reset order if it was changed */
-        width: auto; /* Revert width */
+        text-align: left;
+        margin-bottom: 5px;
+        margin-top: 0;
+        width: auto;
     }
 
     .intro-text {
         flex: 1; /* Allows text to take available space */
-        padding-right: 20px; /* Space between text and image */
+        padding-right: 20px;
+        align-self: flex-start;
+        /* If text content is long and causing clipping on very short viewports, consider: */
+        /* max-height: calc(100% - var(--contact-image-group-height) - var(--gap)); */
+        /* overflow-y: auto; */
     }
+
     .intro-image-container {
-        flex-shrink: 0; /* Prevents it from shrinking */
-        margin-left: auto; /* Pushes it to the far right within the flex container */
-        border: none; /* No border on desktop */
-        background-color: transparent; /* No background on desktop */
-        overflow: hidden; /* Ensures border-radius on image clips correctly */
-        margin-top: 0; /* Align to the top of the flex container */
+        flex-shrink: 0;
+        border: none;
+        background-color: transparent;
+        overflow: hidden;
+        margin-top: 0;
     }
+
     .intro-image-container img {
-        width: 100px; /* Set a specific, small fixed width */
-        height: auto; /* IMPORTANT: Maintain original aspect ratio */
-        object-fit: contain; /* Ensure the entire image is visible without cropping */
-        position: static;
-        top: auto;
-        left: auto;
+        width: 140px; /* Adjusted size slightly smaller as requested */
+        height: auto;
+        object-fit: contain;
     }
 }
 
@@ -180,19 +188,19 @@ main {
 /* === PORTFOLIO GRID (portfolio.html) === */
 .portfolio-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr; /* Single column for mobile */
+  gap: 2rem; /* Gap between grid items */
 }
 
 @media (min-width: 768px) {
   .portfolio-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Two columns for desktop */
   }
 }
 
 .portfolio-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack image and text vertically */
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -204,7 +212,7 @@ main {
     text-decoration: none;
     color: inherit;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Ensure link content also stacks */
     height: 100%;
 }
 
@@ -232,26 +240,30 @@ main {
     white-space: nowrap;
 }
 
-.portfolio-item .project-thumbnail { /* This is the CONTAINER for the image, making it square */
-    width: 100%;
-    height: 0; /* Important for padding-bottom trick */
-    padding-bottom: 100%; /* Makes the height equal to the width (100% of parent's width) for a square */
-    position: relative; /* Needed for absolute positioning of image inside */
-    overflow: hidden; /* To ensure image doesn't overflow */
+.portfolio-item .project-thumbnail { /* This is the CONTAINER for the image */
+    width: 100%; /* Takes full width of its parent */
+    position: relative; /* Needed for object-fit to work reliably with padding-top trick */
+    overflow: hidden; /* Important for border-radius to clip content and for object-fit */
+    border-radius: 10px; /* Re-added border-radius to container */
+    margin-top: 10px; /* Space from title/tags above */
+    border: 1px solid #ccc; /* Re-added border to container */
+    display: flex; /* Use flex to center image if it doesn't fill the container */
+    justify-content: center; /* Center image horizontally */
+    align-items: center; /* Center image vertically */
 
-    border-radius: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc; /* Maintain border for portfolio items */
+    /* New styles for consistent square size */
+    padding-top: 100%; /* This makes the height equal to the width */
+    height: 0; /* Override previous height */
 }
 
 .portfolio-item .project-thumbnail img { /* This styles the actual IMAGE inside the container */
-    position: absolute;
+    position: absolute; /* Position absolutely within the padding-top trick container */
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the square area */
-    border-radius: 10px; /* Apply rounded corners to the image as well */
+    width: 100%; /* Image fills its container horizontally */
+    height: 100%; /* Image fills its container vertically */
+    object-fit: cover; /* This is key: it will cover the area, cropping if necessary */
+    border-radius: 10px;
 }
 
 /* === BACK BUTTON === */
@@ -277,12 +289,10 @@ main h1:first-of-type {
 
 /* === PROJECT DETAIL PAGE (project-X.html) === */
 .project-detail {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  max-width: 900px; /* Kept max-width for readability on very wide screens */
+  margin-left: 0; /* Align to the left */
+  margin-right: auto; /* Allow auto margin on the right to push it left */
+  padding-bottom: 2rem;
 }
 
 .project-detail h1 {
@@ -293,45 +303,61 @@ main h1:first-of-type {
 .project-detail .tags-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 10px; /* Adjusted margin-bottom to move tags closer to text */
 }
 
 .project-detail .tag {
     background-color: #e0e0e0;
-    padding: 8px 15px;
+    padding: 5px 10px;
     border-radius: 5px;
-    font-size: 0.95em;
+    font-size: 0.85em;
     color: #333;
     text-transform: capitalize;
 }
 
+/* This targets the large main image in the detail page, if you decide to add one explicitly in HTML */
+/* Or if loadProjectDetail.js places the main image here */
 .project-detail .main-image {
   width: 100%;
   height: auto;
-  max-height: 500px;
-  object-fit: contain;
+  max-height: 500px; /* Keep a max-height for large screens */
+  object-fit: contain; /* Ensure full image is seen */
   margin: 1.5rem 0;
-  border: none;
-  background-color: transparent;
+  border-radius: 10px;
+  border: 1px solid #ccc; /* Border for the main image on project detail page */
 }
 
 .project-detail .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: flex; /* Default to flex column for mobile */
+  flex-direction: column; /* Stack items vertically on mobile */
   gap: 15px;
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
 
+/* Media query for desktop layout */
+@media (min-width: 768px) {
+  .project-detail .gallery {
+    display: grid; /* Change to grid for desktop */
+    grid-template-columns: repeat(3, 1fr); /* Three columns for desktop */
+    gap: 15px; /* Keep the gap */
+  }
+
+  .project-detail .gallery img {
+    /* Optional: If images still feel too large in 3 columns, you can add a max-width here */
+    /* For example: max-width: 250px; but this might not be needed with 3 columns */
+  }
+}
+
+
 .project-detail .gallery img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 5px;
+  width: 100%; /* Image takes full width of its grid/flex container */
+  height: auto; /* Height adjusts proportionally */
+  object-fit: contain; /* Ensures the entire image is visible without cropping */
+  border-radius: 10px; /* Apply rounded corners */
+  border: 1px solid #ccc; /* Border to gallery images on project detail page */
   cursor: pointer;
-  border: none;
-  background-color: transparent;
   transition: transform 0.2s ease;
 }
 

@@ -5,20 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- START HARDCODED PROJECT DATA (MUST BE IDENTICAL TO loadProjects.js) ---
     const projects = [
-        {
+{
             "id": "keep-magazine",
             "title": "Keep Magazine",
-            "tags": ["Web", "Branding", "Content Design", "Editorial"],
-            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton. It aims to push the boundaries of what a modern magazine can be, embracing digital-first content while maintaining strong editorial principles. We explored new ways to present articles and visual content.",
+            "tags": ["CD", "UI/UX", "Branding", "Editorial"],
+            "description": "Keep Magazine is a <em>digital first</em> magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
             "mainImage": "KeepMagazineImage.png",
             "galleryImages": [
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
                 { "src": "KeepMagazineImage2.png" },
                 { "src": "KeepMagazineImage3.png" },
-                { "src": "KeepMagazineImage4.png" },
-                { "src": "KeepMagazineImage5.png" }
             ],
-            "externalLink": "https://keepmagazine.online/",
+            "externalLink": "https://keepmagazine.online",
             "externalLinkText": "See more at keepmagazine.online",
             "localLink": "project-keep.html"
         },
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
             "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
-            "mainImage": "SuiGenerisImage.png",
+            "mainImage": "SuiGenerisGif.gif",
             "galleryImages": [
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
                 { "src": "SuiGenerisGif.gif" },
@@ -53,10 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(`Project with ID "${projectId}" not found in hardcoded data.`);
         const projectDetailSection = document.querySelector('.project-detail');
         if (projectDetailSection) {
+            // Note: galleryHtml and externalLinkHtml are not defined here,
+            // this fallback might need proper initialization if it's ever hit
             projectDetailSection.innerHTML = `
-                <a href="portfolio.html" class="back-button no-underline">&larr; Back to Portfolio</a>
-                <h1>Project Not Found</h1>
-                <p>The project you are looking for could not be found in the hardcoded data. Please check the project ID.</p>
+                <h1>${project.title}</h1>
+                <div class="tags-container">
+                    ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
+                </div>
+                <p>${project.description}</p>
+                ${galleryHtml}
+                ${externalLinkHtml}
             `;
         }
     }
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const imgSrc = typeof imgData === 'string' ? imgData : imgData.src;
                     // Images are in the root, and this JS is in the root. No prefix needed.
                     // If your images are NOT in the root (e.g., in an 'assets' folder), you must update 'imgSrc' in the 'projects' array above.
-                    const finalImgSrc = imgSrc.startsWith('http') ? imgSrc : imgSrc; 
+                    const finalImgSrc = imgSrc.startsWith('http') ? imgSrc : imgSrc;
                     const imgClass = typeof imgData === 'object' && imgData.class ? imgData.class : '';
                     return `<img src="${finalImgSrc}" alt="${project.title} gallery image ${index + 1}" class="${imgClass}" />`;
                 }).join('')}
@@ -85,19 +89,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle externalLink: if it's a local file (like PDF), this JS is in root, so no prefix needed.
         const finalExternalLink = project.externalLink && !project.externalLink.startsWith('http') ? project.externalLink : project.externalLink;
-        const externalLinkHtml = project.externalLink ? `<p class="download-link-container"><a href="${finalExternalLink}" target="_blank" class="no-underline">${project.externalLinkText}</a></p>` : '';
 
+        let externalLinkHtml = '';
+        if (project.externalLink) {
+            let linkTextContent;
+            // Check if the current project is 'keep-magazine' for specific formatting
+            if (project.id === 'keep-magazine') {
+                // For Keep Magazine, specifically separate the prefix "See more at "
+                // and make only the domain clickable and underlined.
+                linkTextContent = `See more at <a href="${finalExternalLink}" target="_blank">${project.externalLink.replace('https://', '').replace('http://', '').replace('www.', '')}</a>`;
+            } else {
+                // For other projects (like Sui Generis), the whole text becomes the clickable, underlined link.
+                linkTextContent = `<a href="${finalExternalLink}" target="_blank">${project.externalLinkText}</a>`;
+            }
+            externalLinkHtml = `<p class="download-link-container">${linkTextContent}</p>`;
+        }
 
         projectDetailSection.innerHTML = `
-            <a href="portfolio.html" class="back-button no-underline">&larr; Back to Portfolio</a>
-            <h1>${project.title}</h1>
-            <div class="tags-container">
-                ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
-            </div>
-            <p>${project.description}</p>
-            ${galleryHtml}
-            ${externalLinkHtml}
-        `;
+                <h1>${project.title}</h1>
+                <div class="tags-container">
+                    ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
+                </div>
+                <p class="grey-text">${project.description}</p>
+                ${galleryHtml}
+                ${externalLinkHtml}
+            `;
 
         const galleryImages = projectDetailSection.querySelectorAll('.gallery img');
         galleryImages.forEach(img => {

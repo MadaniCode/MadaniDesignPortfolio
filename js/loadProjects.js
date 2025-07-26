@@ -5,15 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             "id": "keep-magazine",
             "title": "Keep Magazine",
-            "tags": ["Web", "Branding", "Content Design", "Editorial"],
-            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton. It aims to push the boundaries of what a modern magazine can be, embracing digital-first content while maintaining strong editorial principles. We explored new ways to present articles and visual content.",
-            "mainImage": "KeepMagazineImage.png", // Path relative to root (from portfolio.html)
+            "tags": ["CD", "UI/UX", "Branding", "Editorial"],
+            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
+            "mainImage": "KeepMagazineGif.gif", // Path relative to root (from portfolio.html)
             "galleryImages": [ // These paths are relevant for loadProjectDetail.js
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
                 { "src": "KeepMagazineImage2.png" },
                 { "src": "KeepMagazineImage3.png" },
-                { "src": "KeepMagazineImage4.png" },
-                { "src": "KeepMagazineImage5.png" }
             ],
             "externalLink": "https://keepmagazine.online/",
             "externalLinkText": "See more at keepmagazine.online",
@@ -24,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
             "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
-            "mainImage": "SuiGenerisImage.png", // Path relative to root (from portfolio.html)
+            "mainImage": "SuiGenerisGif.gif", // Path relative to root (from portfolio.html)
             "galleryImages": [ // These paths are relevant for loadProjectDetail.js
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
                 { "src": "SuiGenerisGif.gif" },
@@ -32,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 { "src": "SuiGenerisImage3.png" }
             ],
             "externalLink": "SuiGenerisPDF.pdf", // Path relative to root (from project-suigeneris.html)
-            "externalLinkText": "Download the PDF"
+            "externalLinkText": "Download the PDF",
+            "localLink": "project-suigeneris.html"
         }
     ];
     // --- END HARDCODED PROJECT DATA ---
