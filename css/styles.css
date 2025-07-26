@@ -13,8 +13,13 @@ body {
 /* Specific body style for homepage (index.html) to prevent scrolling */
 /* This class should ONLY be applied to the <body> tag of your homepage (e.g., index.html) */
 body.homepage-locked {
-  overflow: hidden;
-  height: 100vh;
+  /* REMOVED: overflow: hidden; */
+  /* REMOVED: height: 100vh; */
+  /*
+     By removing these, the body will now expand to fit its content
+     and allow scrolling if content overflows the viewport height.
+     This should resolve the profile image cutout.
+  */
 }
 
 
@@ -87,7 +92,9 @@ main {
   max-width: 1200px; /* Consistent max-width for main content area */
   margin: 0 auto;
   position: relative;
-  /* height: calc(100vh - 4rem); This line should be carefully considered if not on homepage */
+  /* REMOVED/COMMENTED OUT: height: calc(100vh - 4rem); */
+  /* This line was likely contributing to fixed height issues on the homepage.
+     Removing it allows 'main' to expand based on its content. */
   box-sizing: border-box; /* Include padding in the height calculation */
 }
 
@@ -97,7 +104,9 @@ main {
     flex-direction: column; /* Default for mobile: stacked vertically */
     gap: 20px; /* Space between flex items */
     align-items: flex-start; /* Align items to the start (left) */
-    height: 100%; /* Make intro take full height of main */
+    /* REMOVED: height: 100%; */
+    /* This was likely causing the profile image to be cut off within the 'intro' if 'main' or 'body' also had restricted height.
+       Removing it allows '.intro' to expand as needed. */
 }
 
 /* New container for centering phone number and image on mobile */
@@ -139,7 +148,8 @@ main {
         flex-direction: column; /* Desktop: stack text and image vertically */
         justify-content: space-between; /* Pushes intro-text to top, contact-image-group to bottom */
         align-items: flex-start; /* Align all items to the left */
-        height: 100%; /* Ensure intro takes full height of main */
+        /* REMOVED: height: 100%; */
+        /* Same as above, allows content to push the container height as needed */
     }
 
     /* On desktop, the contact-image-group should be at the bottom */
