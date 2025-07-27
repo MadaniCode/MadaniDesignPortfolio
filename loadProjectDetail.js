@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
                         // Render a video tag for video files
-                        return `<video src="${finalSrc}" alt="${project.title} gallery video ${index + 1}" class="${itemClass}" controls muted loop></video>`;
+                        return `<video src="${finalSrc}" alt="${project.title} gallery video ${index + 1}" class="${itemClass}" controls loop></video>`;
                     } else {
                         // Render an image tag for image files
                         return `<img src="${finalSrc}" alt="${project.title} gallery image ${index + 1}" class="${itemClass}" />`;

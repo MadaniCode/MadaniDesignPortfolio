@@ -1,25 +1,30 @@
 /* === BASE STYLES === */
 body {
   font-family: 'Azeret Mono', monospace;
-  background: linear-gradient(to bottom, #ffffff 15%, #e0dcdc 70%, #a7a7a7 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: 100% 100vh;
+  /* REMOVED background properties from body */
   color: #000;
   margin: 0;
   padding: 0;
+  min-height: 100vh; /* Ensures body is at least viewport height */
+  overflow-x: hidden; /* Prevent horizontal scrollbar from potential layout issues */
 }
+
+/* New wrapper for the gradient background */
+.gradient-background-wrapper {
+  min-height: 100vh; /* Ensures it's at least one viewport high */
+  background: linear-gradient(to bottom, #ffffff 15%, #e0dcdc 70%, #a7a7a7 100%);
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; -- REMOVED this, it was causing iOS issues */
+  background-size: 100% 100%; /* Make it cover the full height of THIS div */
+  position: relative; /* Needed if you have any absolutely positioned children inside */
+  /* If you add any padding to the body, you might need to adjust this wrapper's dimensions */
+}
+
 
 /* Specific body style for homepage (index.html) to prevent scrolling */
 /* This class should ONLY be applied to the <body> tag of your homepage (e.g., index.html) */
 body.homepage-locked {
-  /* REMOVED: overflow: hidden; */
-  /* REMOVED: height: 100vh; */
-  /*
-     By removing these, the body will now expand to fit its content
-     and allow scrolling if content overflows the viewport height.
-     This should resolve the profile image cutout.
-  */
+  /* No changes needed here, as the problem was in the background property */
 }
 
 
