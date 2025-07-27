@@ -364,14 +364,21 @@ main h1:first-of-type {
 }
 
 
-.project-detail .gallery img {
-  width: 100%; /* Image takes full width of its grid/flex container */
-  height: auto; /* Height adjusts proportionally */
-  object-fit: contain; /* Ensures the entire image is visible without cropping */
-  border-radius: 10px; /* Apply rounded corners */
-  border: 1px solid #ccc; /* Border to gallery images on project detail page */
-  cursor: pointer;
+.project-detail .gallery img,
+.project-detail .gallery video { /* Added the video selector here */
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* Use 'contain' for videos to ensure whole video is seen */
+  border-radius: 10px; /* Rounds the corners */
+  border: 1px solid #ccc; /* Adds the border */
+  cursor: pointer; /* Keeps the pointer if you add a custom click behavior */
   transition: transform 0.2s ease;
+}
+
+.project-detail .gallery video {
+    /* Optional: Add a background color for video elements if they don't fill their container perfectly
+       or if there are black bars due to aspect ratio, to blend with your gradient background */
+    background-color: #f0f0f0; /* Light grey, adjust to match your background visually */
 }
 
 .project-detail .gallery img:hover {

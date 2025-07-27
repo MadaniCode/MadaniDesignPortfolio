@@ -42,8 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
             "mainImage": "editorialsgif.gif", // <--- IMPORTANT: Create this image file in your root folder!
             "galleryImages": [
                 // Add paths to your editorial images here. Create these files!
-                { "src": "EditorialImage1.png" },
-                { "src": "EditorialImage2.png" }
+                { "src": "editorial1.png" },
+                { "src": "editorial2.png" },
+                { "src": "editorial3.png" },
+                { "src": "editorial4.png" },
+                { "src": "editorial5.png" },
+                { "src": "editorial6.png" },
+                { "src": "editorial7.png" },
+                { "src": "editorial8.png" },
+                { "src": "editorial9.png" },
+                { "src": "editorial10.png" }
             ],
             // If there's an external link for all editorials or a main platform
             "externalLink": "https://example.com/editorials",
@@ -59,8 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "mainImage": "contentdesigngif.gif", // <--- IMPORTANT: Create this image file in your root folder!
             "galleryImages": [
                 // Add paths to your content design images here. Create these files!
-                { "src": "ContentDesignImage1.png" },
-                { "src": "ContentDesignImage2.png" }
+                { "src": "ContentDesign1.mp4" },
+                { "src": "ContentDesign3.mp4" },
+                { "src": "ContentDesign2.mp4" },
             ],
             // If there's an external link for all content design or a main platform
             "externalLink": "https://example.com/content-design",

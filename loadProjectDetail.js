@@ -40,34 +40,35 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             "id": "editorials",
             "title": "Editorials",
-            "tags": ["Writing", "Publishing", "Layout Design"], // Example tags
+            "tags": ["Writing", "Publishing", "Layout Design"],
             "description": "A collection of editorials I've written and contributed to, showcasing my ability to craft compelling narratives and insightful commentary.",
-            "mainImage": "editorialsgif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "mainImage": "editorialsgif.gif",
             "galleryImages": [
-                // Add paths to your editorial images here. Create these files!
-                { "src": "EditorialImage1.png" },
-                { "src": "EditorialImage2.png" }
+                { "src": "editorial1.png" },
+                { "src": "editorial2.png" },
+                { "src": "editorial3.png" },
+                { "src": "editorial4.png" },
+                { "src": "editorial5.png" },
+                { "src": "editorial6.png" },
+                { "src": "editorial8.png" },
+                { "src": "editorial10.png" }
             ],
-            // If there's an external link for all editorials or a main platform
-            "externalLink": "https://example.com/editorials",
-            "externalLinkHtml": `<span class="no-underline">Read more at </span><a href="https://example.com/editorials/" target="_blank">example.com/editorials</a>`,
             "localLink": "project-editorials.html"
         },
         // --- NEW PROJECT: CONTENT DESIGN ---
         {
             "id": "content-design",
             "title": "Content Design",
-            "tags": ["UX", "Journalism", "Strategy"], // Example tags
+            "tags": ["UX", "Journalism", "Strategy"],
             "description": "Projects focused on structuring, writing, and designing content to meet user needs and business goals effectively across various platforms.",
-            "mainImage": "contentdesigngif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "mainImage": "contentdesigngif.gif",
             "galleryImages": [
-                // Add paths to your content design images here. Create these files!
-                { "src": "ContentDesignImage1.png" },
-                { "src": "ContentDesignImage2.png" }
+                { "src": "ContentDesign1.mp4" },
+                { "src": "ContentDesign3.mp4" },
+                { "src": "ContentDesign2.mp4" },
             ],
-            // If there's an external link for all content design or a main platform
-            "externalLink": "https://example.com/content-design",
-            "externalLinkHtml": `<span class="no-underline">Learn more at </span><a href="https://example.com/content-design/" target="_blank">example.com/content-design</a>`,
+            "externalLink": "www.instagram.com/madanivision/",
+            "externalLinkHtml": `<span class="no-underline">See more on my </span><a href="https://www.instagram.com/madanivision/" target="_blank">Instagram</a>`,
             "localLink": "project-contentdesign.html"
         }
     ];
@@ -86,16 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(`Project with ID "${projectId}" not found in hardcoded data.`);
         const projectDetailSection = document.querySelector('.project-detail');
         if (projectDetailSection) {
-            // Note: galleryHtml and externalLinkHtml are not defined here,
-            // this fallback might need proper initialization if it's ever hit
+            const galleryHtml = '';
+            const externalLinkHtml = '';
             projectDetailSection.innerHTML = `
-                <h1>${project.title}</h1>
-                <div class="tags-container">
-                    ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
-                </div>
-                <p>${project.description}</p>
-                ${galleryHtml}
-                ${externalLinkHtml}
+                <h1>Project Not Found</h1>
+                <p>The project you are looking for could not be found.</p>
+                <a href="portfolio.html" class="back-button no-underline">&larr; Back to Portfolio</a>
             `;
         }
     }
@@ -112,47 +109,64 @@ document.addEventListener('DOMContentLoaded', () => {
         const galleryHtml = project.galleryImages && project.galleryImages.length > 0 ? `
             <div class="gallery">
                 ${project.galleryImages.map((imgData, index) => {
-                    const imgSrc = typeof imgData === 'string' ? imgData : imgData.src;
-                    // Images are in the root, and this JS is in the root. No prefix needed.
-                    // If your images are NOT in the root (e.g., in an 'assets' folder), you must update 'imgSrc' in the 'projects' array above.
-                    const finalImgSrc = imgSrc.startsWith('http') ? imgSrc : imgSrc;
-                    const imgClass = typeof imgData === 'object' && imgData.class ? imgData.class : '';
-                    return `<img src="${finalImgSrc}" alt="${project.title} gallery image ${index + 1}" class="${imgClass}" />`;
+                    const src = typeof imgData === 'string' ? imgData : imgData.src;
+                    const finalSrc = src.startsWith('http') ? src : src;
+                    const itemClass = typeof imgData === 'object' && imgData.class ? imgData.class : '';
+                    const fileExtension = src.split('.').pop().toLowerCase();
+
+                    if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                        // Render a video tag for video files
+                        return `<video src="${finalSrc}" alt="${project.title} gallery video ${index + 1}" class="${itemClass}" controls autoplay muted loop></video>`;
+                    } else {
+                        // Render an image tag for image files
+                        return `<img src="${finalSrc}" alt="${project.title} gallery image ${index + 1}" class="${itemClass}" />`;
+                    }
                 }).join('')}
             </div>
         ` : '';
 
-        // Handle externalLink: if it's a local file (like PDF), this JS is in root, so no prefix needed.
         const finalExternalLink = project.externalLink && !project.externalLink.startsWith('http') ? project.externalLink : project.externalLink;
 
         let externalLinkHtml = '';
         if (project.externalLink) {
             let linkTextContent;
-            // Check if the current project is 'keep-magazine' for specific formatting
             if (project.id === 'keep-magazine') {
-                // For Keep Magazine, specifically separate the prefix "See more at "
-                // and make only the domain clickable and underlined.
                 linkTextContent = `See more at <a href="${finalExternalLink}" target="_blank">${project.externalLink.replace('https://', '').replace('http://', '').replace('www.', '')}</a>`;
             } else {
-                // For other projects (like Sui Generis), the whole text becomes the clickable, underlined link.
-                linkTextContent = `<a href="${finalExternalLink}" target="_blank">${project.externalLinkText}</a>`;
+                linkTextContent = `<a href="${finalExternalLink}" target="_blank">${project.externalLinkHtml || finalExternalLink}</a>`;
             }
             externalLinkHtml = `<p class="download-link-container">${linkTextContent}</p>`;
         }
 
         projectDetailSection.innerHTML = `
-                <h1>${project.title}</h1>
-                <div class="tags-container">
-                    ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
-                </div>
-                <p class="grey-text">${project.description}</p>
-                ${galleryHtml}
-                ${externalLinkHtml}
-            `;
+            <h1>${project.title}</h1>
+            <div class="tags-container">
+                ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
+            </div>
+            <p class="grey-text">${project.description}</p>
+            ${galleryHtml}
+            ${externalLinkHtml}
+        `;
 
+        // The lightbox logic currently only works for images.
+        // For videos, you might want a different lightbox behavior (e.g., a modal with video controls).
+        // For now, videos won't open in the image lightbox.
         const galleryImages = projectDetailSection.querySelectorAll('.gallery img');
         galleryImages.forEach(img => {
             img.addEventListener('click', () => openLightbox(img.src));
+        });
+
+        // Optional: Add event listeners for videos if you want custom controls/interactions
+        const galleryVideos = projectDetailSection.querySelectorAll('.gallery video');
+        galleryVideos.forEach(video => {
+            // Example: play/pause on click (if controls are hidden)
+            // video.addEventListener('click', () => {
+            //     if (video.paused) {
+            //         video.play();
+            //     } else {
+            //         video.pause();
+            //     }
+            // });
         });
     }
 
@@ -162,6 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!lightbox || !lightboxImg) {
             console.error("Lightbox elements not found. Make sure lightbox HTML is included.");
+            return;
+        }
+
+        // Only show images in lightbox for now. Videos won't work in this specific lightbox.
+        const fileExtension = src.split('.').pop().toLowerCase();
+        if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+            console.warn("Lightbox currently supports images only. Video will not open in lightbox.");
             return;
         }
 
