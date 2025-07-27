@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "keep-magazine",
             "title": "Keep Magazine",
             "tags": ["Creative Direction", "UI/UX", "Branding", "Editorial"],
-            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
+            "description": "Keep Magazine is a <i>digital first</i> magazine aimed at creatives. We have interviewed the likes of <b>Dan Alves</b> and <b>Alex Clayton</b>.",
             "mainImage": "KeepMagazineGif.gif",
             "galleryImages": [
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "sui-generis",
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
-            "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
+            "description": "A <b>self-published zine</b> that flips inside out into a poster. A reminder to place ourselves in our work and <em>embrace our individuality</em>.<br> <br>Distributed locally. ",
             "mainImage": "SuiGenerisGif.gif",
             "galleryImages": [
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
@@ -37,43 +37,35 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             "id": "editorials",
             "title": "Editorials",
-            "tags": ["Writing", "Publishing", "Layout Design"], // Example tags
-            "description": "A collection of editorials I've written and contributed to, showcasing my ability to craft compelling narratives and insightful commentary.",
-            "mainImage": "editorialsgif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "tags": ["Writing", "Publishing", "Layout Design"],
+            "description": "A collection of editorials I've <b>designed and contributed to</b>, from a variety of publications.",
+            "mainImage": "editorialsgif.gif",
             "galleryImages": [
-                // Add paths to your editorial images here. Create these files!
                 { "src": "editorial1.png" },
                 { "src": "editorial2.png" },
                 { "src": "editorial3.png" },
                 { "src": "editorial4.png" },
                 { "src": "editorial5.png" },
                 { "src": "editorial6.png" },
-                { "src": "editorial7.png" },
                 { "src": "editorial8.png" },
-                { "src": "editorial9.png" },
                 { "src": "editorial10.png" }
             ],
-            // If there's an external link for all editorials or a main platform
-            "externalLink": "https://example.com/editorials",
-            "externalLinkHtml": `<span class="no-underline">Read more at </span><a href="https://example.com/editorials/" target="_blank">example.com/editorials</a>`,
             "localLink": "project-editorials.html"
         },
         // --- NEW PROJECT: CONTENT DESIGN ---
         {
             "id": "content-design",
             "title": "Content Design",
-            "tags": ["UX", "Journalism", "Strategy"], // Example tags
-            "description": "Projects focused on structuring, writing, and designing content to meet user needs and business goals effectively across various platforms.",
-            "mainImage": "contentdesigngif.gif", // <--- IMPORTANT: Create this image file in your root folder!
+            "tags": ["UX", "Journalism", "Strategy"],
+            "description": "Telling stories through <em>meaningful design</em> and presenting ideas in a way that resonates with an audience.<br> <br>These projects showcase engaging content that is both <b>visually appealing</b> and <b>informative</b>.",
+            "mainImage": "contentdesigngif.gif",
             "galleryImages": [
-                // Add paths to your content design images here. Create these files!
                 { "src": "ContentDesign1.mp4" },
                 { "src": "ContentDesign3.mp4" },
                 { "src": "ContentDesign2.mp4" },
             ],
-            // If there's an external link for all content design or a main platform
-            "externalLink": "https://example.com/content-design",
-            "externalLinkHtml": `<span class="no-underline">Learn more at </span><a href="https://example.com/content-design/" target="_blank">example.com/content-design</a>`,
+            "externalLink": "https://www.instagram.com/madanivision/",
+            "externalLinkHtml": `<span class="no-underline">See more on my </span><a href="https://www.instagram.com/madanivision/" target="_blank">Instagram</a>`,
             "localLink": "project-contentdesign.html"
         }
     ];

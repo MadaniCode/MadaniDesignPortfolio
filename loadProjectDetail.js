@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "keep-magazine",
             "title": "Keep Magazine",
             "tags": ["Creative Direction", "UI/UX", "Branding", "Editorial"],
-            "description": "Keep Magazine is a digital first magazine aimed at creatives. We have interviewed the likes of Dan Alves and Alex Clayton.",
+            "description": "Keep Magazine is a <i>digital first</i> magazine aimed at creatives. We have interviewed the likes of <b>Dan Alves</b> and <b>Alex Clayton</b>.",
             "mainImage": "KeepMagazineGif.gif",
             "galleryImages": [
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "sui-generis",
             "title": "Sui Generis",
             "tags": ["Print", "Writing", "Type Design"],
-            "description": "A self-published zine that flips inside out into a poster. A reminder to place ourselves in our work and embrace our individuality. Distributed locally. This project allowed me to combine my passion for typography and experimental print design, exploring how a physical artifact can surprise and engage its audience through its unique form.",
+            "description": "A <b>self-published zine</b> that flips inside out into a poster. A reminder to place ourselves in our work and <em>embrace our individuality</em>.<br> <br>Distributed locally. ",
             "mainImage": "SuiGenerisGif.gif",
             "galleryImages": [
                 { "src": "SuiGenerisImage.png", "class": "gallery-tall" },
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "editorials",
             "title": "Editorials",
             "tags": ["Writing", "Publishing", "Layout Design"],
-            "description": "A collection of editorials I've written and contributed to, showcasing my ability to craft compelling narratives and insightful commentary.",
+            "description": "A collection of editorials I've <b>designed and contributed to</b>, from a variety of publications.",
             "mainImage": "editorialsgif.gif",
             "galleryImages": [
                 { "src": "editorial1.png" },
@@ -60,14 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "content-design",
             "title": "Content Design",
             "tags": ["UX", "Journalism", "Strategy"],
-            "description": "Projects focused on structuring, writing, and designing content to meet user needs and business goals effectively across various platforms.",
+            "description": "Telling stories through <em>meaningful design</em> and presenting ideas in a way that resonates with an audience.<br> <br>These projects showcase engaging content that is both <b>visually appealing</b> and <b>informative</b>.",
             "mainImage": "contentdesigngif.gif",
             "galleryImages": [
                 { "src": "ContentDesign1.mp4" },
                 { "src": "ContentDesign3.mp4" },
                 { "src": "ContentDesign2.mp4" },
             ],
-            "externalLink": "www.instagram.com/madanivision/",
+            "externalLink": "https://www.instagram.com/madanivision/",
             "externalLinkHtml": `<span class="no-underline">See more on my </span><a href="https://www.instagram.com/madanivision/" target="_blank">Instagram</a>`,
             "localLink": "project-contentdesign.html"
         }
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderProjectDetail(project) {
+function renderProjectDetail(project) {
         document.title = `${project.title} — Madani`;
 
         const projectDetailSection = document.querySelector('.project-detail');
@@ -115,10 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fileExtension = src.split('.').pop().toLowerCase();
 
                     if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
-                        // Render a video tag for video files
                         return `<video src="${finalSrc}" alt="${project.title} gallery video ${index + 1}" class="${itemClass}" controls loop></video>`;
                     } else {
-                        // Render an image tag for image files
                         return `<img src="${finalSrc}" alt="${project.title} gallery image ${index + 1}" class="${itemClass}" />`;
                     }
                 }).join('')}
@@ -127,15 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const finalExternalLink = project.externalLink && !project.externalLink.startsWith('http') ? project.externalLink : project.externalLink;
 
-        let externalLinkHtml = '';
+        let generatedExternalLinkHtml = ''; // Renamed variable to avoid confusion
         if (project.externalLink) {
-            let linkTextContent;
-            if (project.id === 'keep-magazine') {
-                linkTextContent = `See more at <a href="${finalExternalLink}" target="_blank">${project.externalLink.replace('https://', '').replace('http://', '').replace('www.', '')}</a>`;
-            } else {
-                linkTextContent = `<a href="${finalExternalLink}" target="_blank">${project.externalLinkHtml || finalExternalLink}</a>`;
+            // If the project provides explicit HTML for the external link, use it directly.
+            if (project.externalLinkHtml) {
+                generatedExternalLinkHtml = project.externalLinkHtml;
             }
-            externalLinkHtml = `<p class="download-link-container">${linkTextContent}</p>`;
+            // Fallback for projects that only define externalLink without custom HTML.
+            // This will create a standard underlined link from the URL.
+            else {
+                generatedExternalLinkHtml = `<a href="${finalExternalLink}" target="_blank">${finalExternalLink}</a>`;
+            }
+            // Wrap the generated/provided HTML in the paragraph container.
+            generatedExternalLinkHtml = `<p class="download-link-container">${generatedExternalLinkHtml}</p>`;
         }
 
         projectDetailSection.innerHTML = `
@@ -145,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <p class="grey-text">${project.description}</p>
             ${galleryHtml}
-            ${externalLinkHtml}
+            ${generatedExternalLinkHtml}
         `;
 
         // The lightbox logic currently only works for images.

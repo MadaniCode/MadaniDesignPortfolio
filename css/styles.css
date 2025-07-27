@@ -77,9 +77,8 @@ p {
 }
 
 .no-underline {
-  text-decoration: none;
+  text-decoration: none !important; 
 }
-
 
 img {
   border-radius: 10px;
@@ -89,7 +88,7 @@ img {
 
 /* === LAYOUT === */
 header {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 main {
