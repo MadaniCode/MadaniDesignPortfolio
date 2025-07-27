@@ -206,6 +206,11 @@ main {
   .portfolio-grid {
     grid-template-columns: repeat(2, 1fr); /* Two columns for desktop */
   }
+
+  /* Hover effect for desktop only */
+  .portfolio-item:hover {
+      opacity: 0.8;
+  }
 }
 
 .portfolio-item {
@@ -214,9 +219,7 @@ main {
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.portfolio-item:hover {
-    opacity: 0.8;
-}
+/* The .portfolio-item:hover rule was moved inside the @media (min-width: 768px) block */
 
 .portfolio-item a {
     text-decoration: none;
