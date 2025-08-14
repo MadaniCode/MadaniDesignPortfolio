@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": "keep-magazine",
             "title": "Keep Magazine",
             "tags": ["Creative Direction", "UI/UX", "Branding", "Editorial"],
-            "description": "Keep Magazine is a <i>digital first</i> magazine aimed at creatives. We have interviewed the likes of <b>Dan Alves</b> and <b>Alex Clayton</b>.",
+            "description": "Keep Magazine is a <i>digital first</i>, bi-weekly publication at the junction of creatives. Each interview comes with an experience that is co-created and deeply personalised. We aim to create a level of connection and collaboration no other magazine has matched. We have interviewed the likes of <b>Dan Alves</b> and <b>Alex Clayton</b>.",
             "mainImage": "KeepMagazineGif.gif",
             "galleryImages": [
                 { "src": "KeepMagazineImage.png", "class": "gallery-tall" },
