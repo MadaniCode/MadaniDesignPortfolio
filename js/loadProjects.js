@@ -49,32 +49,61 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Title + Description
         document.getElementById('modal-title').innerText = project.title;
         const modalDescription = document.getElementById('modal-description');
         if (modalDescription) {
             modalDescription.innerHTML = project.description;
         }
 
+        // External Link
         const externalLinkContainer = document.getElementById('modal-external-link');
         if (externalLinkContainer) {
             externalLinkContainer.innerHTML = project.externalLinkHtml || '';
         }
 
+        // Gallery
         swipableGallery.innerHTML = '';
         project.galleryImages.forEach(imgData => {
             const src = typeof imgData === 'string' ? imgData : imgData.src;
             const fileExtension = src.split('.').pop().toLowerCase();
             const item = document.createElement('div');
             item.classList.add('gallery-item');
-            
+
             if (['mp4', 'webm', 'ogg', 'mov'].includes(fileExtension)) {
-                item.innerHTML = `<video src="${src}" controls loop autoplay muted></video>`;
+                // Create video element
+                const video = document.createElement('video');
+                video.src = src;
+                video.controls = true;
+                video.loop = true;
+                video.muted = true;
+                video.preload = "metadata";  // lightweight loading
+                video.playsInline = true;    // prevents fullscreen autoplay on iOS
+                video.setAttribute("loading", "lazy");
+
+                // Click-to-play toggle
+                video.addEventListener('click', () => {
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
+
+                item.appendChild(video);
             } else {
-                item.innerHTML = `<img src="${src}" alt="${project.title} gallery item" />`;
+                // Create image element
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `${project.title} gallery item`;
+                img.setAttribute("loading", "lazy");
+                item.appendChild(img);
             }
+
             swipableGallery.appendChild(item);
         });
 
+        // Show modal
         projectModal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
