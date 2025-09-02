@@ -1,32 +1,24 @@
 /* === BASE STYLES === */
 body {
   font-family: 'Azeret Mono', monospace;
-  /* REMOVED background properties from body */
   color: #000;
   margin: 0;
   padding: 0;
-  min-height: 100vh; /* Ensures body is at least viewport height */
-  overflow-x: hidden; /* Prevent horizontal scrollbar from potential layout issues */
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* New wrapper for the gradient background */
 .gradient-background-wrapper {
-  min-height: 100vh; /* Ensures it's at least one viewport high */
+  min-height: 100vh;
   background: linear-gradient(to bottom, #ffffff 15%, #e0dcdc 70%, #a7a7a7 100%);
   background-repeat: no-repeat;
-  /* background-attachment: fixed; -- REMOVED this, it was causing iOS issues */
-  background-size: 100% 100%; /* Make it cover the full height of THIS div */
-  position: relative; /* Needed if you have any absolutely positioned children inside */
-  /* If you add any padding to the body, you might need to adjust this wrapper's dimensions */
+  background-size: 100% 100%;
+  position: relative;
 }
 
-
-/* Specific body style for homepage (index.html) to prevent scrolling */
-/* This class should ONLY be applied to the <body> tag of your homepage (e.g., index.html) */
 body.homepage-locked {
-  /* No changes needed here, as the problem was in the background property */
+  overflow-y: hidden;
 }
-
 
 .fade-in {
   animation: fadeIn 0.4s ease-in forwards;
@@ -77,13 +69,13 @@ p {
 }
 
 .no-underline {
-  text-decoration: none !important; 
+  text-decoration: none !important;
 }
 
 img {
   border-radius: 10px;
-  max-width: 100%; /* General image rule, allows responsiveness by default */
-  height: auto;    /* General image rule, maintains aspect ratio by default */
+  max-width: 100%;
+  height: auto;
 }
 
 /* === LAYOUT === */
@@ -92,95 +84,71 @@ header {
 }
 
 main {
-  padding: 2rem 2rem 4rem 2rem; /* Added 4rem for bottom padding (top, right, bottom, left) */
-  max-width: 1200px; /* Consistent max-width for main content area */
+  padding: 2rem 2rem 4rem 2rem;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
-  /* REMOVED/COMMENTED OUT: height: calc(100vh - 4rem); */
-  /* This line was likely contributing to fixed height issues on the homepage.
-     Removing it allows 'main' to expand based on its content. */
-  box-sizing: border-box; /* Include padding in the height calculation */
+  box-sizing: border-box;
 }
 
 /* === HOMEPAGE (index.html) specific === */
 .intro {
     display: flex;
-    flex-direction: column; /* Default for mobile: stacked vertically */
-    gap: 20px; /* Space between flex items */
-    align-items: flex-start; /* Align items to the start (left) */
-    /* REMOVED: height: 100%; */
-    /* This was likely causing the profile image to be cut off within the 'intro' if 'main' or 'body' also had restricted height.
-       Removing it allows '.intro' to expand as needed. */
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
 }
 
-/* New container for centering phone number and image on mobile */
 .contact-image-group {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center horizontally */
-    width: 100%; /* Take full width of its parent */
-    margin-top: 20px; /* Space from text above */
-    flex-shrink: 0; /* Prevents this group from shrinking if space is tight */
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    flex-shrink: 0;
 }
 
 .phone-number {
-    text-align: center; /* Center the text itself */
-    margin-bottom: 10px; /* Space between phone number and image */
-    margin-top: 0; /* Remove default paragraph top margin */
-    width: 100%; /* Ensure it spans the width to center text within */
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 0;
+    width: 100%;
 }
 
-/* Mobile styles for .intro-image-container (applies below 768px) */
 .intro-image-container {
-    width: 55%; /* Keep 55% width on mobile as per your current setup */
-    max-width: 250px; /* Add a max-width to prevent it from becoming too large on tablets in portrait mode */
+    width: 55%;
+    max-width: 250px;
     border: none;
     background-color: transparent;
 }
 
-/* Mobile styles for the image *inside* .intro-image-container */
 .intro-image-container img {
-    width: 100%; /* Image fills its container on mobile */
-    height: auto; /* Maintains aspect ratio */
-    object-fit: contain; /* Ensures the whole image is visible */
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
-
-/* Styles specifically for screens 768px wide or wider (desktop/tablet landscape) */
 @media (min-width: 768px) {
     .intro {
-        flex-direction: column; /* Desktop: stack text and image vertically */
-        justify-content: space-between; /* Pushes intro-text to top, contact-image-group to bottom */
-        align-items: flex-start; /* Align all items to the left */
-        /* REMOVED: height: 100%; */
-        /* Same as above, allows content to push the container height as needed */
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
     }
 
-    /* On desktop, the contact-image-group should be at the bottom */
     .contact-image-group {
-        position: static; /* Ensure it behaves as a normal flex item */
-        margin-top: auto; /* This pushes the group to the bottom when using space-between on parent */
+        position: static;
+        margin-top: auto;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        flex-shrink: 0; /* Prevent shrinking to ensure visibility */
+        flex-shrink: 0;
     }
 
-    /* On desktop, the phone number should be left-aligned and retain some margin */
     .phone-number {
         text-align: left;
         margin-bottom: 5px;
         margin-top: 0;
         width: auto;
-    }
-
-    .intro-text {
-        flex: 1; /* Allows text to take available space */
-        padding-right: 20px;
-        align-self: flex-start;
-        /* If text content is long and causing clipping on very short viewports, consider: */
-        /* max-height: calc(100% - var(--contact-image-group-height) - var(--gap)); */
-        /* overflow-y: auto; */
     }
 
     .intro-image-container {
@@ -192,7 +160,7 @@ main {
     }
 
     .intro-image-container img {
-        width: 140px; /* Adjusted size slightly smaller as requested */
+        width: 140px;
         height: auto;
         object-fit: contain;
     }
@@ -202,16 +170,15 @@ main {
 /* === PORTFOLIO GRID (portfolio.html) === */
 .portfolio-grid {
   display: grid;
-  grid-template-columns: 1fr; /* Single column for mobile */
-  gap: 2rem; /* Gap between grid items */
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
 @media (min-width: 768px) {
   .portfolio-grid {
-    grid-template-columns: repeat(2, 1fr); /* Two columns for desktop */
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Hover effect for desktop only */
   .portfolio-item:hover {
       opacity: 0.8;
   }
@@ -219,17 +186,15 @@ main {
 
 .portfolio-item {
     display: flex;
-    flex-direction: column; /* Stack image and text vertically */
+    flex-direction: column;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
-
-/* The .portfolio-item:hover rule was moved inside the @media (min-width: 768px) block */
 
 .portfolio-item a {
     text-decoration: none;
     color: inherit;
     display: flex;
-    flex-direction: column; /* Ensure link content also stacks */
+    flex-direction: column;
     height: 100%;
 }
 
@@ -257,29 +222,27 @@ main {
     white-space: nowrap;
 }
 
-.portfolio-item .project-thumbnail { /* This is the CONTAINER for the image */
-    width: 100%; /* Takes full width of its parent */
-    position: relative; /* Needed for object-fit to work reliably with padding-top trick */
-    overflow: hidden; /* Important for border-radius to clip content and for object-fit */
-    border-radius: 10px; /* Re-added border-radius to container */
-    margin-top: 10px; /* Space from title/tags above */
-    border: 1px solid #ccc; /* Re-added border to container */
-    display: flex; /* Use flex to center image if it doesn't fill the container */
-    justify-content: center; /* Center image horizontally */
-    align-items: center; /* Center image vertically */
-
-    /* New styles for consistent square size */
-    padding-top: 100%; /* This makes the height equal to the width */
-    height: 0; /* Override previous height */
+.portfolio-item .project-thumbnail {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100%;
+    height: 0;
 }
 
-.portfolio-item .project-thumbnail img { /* This styles the actual IMAGE inside the container */
-    position: absolute; /* Position absolutely within the padding-top trick container */
+.portfolio-item .project-thumbnail img {
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%; /* Image fills its container horizontally */
-    height: 100%; /* Image fills its container vertically */
-    object-fit: cover; /* This is key: it will cover the area, cropping if necessary */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
 }
 
@@ -306,9 +269,9 @@ main h1:first-of-type {
 
 /* === PROJECT DETAIL PAGE (project-X.html) === */
 .project-detail {
-  max-width: 900px; /* Kept max-width for readability on very wide screens */
-  margin-left: 0; /* Align to the left */
-  margin-right: auto; /* Allow auto margin on the right to push it left */
+  max-width: 900px;
+  margin-left: 0;
+  margin-right: auto;
   padding-bottom: 2rem;
 }
 
@@ -321,7 +284,7 @@ main h1:first-of-type {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 10px; /* Adjusted margin-bottom to move tags closer to text */
+    margin-bottom: 10px;
 }
 
 .project-detail .tag {
@@ -333,60 +296,51 @@ main h1:first-of-type {
     text-transform: capitalize;
 }
 
-/* This targets the large main image in the detail page, if you decide to add one explicitly in HTML */
-/* Or if loadProjectDetail.js places the main image here */
 .project-detail .main-image {
   width: 100%;
   height: auto;
-  max-height: 500px; /* Keep a max-height for large screens */
-  object-fit: contain; /* Ensure full image is seen */
+  max-height: 500px;
+  object-fit: contain;
   margin: 1.5rem 0;
   border-radius: 10px;
-  border: 1px solid #ccc; /* Border for the main image on project detail page */
+  border: 1px solid #ccc;
 }
 
 .project-detail .gallery {
-  display: flex; /* Default to flex column for mobile */
-  flex-direction: column; /* Stack items vertically on mobile */
+  display: flex;
+  flex-direction: column;
   gap: 15px;
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
 
-/* Media query for desktop layout */
 @media (min-width: 768px) {
   .project-detail .gallery {
-    display: grid; /* Change to grid for desktop */
-    grid-template-columns: repeat(3, 1fr); /* Three columns for desktop */
-    gap: 15px; /* Keep the gap */
-  }
-
-  .project-detail .gallery img {
-    /* Optional: If images still feel too large in 3 columns, you can add a max-width here */
-    /* For example: max-width: 250px; but this might not be needed with 3 columns */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
   }
 }
 
+.project-detail .gallery .gallery-item {
+    overflow: hidden;
+    background-color: transparent;
+}
 
 .project-detail .gallery img,
-.project-detail .gallery video { /* Added the video selector here */
+.project-detail .gallery video,
+.gallery-item img,
+.gallery-item video {
   width: 100%;
   height: auto;
-  object-fit: contain; /* Use 'contain' for videos to ensure whole video is seen */
-  border-radius: 10px; /* Rounds the corners */
-  border: 1px solid #ccc; /* Adds the border */
-  cursor: pointer; /* Keeps the pointer if you add a custom click behavior */
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
   transition: transform 0.2s ease;
-}
-
-.project-detail .gallery video {
-    /* Optional: Add a background color for video elements if they don't fill their container perfectly
-       or if there are black bars due to aspect ratio, to blend with your gradient background */
-    background-color: #f0f0f0; /* Light grey, adjust to match your background visually */
-}
-
-.project-detail .gallery img:hover {
-  transform: scale(1.03);
+  display: block;
+  overflow: hidden;
+  background-color: #f0f0f0;
 }
 
 
@@ -412,9 +366,176 @@ main h1:first-of-type {
   pointer-events: auto;
 }
 
+.lightbox .lightbox-media-wrapper {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+}
+
 .lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+/* === NEW: In-page project detail window (modal) === */
+.project-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  overflow: auto;
+}
+
+.project-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: transparent;
+  width: 90%;
+  max-width: 1200px;
+  padding: 2rem;
+  position: relative;
+  margin: auto;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.modal-inner {
+    max-height: 90vh;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 15px 4rem 15px;
+}
+
+.swipable-gallery-container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  flex-grow: 1;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swipable-gallery-container::-webkit-scrollbar {
+  height: 12px;
+  background-color: transparent;
+}
+
+.swipable-gallery-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  border: 3px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+.swipable-gallery-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2.5rem;
+  font-weight: 300;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #fff;
+  z-index: 1001;
+}
+
+.project-header {
+  padding-bottom: 2rem;
+}
+
+.gallery-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.swipable-gallery {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.gallery-item {
+  flex-shrink: 0;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.gallery-item img,
+.gallery-item video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.project-modal h1,
+.project-modal p,
+.project-modal a {
+    color: #fff;
+}
+.project-modal .grey-text {
+    color: #ccc;
+}
+
+.project-modal a:hover {
+    opacity: 0.7;
+}
+
+/* === UPDATED: Mobile-Specific Gallery Styles === */
+@media (max-width: 767px) {
+    .modal-content {
+        width: 100%;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+
+    .modal-inner {
+        padding: 0;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    
+    .swipable-gallery {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .gallery-item {
+        width: 90%;
+        margin: 0 auto;
+        height: auto;
+        min-height: 1px;
+    }
+
+    .project-detail p {
+      max-width: 90%;
+      margin: 0 auto;
+    }
 }
