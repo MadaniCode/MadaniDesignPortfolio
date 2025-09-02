@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 video.src = src;
                 video.controls = true;
                 video.loop = true;
-                video.muted = true;
+                video.muted = false;
                 video.preload = "metadata";  // lightweight loading
                 video.playsInline = true;    // prevents fullscreen autoplay on iOS
                 video.setAttribute("loading", "lazy");
