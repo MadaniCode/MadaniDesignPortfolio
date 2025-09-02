@@ -385,7 +385,7 @@ main h1:first-of-type {
     border-radius: 0;
 }
 
-/* === NEW: In-page project detil window (modal) === */
+/* === NEW: In-page project detail window (modal) === */
 .project-modal {
   position: fixed;
   top: 0;
