@@ -1,4 +1,4 @@
-// js/loadProjects.js (Updated to handle in-page modal)
+// js/loadProjects.js (Updated to handle in-page modal with improved video behavior)
 
 document.addEventListener('DOMContentLoaded', () => {
     const projectsContainer = document.querySelector('.portfolio-grid');
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${project.tags.map(tag => `<span class="tag no-underline">${tag}</span>`).join('')}
                 </div>
                 <div class="project-thumbnail">
-                    <img src="${mainImagePath}" alt="${project.title} main image" />
+                    <img src="${mainImagePath}" alt="${project.title} main image" loading="lazy" />
                 </div>
             </a>
         `;
@@ -71,19 +71,23 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('gallery-item');
 
             if (['mp4', 'webm', 'ogg', 'mov'].includes(fileExtension)) {
-                // Create video element
                 const video = document.createElement('video');
                 video.src = src;
-                video.controls = true;
                 video.loop = true;
                 video.muted = false;
-                video.preload = "metadata";  // lightweight loading
-                video.playsInline = true;    // prevents fullscreen autoplay on iOS
+                video.preload = "metadata";
+                video.playsInline = true;
                 video.setAttribute("loading", "lazy");
+
+                // Hide controls on mobile, show on desktop
+                if (window.innerWidth >= 768) {
+                    video.controls = true;
+                }
 
                 // Click-to-play toggle
                 video.addEventListener('click', () => {
                     if (video.paused) {
+                        pauseAllVideos(); // stop others first
                         video.play();
                     } else {
                         video.pause();
@@ -92,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 item.appendChild(video);
             } else {
-                // Create image element
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = `${project.title} gallery item`;
@@ -103,16 +106,22 @@ document.addEventListener('DOMContentLoaded', () => {
             swipableGallery.appendChild(item);
         });
 
-        // Show modal
         projectModal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
-    
+
     function closeModal() {
         projectModal.classList.remove('show');
         document.body.style.overflow = '';
+        pauseAllVideos(); // stop when modal closes
     }
 
+    function pauseAllVideos() {
+        const videos = swipableGallery.querySelectorAll('video');
+        videos.forEach(v => v.pause());
+    }
+
+    // Close events
     modalCloseBtn.addEventListener('click', closeModal);
 
     projectModal.addEventListener('click', (e) => {
@@ -122,8 +131,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-      if (projectModal.classList.contains('show') && e.key === 'Escape') {
-        closeModal();
-      }
+        if (projectModal.classList.contains('show') && e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Pause videos if tab/window is not active
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pauseAllVideos();
+        }
     });
 });
