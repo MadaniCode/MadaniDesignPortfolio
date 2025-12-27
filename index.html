@@ -497,11 +497,10 @@
     /* =========================================================
        Mobile: keep single-stack + FIX collapse
        ========================================================= */
-    @media (max-width: 980px){
+      @media (max-width: 980px){
       .mast{ grid-template-columns: 1fr; gap: 8px; }
       .mast-right{ justify-content:flex-start; }
 
-      /* controls bar stacks */
       .controls{
         flex-direction: column;
         align-items: stretch;
@@ -517,7 +516,6 @@
         max-height: none;
       }
 
-      /* FIX: cards were collapsing into lines due to flex-basis:0 */
       .card{
         flex: 0 0 auto;
         width: 100%;
@@ -527,11 +525,11 @@
 
       .cardInner{
         height: auto;
-        min-height: 660px;
+        min-height: 660px; /* <-- your “entry height” knob */
       }
 
       .detailGrid{ grid-template-columns: 1fr; }
-      .detailBody{ height: 420px; }
+      .detailBody{ height: 660px; }
     }
 
     @media (max-width: 520px){
