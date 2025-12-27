@@ -1,52 +1,1211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Madani's Portfolio</title>
-  <link href="https://api.fontshare.com/v2/css?f[]=azeret-mono@400,500,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body> 
-  <main class="fade-in">
-    <section class="intro">
-      <div class="intro-text">
-        <h1 style="font-size: 300%">Madani</h1>
-        <p style="font-size: 110%; margin-bottom: 2.1em;">
-          <span class="no-underline">&gt;</span>
-          <a href="portfolio.html" class="portfolio-link">Portfolio</a>
-        </p>
 
-        <p class="subtitle grey-text">
-          Studying Graphic Design BA (Hons)<br>
-          Co-Founder of <a class="grey-text" href="https://keepmagazine.online/">Keep Magazine</a><br><br>
-          Experience in... <br>
-          Graphic Design,<br>
-          Content Design,<br>
-          Editorial Design,<br>
-          Creative Code.
-        </p>
-        <br>
-        <p class="grey-text">
-          <span class="no-underline">&gt;</span>
-          <a href="mailto:abdelrahmanpersonal@gmail.com">Email</a><br>
-          <span class="no-underline">&gt;</span>
-          <a href="https://www.instagram.com/madanivision/" target="_blank">Instagram</a><br>
-          <span class="no-underline">&gt;</span>
-          <a href="https://madanicode.github.io/MadaniJournal/" target="_blank">Blog</a>
-        </p>
+  <style>
+    :root{
+      --bg:#bfbfbf;
+      --paper:#ffffff;
+      --ink:#111111;
+      --muted:#5f5f5f;
+      --rule:#c9c9c9;
+      --rule2:#b6b6b6;
+      --chip:#efefef;
+      --chip-ink:#111;
+      --chip-on:#1c45ff;
+      --chip-on-ink:#fff;
+
+      --highlight:#fff66b;
+
+      --serif:"Times New Roman", Times, serif;
+      --sans:-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+      --max: 1180px;
+      --pad: 28px;
+      --gap: 12px;
+
+      --flip: 720ms;
+      --ease: cubic-bezier(.16,1,.3,1);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px var(--pad) 70px;
+    }
+
+    /* --- masthead --- */
+    .mast{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:baseline;
+      gap: 18px;
+      margin-top: 6px;
+    }
+    .brand{
+      font-family:var(--serif);
+      font-size: 48px;
+      line-height: .95;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin:0;
+    }
+    .mast-right{
+      display:flex;
+      align-items:baseline;
+      justify-content:flex-end;
+      gap: 14px;
+      flex-wrap:wrap;
+    }
+
+
+      .nav{
+        display:inline-flex;
+        align-items:baseline;
+        gap: 10px;
+        user-select:none;
+        white-space:nowrap;
+      }
+
+      .nav a{
+        font-family: var(--serif);
+        font-size: 36px;
+        line-height: 1;
+        text-decoration:none;
+        color: var(--ink);
+        opacity: .25;
+      }
+
+      .nav a.is-active{
+        opacity: 1;
+      }
+
+      .navDivider{
+        font-family: var(--serif);
+        font-size: 36px;
+        line-height: 1;
+        opacity: .35;
+      }
+
+
+    .search{
+      width: 220px;
+      border: 1px solid var(--rule2);
+      background: var(--paper);
+      padding: 10px 12px;
+      font-size: 14px;
+      outline:none;
+    }
+
+    /* views */
+    body[data-view="about"] #workView{ display:none; }
+    body[data-view="about"] #aboutView{ display:block; }
+    #aboutView{ display:none; margin-top: 14px; }
+
+    .aboutBox{
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      padding: 12px;
+      max-width: 760px;
+    }
+    .aboutBox p{
+      margin:0 0 10px 0;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .aboutBox .links{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      font-size: 13px;
+    }
+    .aboutBox .links a{
+      color: var(--ink);
+      text-decoration:none;
+      border-bottom: 1px solid rgba(0,0,0,.22);
+    }
+
+    /* filters */
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
+      margin: 0;
+    }
+    .chip{
+      border: 1px solid var(--rule2);
+      background: var(--chip);
+      color: var(--chip-ink);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      line-height: 1;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease;
+    }
+    .chip:active{ transform: translateY(1px); }
+    .chip.is-on{
+      background: var(--chip-on);
+      border-color: rgba(0,0,0,.12);
+      color: var(--chip-on-ink);
+    }
+
+    /* NEW: controls bar (chips left, search right) */
+    .controls{
+      margin-top: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .controls .search{
+      width: 320px;
+      flex: 0 0 auto;
+    }
+
+    /* =========================================================
+       ROW LAYOUT (no jumping)
+       ========================================================= */
+    .rows{
+      margin-top: 18px;
+      display:flex;
+      flex-direction:column;
+      gap: var(--gap);
+    }
+
+    .row{
+      display:flex;
+      gap: var(--gap);
+      flex-wrap: nowrap;
+      align-items: stretch;
+    }
+
+    @media (min-width: 981px){
+      .row{
+        height: 648px;
+        max-height: 648px;
+      }
+      .card{ height: 100%; }
+    }
+
+    /* =========================================================
+       CARD sizing + squeeze
+       ========================================================= */
+    .card{
+      --base: 1;
+      --openGrow: 2.2;
+
+      flex: var(--base) 1 0;
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      position:relative;
+      overflow: hidden;
+      border-radius: 2px;
+
+      transition:
+        flex-grow var(--flip) var(--ease),
+        border-color 220ms ease;
+    }
+
+    .card.keep{ --base: 2; }
+
+    .card.is-open{
+      flex-grow: var(--openGrow);
+      border-color: rgba(0,0,0,.35);
+    }
+    .row.has-open .card:not(.is-open){
+      flex-grow: 0.7;
+    }
+
+    /* row-specific openGrow (unchanged from your current file) */
+    .row[data-row="2"] .card[data-title="Content Design"]{ --openGrow: 1.1; }
+    .row[data-row="2"] .card[data-title="Editorial Spreads"]{ --openGrow: 1.55; }
+    .row[data-row="3"] .card[data-title="Shovel Studio"]{ --openGrow: 1; }
+    .row[data-row="3"] .card[data-title="Dog Tags"]{ --openGrow: 1.65; }
+
+    /* =========================================================
+       Flip mechanics
+       ========================================================= */
+    .cardInner{
+      position:relative;
+      height: 100%;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+      will-change: transform;
+      background: transparent;
+    }
+
+    .face{
+      position:absolute;
+      inset:0;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform var(--flip) var(--ease);
+      display:flex;
+      flex-direction:column;
+      background: var(--paper);
+      overflow: hidden;
+      border: 0;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+    /* front cover media stays cover */
+    .media.has-img{ position:relative; }
+    .media.has-img img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .media.has-img .caption{
+      position:absolute;
+      left:12px;
+      bottom:12px;
+    }
+
+    /* DETAIL MEDIA (shots) — STOP CROPPING + AUTO SIZE */
+    .shot{
+      margin:0;
+      border: 1px solid var(--rule2);
+      background:#fff;
+      overflow:hidden;
+    }
+
+    .shot img,
+    .shot video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit: contain;
+      background:#fff;
+    }
+    .shot video{ background:#000; }
+
+    .shot.span2{ grid-column: 1 / -1; }
+    .shot.square{ aspect-ratio: 1 / 1 !important; }
+
+    .front{ transform: rotateY(0deg) translateZ(0.6px); }
+    .back { transform: rotateY(180deg) translateZ(0.6px); }
+
+    .card.is-open .front{ transform: rotateY(-180deg) translateZ(0.6px); }
+    .card.is-open .back { transform: rotateY(0deg) translateZ(0.6px); }
+
+    @supports (-webkit-touch-callout: none) {
+      .face{ -webkit-transform: translateZ(0.01px); }
+    }
+
+    /* =========================================================
+       FRONT
+       ========================================================= */
+    .front .hit{
+      all: unset;
+      display:flex;
+      flex-direction:column;
+      height: 100%;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .frontHeader{ display:block; }
+
+    .topline{
+      width:100%;
+      display:grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 12px;
+      line-height: 1;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      cursor:pointer;
+    }
+    .topline b{ color: var(--ink); font-weight:600; text-transform:none; letter-spacing:0; }
+
+    .title{
+      font-family: var(--serif);
+      font-size: 34px;
+      line-height: 1.05;
+      font-weight: 400;
+      margin: 10px 12px 12px;
+      letter-spacing:-0.01em;
+      cursor:pointer;
+    }
+
+    /* hover yellow */
+    .card:not(.is-open):hover .topline,
+    .card:not(.is-open):hover .title{
+      background: var(--highlight);
+    }
+    .card:not(.is-open):hover{
+      background: var(--highlight);
+      border-color: rgba(0,0,0,.35);
+    }
+    .card:not(.is-open):hover .face{
+      background: var(--highlight);
+    }
+    .card:not(.is-open):hover .media{
+      background: transparent;
+    }
+    .card.is-open .topline{ background: var(--highlight); color: var(--ink); }
+
+    .media{
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      background: #f6f6f6;
+      flex: 1 1 auto;
+      min-height: 180px;
+      aspect-ratio: auto;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .media .ph{
+      width:100%;
+      height:100%;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,0)),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0 12px, rgba(0,0,0,0) 12px 24px);
+      display:flex;
+      align-items:flex-end;
+      padding: 10px 12px;
+    }
+
+    .caption{
+      font-size: 12px;
+      line-height: 1.2;
+      color: var(--muted);
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 6px 8px;
+      max-width: 92%;
+    }
+
+    .frontMeta{
+      margin-top: auto;
+      display:block;
+      background: var(--paper);
+    }
+
+    .tags{
+      padding: 10px 12px 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px;
+    }
+    .tag{
+      font-size: 12px;
+      line-height: 1;
+      padding: 6px 8px;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink);
+      background: #fafafa;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    /* =========================================================
+       BACK
+       ========================================================= */
+    .detailTop{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--rule);
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 12px;
+      background: var(--highlight);
+      cursor:pointer;
+    }
+    .detailTop h3{
+      font-family: var(--serif);
+      font-weight: 400;
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.05;
+      pointer-events:none;
+    }
+    .detailTop .hint{
+      font-size: 12px;
+      color: rgba(0,0,0,.65);
+      pointer-events:none;
+    }
+
+    .detailBody{
+      padding: 12px;
+      height: calc(100% - 48px);
+      overflow:auto;
+      background:#fbfbfb;
+    }
+    .detailBody p{
+      margin:0 0 10px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .kicker{
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+    .detailGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .phImg{
+      border: 1px solid var(--rule2);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,0)),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0 10px, rgba(0,0,0,0) 10px 20px);
+      aspect-ratio: 4 / 3;
+      display:flex;
+      align-items:flex-end;
+      padding: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       Mobile: keep single-stack + FIX collapse
+       ========================================================= */
+    @media (max-width: 980px){
+      .mast{ grid-template-columns: 1fr; gap: 8px; }
+      .mast-right{ justify-content:flex-start; }
+
+      /* controls bar stacks */
+      .controls{
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls .search{
+        width: 100%;
+      }
+
+      .row{
+        flex-direction: column;
+        flex-wrap: nowrap;
+        height: auto;
+        max-height: none;
+      }
+
+      /* FIX: cards were collapsing into lines due to flex-basis:0 */
+      .card{
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+      }
+
+      .cardInner{
+        height: auto;
+        min-height: 660px;
+      }
+
+      .detailGrid{ grid-template-columns: 1fr; }
+      .detailBody{ height: 420px; }
+    }
+
+    @media (max-width: 520px){
+      .wrap{ padding-left: 16px; padding-right: 16px; }
+      .brand{ font-size: 46px; }
+      .title{ font-size: 30px; }
+    }
+  </style>
+</head>
+
+<body data-view="work">
+  <main class="wrap">
+
+    <section class="mast">
+      <h1 class="brand">Madani</h1>
+
+      <div class="mast-right">
+        <nav class="nav" aria-label="Sections">
+          <a href="#work" id="navWork" class="is-active">Work</a>
+          <span class="navDivider" aria-hidden="true">|</span>
+          <a href="#about" id="navAbout">About</a>
+        </nav>
       </div>
-      <div class="contact-image-group">
-        <p class="grey-text phone-number">
-          <a href="tel:+447951033153">+44 7951 033153</a>
+    </section>
+
+    <section id="aboutView" aria-label="About">
+      <div class="aboutBox">
+        <p>
+          I’m a designer based in England, focused on editorial and digital design. I’m the co-founder of Keep Magazine and work independently across publishing, layout, and visual systems.
         </p>
-        <div class="intro-image-container">
-          <img src="MadaniProfilePicture.png" alt="Madani Profile Picture" />
+        <div class="links">
+          <a href="https://www.instagram.com/madanivision/" target="_blank" rel="noreferrer">Instagram</a>
+          <a href="https://blog.madanidesign.com/" target="_blank" rel="noreferrer">Blog</a>
+          <a href="mailto:abdelrahmanpersonal@gmail.com">Email</a>
         </div>
       </div>
     </section>
+
+    <section id="workView">
+      <!-- NEW: controls bar -->
+      <section class="controls" aria-label="Work controls">
+        <section class="filters" aria-label="Filters">
+          <span class="chip is-on" data-filter="all">All</span>
+          <span class="chip" data-filter="web">Web</span>
+          <span class="chip" data-filter="content">Content</span>
+          <span class="chip" data-filter="direction">Direction</span>
+        </section>
+
+        <input id="q" class="search" placeholder="Search projects…" />
+      </section>
+
+      <section class="rows" id="work" aria-label="Projects">
+
+        <!-- Row 1 -->
+        <div class="row" data-row="1">
+          <article class="card keep" data-cat="web" data-year="ongoing" data-title="Keep Magazine" data-tags="web, editorial, publishing, systems">
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Keep Magazine">
+                  <div class="frontHeader">
+                    <div class="topline"><span>Ongoing</span><span><b>Web</b></span><span>Keep</span></div>
+                    <h2 class="title">Keep Magazine</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="KeepMagazine/KeepCover.webp"
+                      alt="Keep Magazine overview"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">Publishing systems, directory logic, editorial structure.</div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">Publishing</span>
+                      <span class="tag">Grid systems</span>
+                      <span class="tag">Editorial</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Keep Magazine</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+
+          <article class="card" style="--base:1" data-cat="web" data-year="2024" data-title="Loops.szn" data-tags="web, ui, interaction, motion, build">
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Loops.szn">
+                  <div class="frontHeader">
+                    <div class="topline"><span>Dec 2024</span><span><b>Web</b></span><span>Loops</span></div>
+                    <h2 class="title">Loops.szn</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="Loops/LoopsCoverImage.gif"
+                      alt="Loops.szn cover"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">Floating Windows, interaction decisions, interactive layouts, parallax motion.</div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">UI</span>
+                      <span class="tag">Interaction</span>
+                      <span class="tag">Build</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Loops.szn</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+        </div>
+
+        <!-- Row 2 (2 cards) -->
+        <div class="row" data-row="2">
+          <article
+            class="card"
+            style="--base:1.55"
+            data-cat="direction"
+            data-year="2024"
+            data-title="Editorial Spreads"
+            data-tags="editorial, spreads, print, mixed media, design"
+          >
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Editorial Spreads">
+                  <div class="frontHeader">
+                    <div class="topline">
+                      <span>2024</span>
+                      <span><b>Direction</b></span>
+                      <span>Editorial</span>
+                    </div>
+                    <h2 class="title">Editorial Spreads</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="ContentDesign/spreads.gif"
+                      alt="Editorial spreads"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">
+                      Graphic-designed editorial spreads using photography, illustration, type, and mixed media.
+                    </div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">Editorial</span>
+                      <span class="tag">Print</span>
+                      <span class="tag">Mixed media</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Editorial Spreads</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+
+          <article
+            class="card"
+            style="--base:1"
+            data-cat="content"
+            data-year="2025"
+            data-title="Content Design"
+            data-tags="content, video, social, motion, design"
+          >
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Content Design">
+                  <div class="frontHeader">
+                    <div class="topline">
+                      <span>2025</span>
+                      <span><b>Content</b></span>
+                      <span>Design</span>
+                    </div>
+                    <h2 class="title">Content Design</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="CONTENTDESIGN1/ContentDesignCover.png"
+                      alt="Content design video work"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">
+                      Short-form and editorial video design for personal and client platforms.
+                    </div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">Video</span>
+                      <span class="tag">Motion</span>
+                      <span class="tag">Social</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Content Design</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="row" data-row="3">
+          <article class="card" style="--base:.8" data-cat="content" data-year="ongoing" data-title="Shovel Studio" data-tags="content, strategy, systems, reels">
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Shovel Studio">
+                  <div class="frontHeader">
+                    <div class="topline"><span>Ongoing</span><span><b>Content</b></span><span>Studio</span></div>
+                    <h2 class="title">Shovel Studio</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="ShovelStudio/ShovelCover.webp"
+                      alt="Shovel Studio cover"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">
+                      Making design and visual briefs for Shovel Studio.
+                    </div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">Systems</span>
+                      <span class="tag">Strategy</span>
+                      <span class="tag">Reels</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Shovel Studio</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+
+          <article class="card" style="--base:1.4" data-cat="direction" data-year="2025" data-title="Dog Tags" data-tags="direction, product, identity">
+            <div class="cardInner">
+              <section class="face front" aria-hidden="false">
+                <button class="hit" type="button" aria-expanded="false" aria-label="Open Dog Tags">
+                  <div class="frontHeader">
+                    <div class="topline"><span>Sep 2025</span><span><b>Direction</b></span><span>Objects</span></div>
+                    <h2 class="title">Dog Tags</h2>
+                  </div>
+
+                  <div class="media has-img">
+                    <img
+                      src="DogTags/DogTagCover.webp"
+                      alt="Dog Tags cover"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="caption">Direction notes, material decisions.</div>
+                  </div>
+
+                  <div class="frontMeta">
+                    <div class="tags">
+                      <span class="tag">Direction</span>
+                      <span class="tag">Material</span>
+                      <span class="tag">Detail</span>
+                    </div>
+                  </div>
+                </button>
+              </section>
+
+              <section class="face back" aria-hidden="true">
+                <div class="detailTop" data-toggle="close">
+                  <h3>Dog Tags</h3>
+                  <div class="hint">Click to close</div>
+                </div>
+                <div class="detailBody"></div>
+              </section>
+            </div>
+          </article>
+        </div>
+
+      </section>
+    </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const chips = Array.from(document.querySelectorAll(".chip"));
+    const q = document.getElementById("q");
+    const navWork = document.getElementById("navWork");
+    const navAbout = document.getElementById("navAbout");
+
+    const rows  = Array.from(document.querySelectorAll(".row"));
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    let activeFilter = "all";
+    let openCardEl = null;
+
+    function normalize(s){ return (s||"").toLowerCase().trim(); }
+
+    // set each .shot figure aspect ratio to the file’s real ratio
+    function hydrateMediaRatios(scope){
+      const figures = Array.from(scope.querySelectorAll("figure.shot"));
+
+      figures.forEach(fig => {
+        if (fig.classList.contains("square")) return;
+
+        const img = fig.querySelector("img");
+        const vid = fig.querySelector("video");
+
+        if (img){
+          const apply = () => {
+            const w = img.naturalWidth;
+            const h = img.naturalHeight;
+            if (w && h) fig.style.aspectRatio = `${w} / ${h}`;
+          };
+          if (img.complete) apply();
+          else img.addEventListener("load", apply, { once:true });
+          return;
+        }
+
+        if (vid){
+          const apply = () => {
+            const w = vid.videoWidth;
+            const h = vid.videoHeight;
+            if (w && h) fig.style.aspectRatio = `${w} / ${h}`;
+          };
+          if (vid.readyState >= 1) apply();
+          else vid.addEventListener("loadedmetadata", apply, { once:true });
+        }
+      });
+    }
+
+    const contentFor = (title) => {
+      if (title === "Loops.szn") {
+        return `
+          <p><b>Loops.szn</b> — UI / interaction decisions, clean hierarchy, motion-ready layouts.</p>
+
+          <div class="kicker">Screens</div>
+          <div class="detailGrid">
+            <figure class="shot">
+              <img src="Loops/Loops1.webp" alt="Loops.szn still" loading="lazy" decoding="async">
+            </figure>
+            <figure class="shot">
+              <img src="Loops/Loops2.webp" alt="Loops.szn still" loading="lazy" decoding="async">
+            </figure>
+          </div>
+
+          <div class="kicker">Motion</div>
+          <div class="detailGrid">
+            <figure class="shot">
+              <video src="Loops/LoopsVideo.mp4" controls playsinline preload="metadata"></video>
+            </figure>
+            <figure class="shot">
+              <video src="Loops/LoopsVideo2.mp4" controls playsinline preload="metadata"></video>
+            </figure>
+          </div>
+        `;
+      }
+
+      if (title === "Keep Magazine") {
+        return `
+          <p><b>Keep Magazine</b> — Keep Magazine is a digital-first editorial project organised as a directory, pairing interviews with bespoke digital experiences. Content is navigated systemically rather than chronologically, encouraging exploration through structure instead of scroll.</p>
+          <p>Featured collaborators include Frédéric Saint Parck, Slawn, and Dan Alves. Co-founded by me.</p>
+
+          <div class="kicker">Pages</div>
+          <div class="detailGrid">
+            <figure class="shot"><img src="KeepMagazine/HomePage.webp" alt="Keep Homepage" loading="lazy" decoding="async"></figure>
+            <figure class="shot"><img src="KeepMagazine/FilesPage.webp" alt="Keep Files page" loading="lazy" decoding="async"></figure>
+          </div>
+
+          <div class="detailGrid">
+            <figure class="shot"><img src="KeepMagazine/DanPage.webp" alt="Keep Dan page" loading="lazy" decoding="async"></figure>
+            <figure class="shot"><img src="KeepMagazine/FredericPage.webp" alt="Keep Frederic page" loading="lazy" decoding="async"></figure>
+          </div>
+
+          <div class="detailGrid">
+            <figure class="shot"><img src="KeepMagazine/ShopPage.webp" alt="Keep Shop page" loading="lazy" decoding="async"></figure>
+            <figure class="shot"><img src="KeepMagazine/ChatPage.webp" alt="Keep Chat page" loading="lazy" decoding="async"></figure>
+          </div>
+
+          <div class="kicker">Direction</div>
+          <div class="detailGrid">
+            <figure class="shot span2">
+              <img src="KeepMagazine/keepmanual.gif" alt="Keep manual" loading="lazy" decoding="async">
+            </figure>
+          </div>
+        `;
+      }
+
+      if (title === "Dog Tags") {
+        return `
+          <p><b>Dog Tags</b> — Direction, photography and product release.</p>
+
+          <div class="kicker">Images</div>
+          <div class="detailGrid">
+            <figure class="shot"><img src="DogTags/DogTagCover.webp" alt="Dog Tags cover" loading="lazy" decoding="async"></figure>
+            <figure class="shot"><img src="DogTags/flick1dogs.webp" alt="Dog Tags flick 1" loading="lazy" decoding="async"></figure>
+          </div>
+          <div class="detailGrid">
+            <figure class="shot"><img src="DogTags/flick2dogs.webp" alt="Dog Tags flick 2" loading="lazy" decoding="async"></figure>
+            <figure class="shot"><img src="DogTags/yeahfam.webp" alt="Dog Tags yeahfam" loading="lazy" decoding="async"></figure>
+          </div>
+        `;
+      }
+
+      if (title === "Editorial Spreads") {
+        return `
+          <p><b>Editorial Spreads</b> — Editorial spreads I’ve graphic designed using Illustrator, Photoshop, my camera, personal stories, and mixed media methods.</p>
+
+          <div class="kicker">Spreads</div>
+
+          <div class="detailGrid">
+            <figure class="shot">
+              <img src="ContentDesign/spread1.webp" alt="Editorial spread 1" loading="lazy" decoding="async">
+            </figure>
+            <figure class="shot">
+              <img src="ContentDesign/spread2.webp" alt="Editorial spread 2" loading="lazy" decoding="async">
+            </figure>
+          </div>
+
+          <div class="detailGrid">
+            <figure class="shot">
+              <img src="ContentDesign/spread3.webp" alt="Editorial spread 3" loading="lazy" decoding="async">
+            </figure>
+            <figure class="shot">
+              <img src="ContentDesign/spread4.webp" alt="Editorial spread 4" loading="lazy" decoding="async">
+            </figure>
+          </div>
+
+          <div class="detailGrid">
+            <figure class="shot">
+              <img src="ContentDesign/spread5.webp" alt="Editorial spread 5" loading="lazy" decoding="async">
+            </figure>
+            <figure class="shot">
+              <img src="ContentDesign/spread6.webp" alt="Editorial spread 6" loading="lazy" decoding="async">
+            </figure>
+          </div>
+        `;
+      }
+
+      if (title === "Content Design") {
+        return `
+          <p><b>Content Design</b> — Short-form and editorial video design for personal and client platforms.</p>
+
+          <div class="kicker">Reels</div>
+
+          <div class="detailGrid">
+            <figure class="shot">
+              <video src="CONTENTDESIGN1/Reel2.mp4" controls playsinline preload="metadata"></video>
+            </figure>
+
+            <figure class="shot">
+              <video src="CONTENTDESIGN1/Reel1.mp4" controls playsinline preload="metadata"></video>
+            </figure>
+          </div>
+        `;
+      }
+
+      if (title === "Shovel Studio") {
+        return `
+          <p>
+            <b>Shovel Studio</b> — Making design and visual briefs for 
+            <a href="https://www.instagram.com/shovel.studio/" target="_blank" rel="noreferrer">
+              Shovel Studio on Instagram
+            </a>.
+          </p>
+
+          <div class="kicker">Reels</div>
+
+          <div class="detailGrid">
+            <figure class="shot">
+              <video
+                src="ShovelStudio/Hardsun.mp4"
+                controls
+                playsinline
+                preload="metadata"
+              ></video>
+            </figure>
+
+            <figure class="shot">
+              <video
+                src="ShovelStudio/Hanger.mp4"
+                controls
+                playsinline
+                preload="metadata"
+              ></video>
+            </figure>
+          </div>
+        `;
+      }
+
+      return `
+        <p><b>${title}</b> — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <div class="kicker">Selected Screens</div>
+        <div class="detailGrid">
+          <div class="phImg">Placeholder image 01</div>
+          <div class="phImg">Placeholder image 02</div>
+          <div class="phImg">Placeholder image 03</div>
+          <div class="phImg">Placeholder image 04</div>
+        </div>
+      `;
+    };
+
+    function updateRowState(row){
+      const hasOpen = !!row.querySelector(".card.is-open");
+      row.classList.toggle("has-open", hasOpen);
+    }
+
+    function closeAnyOpen(){
+      if (!openCardEl) return;
+
+      openCardEl.classList.remove("is-open");
+      const hit = openCardEl.querySelector(".hit");
+      if (hit) hit.setAttribute("aria-expanded","false");
+
+      const back = openCardEl.querySelector(".back");
+      if (back) back.setAttribute("aria-hidden","true");
+
+      openCardEl = null;
+      rows.forEach(updateRowState);
+    }
+
+    function openCard(card){
+      if (openCardEl === card && card.classList.contains("is-open")){
+        closeAnyOpen();
+        return;
+      }
+
+      closeAnyOpen();
+
+      const body = card.querySelector(".detailBody");
+      if (body) {
+        body.innerHTML = contentFor(card.dataset.title);
+        hydrateMediaRatios(body);
+      }
+
+      card.classList.add("is-open");
+
+      const hit = card.querySelector(".hit");
+      if (hit) hit.setAttribute("aria-expanded","true");
+
+      const back = card.querySelector(".back");
+      if (back) back.setAttribute("aria-hidden","false");
+
+      openCardEl = card;
+
+      const row = card.closest(".row");
+      if (row) updateRowState(row);
+
+      const isDesktop = window.matchMedia("(min-width: 981px)").matches;
+      if (isDesktop) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }
+
+    cards.forEach(card => {
+      const hit = card.querySelector(".hit");
+      hit.addEventListener("click", () => {
+        if (document.body.getAttribute("data-view") === "about") return;
+        openCard(card);
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      const toggle = e.target.closest(".detailTop[data-toggle='close']");
+      if (!toggle) return;
+      const card = e.target.closest(".card");
+      if (!card) return;
+      if (openCardEl === card) closeAnyOpen();
+    });
+
+    function apply(){
+      closeAnyOpen();
+      const query = normalize(q.value);
+
+      cards.forEach(card => {
+        const cat = card.dataset.cat;
+        const title = normalize(card.dataset.title);
+        const tags = normalize(card.dataset.tags);
+
+        const filterOk =
+          activeFilter === "all" ||
+          activeFilter === cat;
+
+        const queryOk =
+          !query ||
+          title.includes(query) ||
+          tags.includes(query);
+
+        card.style.display = (filterOk && queryOk) ? "" : "none";
+      });
+
+      rows.forEach(row => {
+        const anyVisible = Array.from(row.querySelectorAll(".card"))
+          .some(c => c.style.display !== "none");
+        row.style.display = anyVisible ? "" : "none";
+        row.classList.remove("has-open");
+      });
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("is-on"));
+        chip.classList.add("is-on");
+        activeFilter = chip.dataset.filter;
+        apply();
+      });
+    });
+
+    q.addEventListener("input", apply);
+
+    navWork.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.body.setAttribute("data-view","work");
+
+      navWork.classList.add("is-active");
+      navAbout.classList.remove("is-active");
+
+      document.getElementById("work").scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+
+    navAbout.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeAnyOpen();
+      document.body.setAttribute("data-view","about");
+
+      navAbout.classList.add("is-active");
+      navWork.classList.remove("is-active");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    apply();
+  </script>
 </body>
 </html>
