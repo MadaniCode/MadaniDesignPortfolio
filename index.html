@@ -679,7 +679,7 @@
 
                   <div class="media has-video">
                     <video
-                      src="Loops/LoopsCoverVideo.mp4"
+                      src="Loops/LoopsCoverImage.mp4"
                       autoplay
                       muted
                       loop
@@ -785,7 +785,6 @@
                     <h2 class="title">Content Design</h2>
                   </div>
 
-                  <!-- FIXED: use proper video tag + has-video class -->
                   <div class="media has-video">
                     <video
                       src="CONTENTDESIGN1/ContentDesignCover2.mp4"
@@ -922,6 +921,26 @@
     let openCardEl = null;
 
     function normalize(s){ return (s||"").toLowerCase().trim(); }
+
+    /* =========================================================
+       iOS reliability: pointerup + touchend + click (deduped)
+       ========================================================= */
+    function addTap(el, handler){
+      if (!el) return;
+
+      const wrapped = (e) => {
+        // Dedupe: iOS can fire touchend then click
+        const now = Date.now();
+        if (el.__lastTap && (now - el.__lastTap) < 450) return;
+        el.__lastTap = now;
+
+        handler(e);
+      };
+
+      el.addEventListener("pointerup", wrapped);
+      el.addEventListener("touchend", wrapped, { passive:false });
+      el.addEventListener("click", wrapped);
+    }
 
     function hydrateMediaRatios(scope){
       const figures = Array.from(scope.querySelectorAll("figure.shot"));
@@ -1165,22 +1184,30 @@
       if (isDesktop) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     }
 
-    // iOS-friendly: pointerup instead of click
+    // Open by tapping the card front
     cards.forEach(card => {
       const hit = card.querySelector(".hit");
-      hit.addEventListener("pointerup", (e) => {
+      addTap(hit, (e) => {
         e.preventDefault();
+        e.stopPropagation();
         if (document.body.getAttribute("data-view") === "about") return;
         openCard(card);
       });
     });
 
-    document.addEventListener("pointerup", (e) => {
-      const toggle = e.target.closest(".detailTop[data-toggle='close']");
-      if (!toggle) return;
-      const card = e.target.closest(".card");
-      if (!card) return;
-      if (openCardEl === card) closeAnyOpen();
+    // Close by tapping the yellow header on the back
+    ["pointerup","touchend","click"].forEach((evt) => {
+      document.addEventListener(evt, (e) => {
+        const toggle = e.target.closest(".detailTop[data-toggle='close']");
+        if (!toggle) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const card = e.target.closest(".card");
+        if (!card) return;
+        if (openCardEl === card) closeAnyOpen();
+      }, evt === "touchend" ? { passive:false } : undefined);
     });
 
     function apply(){
@@ -1213,7 +1240,7 @@
     }
 
     chips.forEach(chip => {
-      chip.addEventListener("pointerup", (e) => {
+      addTap(chip, (e) => {
         e.preventDefault();
         chips.forEach(c => c.classList.remove("is-on"));
         chip.classList.add("is-on");
@@ -1224,7 +1251,7 @@
 
     q.addEventListener("input", apply);
 
-    navWork.addEventListener("pointerup", (e) => {
+    addTap(navWork, (e) => {
       e.preventDefault();
       document.body.setAttribute("data-view","work");
 
@@ -1234,7 +1261,7 @@
       document.getElementById("work").scrollIntoView({ behavior:"smooth", block:"start" });
     });
 
-    navAbout.addEventListener("pointerup", (e) => {
+    addTap(navAbout, (e) => {
       e.preventDefault();
       closeAnyOpen();
       document.body.setAttribute("data-view","about");
