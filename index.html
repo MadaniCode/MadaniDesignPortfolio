@@ -72,35 +72,33 @@
       flex-wrap:wrap;
     }
 
+    .nav{
+      display:inline-flex;
+      align-items:baseline;
+      gap: 10px;
+      user-select:none;
+      white-space:nowrap;
+    }
 
-      .nav{
-        display:inline-flex;
-        align-items:baseline;
-        gap: 10px;
-        user-select:none;
-        white-space:nowrap;
-      }
+    .nav a{
+      font-family: var(--serif);
+      font-size: 36px;
+      line-height: 1;
+      text-decoration:none;
+      color: var(--ink);
+      opacity: .25;
+    }
 
-      .nav a{
-        font-family: var(--serif);
-        font-size: 36px;
-        line-height: 1;
-        text-decoration:none;
-        color: var(--ink);
-        opacity: .25;
-      }
+    .nav a.is-active{
+      opacity: 1;
+    }
 
-      .nav a.is-active{
-        opacity: 1;
-      }
-
-      .navDivider{
-        font-family: var(--serif);
-        font-size: 36px;
-        line-height: 1;
-        opacity: .35;
-      }
-
+    .navDivider{
+      font-family: var(--serif);
+      font-size: 36px;
+      line-height: 1;
+      opacity: .35;
+    }
 
     .search{
       width: 220px;
@@ -166,7 +164,7 @@
       color: var(--chip-on-ink);
     }
 
-    /* NEW: controls bar (chips left, search right) */
+    /* controls bar (chips left, search right) */
     .controls{
       margin-top: 12px;
       display:flex;
@@ -269,6 +267,36 @@
       transform: translateZ(0);
     }
 
+    /* =========================================================
+       iOS SAFARI FLIP FIX (added)
+       ========================================================= */
+    .cardInner{
+      -webkit-perspective: 1400px;
+      perspective: 1400px;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+    .face{
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+    }
+
+    /* Avoid iOS white slab flash / z-fighting */
+    .front, .back{
+      -webkit-transform: translateZ(0.1px);
+      transform: translateZ(0.1px);
+    }
+
+    .hit{
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
     /* front cover media stays cover */
     .media.has-img{ position:relative; }
     .media.has-img img{
@@ -280,6 +308,23 @@
       display:block;
     }
     .media.has-img .caption{
+      position:absolute;
+      left:12px;
+      bottom:12px;
+    }
+
+    /* VIDEO cover (added) */
+    .media.has-video{ position:relative; }
+    .media.has-video video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      background:#000;
+    }
+    .media.has-video .caption{
       position:absolute;
       left:12px;
       bottom:12px;
@@ -497,7 +542,7 @@
     /* =========================================================
        Mobile: keep single-stack + FIX collapse
        ========================================================= */
-      @media (max-width: 980px){
+    @media (max-width: 980px){
       .mast{ grid-template-columns: 1fr; gap: 8px; }
       .mast-right{ justify-content:flex-start; }
 
@@ -525,7 +570,7 @@
 
       .cardInner{
         height: auto;
-        min-height: 660px; /* <-- your “entry height” knob */
+        min-height: 660px; /* “entry height” knob */
       }
 
       .detailGrid{ grid-template-columns: 1fr; }
@@ -569,7 +614,6 @@
     </section>
 
     <section id="workView">
-      <!-- NEW: controls bar -->
       <section class="controls" aria-label="Work controls">
         <section class="filters" aria-label="Filters">
           <span class="chip is-on" data-filter="all">All</span>
@@ -633,13 +677,16 @@
                     <h2 class="title">Loops.szn</h2>
                   </div>
 
-                  <div class="media has-img">
-                    <img
-                      src="Loops/LoopsCoverImage.gif"
-                      alt="Loops.szn cover"
-                      loading="lazy"
-                      decoding="async"
-                    >
+                  <div class="media has-video">
+                    <video
+                      src="Loops/LoopsCoverVideo.mp4"
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      preload="metadata"
+                    ></video>
+
                     <div class="caption">Floating Windows, interaction decisions, interactive layouts, parallax motion.</div>
                   </div>
 
@@ -664,7 +711,7 @@
           </article>
         </div>
 
-        <!-- Row 2 (2 cards) -->
+        <!-- Row 2 -->
         <div class="row" data-row="2">
           <article
             class="card"
@@ -738,13 +785,17 @@
                     <h2 class="title">Content Design</h2>
                   </div>
 
-                  <div class="media has-img">
-                    <img
-                      src="CONTENTDESIGN1/ContentDesignCover.png"
-                      alt="Content design video work"
-                      loading="lazy"
-                      decoding="async"
-                    >
+                  <!-- FIXED: use proper video tag + has-video class -->
+                  <div class="media has-video">
+                    <video
+                      src="CONTENTDESIGN1/ContentDesignCover2.mp4"
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      preload="metadata"
+                    ></video>
+
                     <div class="caption">
                       Short-form and editorial video design for personal and client platforms.
                     </div>
@@ -872,10 +923,8 @@
 
     function normalize(s){ return (s||"").toLowerCase().trim(); }
 
-    // set each .shot figure aspect ratio to the file’s real ratio
     function hydrateMediaRatios(scope){
       const figures = Array.from(scope.querySelectorAll("figure.shot"));
-
       figures.forEach(fig => {
         if (fig.classList.contains("square")) return;
 
@@ -1034,7 +1083,7 @@
       if (title === "Shovel Studio") {
         return `
           <p>
-            <b>Shovel Studio</b> — Making design and visual briefs for 
+            <b>Shovel Studio</b> — Making design and visual briefs for
             <a href="https://www.instagram.com/shovel.studio/" target="_blank" rel="noreferrer">
               Shovel Studio on Instagram
             </a>.
@@ -1044,21 +1093,11 @@
 
           <div class="detailGrid">
             <figure class="shot">
-              <video
-                src="ShovelStudio/Hardsun.mp4"
-                controls
-                playsinline
-                preload="metadata"
-              ></video>
+              <video src="ShovelStudio/Hardsun.mp4" controls playsinline preload="metadata"></video>
             </figure>
 
             <figure class="shot">
-              <video
-                src="ShovelStudio/Hanger.mp4"
-                controls
-                playsinline
-                preload="metadata"
-              ></video>
+              <video src="ShovelStudio/Hanger.mp4" controls playsinline preload="metadata"></video>
             </figure>
           </div>
         `;
@@ -1126,15 +1165,17 @@
       if (isDesktop) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     }
 
+    // iOS-friendly: pointerup instead of click
     cards.forEach(card => {
       const hit = card.querySelector(".hit");
-      hit.addEventListener("click", () => {
+      hit.addEventListener("pointerup", (e) => {
+        e.preventDefault();
         if (document.body.getAttribute("data-view") === "about") return;
         openCard(card);
       });
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener("pointerup", (e) => {
       const toggle = e.target.closest(".detailTop[data-toggle='close']");
       if (!toggle) return;
       const card = e.target.closest(".card");
@@ -1172,7 +1213,8 @@
     }
 
     chips.forEach(chip => {
-      chip.addEventListener("click", () => {
+      chip.addEventListener("pointerup", (e) => {
+        e.preventDefault();
         chips.forEach(c => c.classList.remove("is-on"));
         chip.classList.add("is-on");
         activeFilter = chip.dataset.filter;
@@ -1182,7 +1224,7 @@
 
     q.addEventListener("input", apply);
 
-    navWork.addEventListener("click", (e) => {
+    navWork.addEventListener("pointerup", (e) => {
       e.preventDefault();
       document.body.setAttribute("data-view","work");
 
@@ -1192,7 +1234,7 @@
       document.getElementById("work").scrollIntoView({ behavior:"smooth", block:"start" });
     });
 
-    navAbout.addEventListener("click", (e) => {
+    navAbout.addEventListener("pointerup", (e) => {
       e.preventDefault();
       closeAnyOpen();
       document.body.setAttribute("data-view","about");
