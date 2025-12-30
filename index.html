@@ -239,13 +239,20 @@
     .row[data-row="3"] .card[data-title="Dog Tags"]{ --openGrow: 1.65; }
 
     /* =========================================================
-       Flip mechanics
+       Flip mechanics (SIMPLIFIED FOR iOS)
        ========================================================= */
     .cardInner{
       position:relative;
       height: 100%;
       perspective: 1400px;
+      -webkit-perspective: 1400px;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+
+      /* simple compositor nudge, no translateZ chains */
+      transform: translate3d(0,0,0);
+      -webkit-transform: translate3d(0,0,0);
+
       will-change: transform;
       background: transparent;
     }
@@ -256,45 +263,43 @@
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+
       will-change: transform;
       transition: transform var(--flip) var(--ease);
+
       display:flex;
       flex-direction:column;
       background: var(--paper);
       overflow: hidden;
       border: 0;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
     }
 
-    /* =========================================================
-       iOS SAFARI FLIP FIX (added)
-       ========================================================= */
-    .cardInner{
-      -webkit-perspective: 1400px;
-      perspective: 1400px;
-      -webkit-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-    }
-
-    .face{
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      -webkit-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-    }
-
-    /* Avoid iOS white slab flash / z-fighting */
-    .front, .back{
-      -webkit-transform: translateZ(0.1px);
-      transform: translateZ(0.1px);
-    }
-
+    /* iOS-friendly tap targets */
     .hit{
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+    }
+
+    /* =========================================================
+       FRONT/BACK TRANSFORMS (NO Z-FIGHTING)
+       ========================================================= */
+    .front{
+      transform: rotateY(0deg);
+      -webkit-transform: rotateY(0deg);
+    }
+    .back{
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+    }
+
+    .card.is-open .front{
+      transform: rotateY(-180deg);
+      -webkit-transform: rotateY(-180deg);
+    }
+    .card.is-open .back{
+      transform: rotateY(0deg);
+      -webkit-transform: rotateY(0deg);
     }
 
     /* front cover media stays cover */
@@ -313,7 +318,7 @@
       bottom:12px;
     }
 
-    /* VIDEO cover (added) */
+    /* VIDEO cover */
     .media.has-video{ position:relative; }
     .media.has-video video{
       position:absolute;
@@ -323,11 +328,17 @@
       object-fit:cover;
       display:block;
       background:#000;
+
+      /* CRITICAL: don't let cover videos intercept taps on iOS */
+      pointer-events: none;
     }
     .media.has-video .caption{
       position:absolute;
       left:12px;
       bottom:12px;
+
+      /* CRITICAL: captions overlay shouldn't intercept taps */
+      pointer-events: none;
     }
 
     /* DETAIL MEDIA (shots) — STOP CROPPING + AUTO SIZE */
@@ -350,16 +361,6 @@
 
     .shot.span2{ grid-column: 1 / -1; }
     .shot.square{ aspect-ratio: 1 / 1 !important; }
-
-    .front{ transform: rotateY(0deg) translateZ(0.6px); }
-    .back { transform: rotateY(180deg) translateZ(0.6px); }
-
-    .card.is-open .front{ transform: rotateY(-180deg) translateZ(0.6px); }
-    .card.is-open .back { transform: rotateY(0deg) translateZ(0.6px); }
-
-    @supports (-webkit-touch-callout: none) {
-      .face{ -webkit-transform: translateZ(0.01px); }
-    }
 
     /* =========================================================
        FRONT
@@ -923,23 +924,24 @@
     function normalize(s){ return (s||"").toLowerCase().trim(); }
 
     /* =========================================================
-       iOS reliability: pointerup + touchend + click (deduped)
+       iOS Safari-safe tap handler: CLICK ONLY
        ========================================================= */
     function addTap(el, handler){
       if (!el) return;
 
       const wrapped = (e) => {
-        // Dedupe: iOS can fire touchend then click
         const now = Date.now();
-        if (el.__lastTap && (now - el.__lastTap) < 450) return;
+        if (el.__lastTap && (now - el.__lastTap) < 400) return;
         el.__lastTap = now;
-
         handler(e);
       };
 
-      el.addEventListener("pointerup", wrapped);
-      el.addEventListener("touchend", wrapped, { passive:false });
+      // iOS Safari: Use click only
       el.addEventListener("click", wrapped);
+
+      // better touch→click behavior
+      el.style.touchAction = "manipulation";
+      el.style.webkitTapHighlightColor = "transparent";
     }
 
     function hydrateMediaRatios(scope){
@@ -1188,26 +1190,22 @@
     cards.forEach(card => {
       const hit = card.querySelector(".hit");
       addTap(hit, (e) => {
-        e.preventDefault();
+        // no preventDefault here (button already), keep it clean for iOS
         e.stopPropagation();
         if (document.body.getAttribute("data-view") === "about") return;
         openCard(card);
       });
     });
 
-    // Close by tapping the yellow header on the back
-    ["pointerup","touchend","click"].forEach((evt) => {
-      document.addEventListener(evt, (e) => {
-        const toggle = e.target.closest(".detailTop[data-toggle='close']");
-        if (!toggle) return;
-
-        e.preventDefault();
+    // Close by tapping the yellow header on the back (bind per element, click only)
+    const closeToggles = Array.from(document.querySelectorAll(".detailTop[data-toggle='close']"));
+    closeToggles.forEach(t => {
+      addTap(t, (e) => {
         e.stopPropagation();
-
-        const card = e.target.closest(".card");
+        const card = t.closest(".card");
         if (!card) return;
         if (openCardEl === card) closeAnyOpen();
-      }, evt === "touchend" ? { passive:false } : undefined);
+      });
     });
 
     function apply(){
@@ -1241,6 +1239,7 @@
 
     chips.forEach(chip => {
       addTap(chip, (e) => {
+        // spans: safe to prevent selection/scroll weirdness on iOS
         e.preventDefault();
         chips.forEach(c => c.classList.remove("is-on"));
         chip.classList.add("is-on");
