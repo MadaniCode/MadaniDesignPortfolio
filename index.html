@@ -403,6 +403,7 @@
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
+    .hit:focus{ outline: none; }
 
     .front{
       transform: rotateY(0deg);
@@ -481,7 +482,10 @@
       flex-direction:column;
       height: 100%;
       width: 100%;
-      cursor: pointer;
+    }
+
+    @media (hover: hover) and (pointer: fine){
+      .front .hit{ cursor: pointer; }
     }
 
     .frontHeader{ display:block; }
@@ -514,20 +518,24 @@
       cursor:pointer;
     }
 
-    .card:not(.is-open):hover .topline,
-    .card:not(.is-open):hover .title{
-      background: var(--highlight);
-    }
-    .card:not(.is-open):hover{
-      background: var(--highlight);
-      border-color: rgba(0,0,0,.35);
-    }
-    .card:not(.is-open):hover .face{
-      background: var(--highlight);
-    }
-    .card:not(.is-open):hover .media{
-      background: transparent;
-    }
+      /* hover yellow (desktop only — prevents iOS sticky hover) */
+      @media (hover: hover) and (pointer: fine){
+        .card:not(.is-open):hover .topline,
+        .card:not(.is-open):hover .title{
+          background: var(--highlight);
+        }
+        .card:not(.is-open):hover{
+          background: var(--highlight);
+          border-color: rgba(0,0,0,.35);
+        }
+        .card:not(.is-open):hover .face{
+          background: var(--highlight);
+        }
+        .card:not(.is-open):hover .media{
+          background: transparent;
+        }
+      }
+
     .card.is-open .topline{ background: var(--highlight); color: var(--ink); }
 
     .media{
@@ -1026,6 +1034,11 @@
         if (el.__lastTap && (now - el.__lastTap) < 400) return;
         el.__lastTap = now;
         handler(e);
+        setTimeout(() => {
+          if (document.activeElement && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+        }, 0);
       };
 
       el.addEventListener("click", wrapped);
