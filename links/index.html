@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Madani — Links</title>
+  <meta name="description" content="Designer based in England. Editorial, content, and visual systems. Co-founder of Keep Magazine.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Madani — Links">
+  <meta property="og:description" content="Designer based in England. Editorial, content, and visual systems.">
+  <meta property="og:url" content="https://madanidesign.com/links/">
+  <meta property="og:image" content="https://madanidesign.com/og-image.png">
+
+  <style>
+    :root {
+      --bg:      #bfbfbf;
+      --paper:   #ffffff;
+      --ink:     #111111;
+      --muted:   #5f5f5f;
+      --rule:    #c9c9c9;
+      --rule2:   #b6b6b6;
+      --highlight: #fff66b;
+      --blue:    #1c45ff;
+      --serif: "Times New Roman", Times, serif;
+      --sans:  -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 36px 20px 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Masthead ── */
+    .mast {
+      padding-bottom: 6px;
+    }
+    .brand {
+      font-family: var(--serif);
+      font-size: 48px;
+      line-height: .95;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      display: block;
+    }
+
+    /* ── Generic card ── */
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      padding: 14px 16px;
+    }
+    .kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+    .card p {
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: var(--sans);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 100ms ease, border-color 100ms ease;
+    }
+    .btn.primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+    .btn-label { font-weight: 500; }
+    .btn-arr   { font-size: 17px; opacity: .45; }
+    .btn:active { background: var(--highlight); border-color: rgba(0,0,0,.35); }
+
+    /* ── Email section ── */
+    .email-card {
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      padding: 14px 16px 16px;
+    }
+    .email-headline {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.015em;
+      margin: 2px 0 8px;
+    }
+    .email-body {
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .email-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .email-input {
+      width: 100%;
+      border: 1px solid var(--rule2);
+      background: #f8f8f8;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-family: var(--sans);
+      color: var(--ink);
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+    .email-input:focus {
+      border-color: var(--ink);
+      background: #fff;
+    }
+    .email-input::placeholder { color: #aaa; }
+    .email-submit {
+      width: 100%;
+      padding: 13px 14px;
+      background: var(--highlight);
+      color: var(--ink);
+      border: 1px solid rgba(0,0,0,.2);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--sans);
+      cursor: pointer;
+      border-radius: 0;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .btn:hover          { background: var(--highlight); border-color: rgba(0,0,0,.35); }
+      .btn.primary        { transition: none; }
+      .btn.primary:hover  { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .email-submit:hover { background: var(--ink); color: var(--highlight); border-color: var(--ink); }
+    }
+    .email-submit:active { opacity: .85; }
+    .email-small {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── Success state ── */
+    .email-success {
+      display: none;
+      padding: 12px 0 4px;
+    }
+    .success-big {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+    .success-small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Link list ── */
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Footer ── */
+    .foot {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: .5;
+      letter-spacing: .04em;
+      margin-top: 14px;
+      user-select: none;
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+
+    <!-- Masthead -->
+    <div class="mast">
+      <span class="brand">Madani</span>
+    </div>
+
+    <!-- Bio -->
+    <div class="card">
+      <div class="kicker">About</div>
+      <p>
+        Designer based in England, focused on editorial and content design.
+        Co-founder of <a href="https://keepmagazine.online/" target="_blank" rel="noreferrer" style="color:var(--ink);">Keep Magazine</a>.
+      </p>
+    </div>
+
+    <!-- See work CTA -->
+    <a class="btn primary" href="/">
+      <span class="btn-label">See my work</span>
+      <span class="btn-arr">→</span>
+    </a>
+
+    <!-- Email collection -->
+    <div class="email-card" id="emailCard">
+      <div class="kicker">Resource</div>
+      <h2 class="email-headline">Get a free<br>design pack</h2>
+      <p class="email-body">
+        Drop your email and I'll send you a pack with Figma templates,
+        type specimens, layout references, and things I actually use day-to-day.
+      </p>
+
+      <form class="email-form" id="emailForm" novalidate>
+        <input
+          type="email"
+          name="fields[email]"
+          class="email-input"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+          inputmode="email"
+        >
+        <button type="submit" class="email-submit">
+          Send me the pack
+        </button>
+        <p class="email-small">No spam. Unsubscribe whenever.</p>
+      </form>
+
+      <div class="email-success" id="emailSuccess">
+        <p class="success-big">You're in.</p>
+        <p class="success-small">Check your inbox, the pack is on its way.</p>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="link-list">
+      <a class="btn" href="https://blog.madanidesign.com/" target="_blank" rel="noreferrer">
+        <span class="btn-label">Blog</span>
+        <span class="btn-arr">↗</span>
+      </a>
+      <a class="btn" href="https://www.are.na/madani/channels" target="_blank" rel="noreferrer">
+        <span class="btn-label">Are.na</span>
+        <span class="btn-arr">↗</span>
+      </a>
+      <a class="btn" href="mailto:abdelrahmanpersonal@gmail.com?subject=Hello%20Madani">
+        <span class="btn-label">Get in touch</span>
+        <span class="btn-arr">→</span>
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="foot">Madani 2026</footer>
+
+  <script>
+    const form    = document.getElementById("emailForm");
+    const success = document.getElementById("emailSuccess");
+    const ML_URL  = "https://assets.mailerlite.com/jsonp/2332129/forms/186973118692066415/subscribe";
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = form.querySelector("input[type=email]");
+
+      if (!input.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
+        input.style.borderColor = "#d00";
+        input.focus();
+        return;
+      }
+
+      input.style.borderColor = "";
+
+      const data = new FormData();
+      data.append("fields[email]", input.value);
+      data.append("ml-submit", "1");
+
+      fetch(ML_URL, { method: "POST", mode: "no-cors", body: data });
+
+      form.style.display = "none";
+      success.style.display = "block";
+    });
+  </script>
+</body>
+</html>
