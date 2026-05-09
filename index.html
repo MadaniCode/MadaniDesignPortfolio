@@ -739,6 +739,81 @@
     }
   </style>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <style>
+    .ml-overlay{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .ml-overlay[hidden]{ display:none; }
+
+    .ml-card{
+      background:var(--paper);
+      border:1px solid var(--rule2);
+      padding:18px 18px 20px;
+      width:100%;
+      max-width:380px;
+      position:relative;
+    }
+    .ml-close{
+      position:absolute;
+      top:10px;right:12px;
+      background:none;border:none;
+      font-size:22px;line-height:1;
+      color:var(--muted);cursor:pointer;
+      padding:2px 4px;
+      font-family:var(--sans);
+    }
+    .ml-kicker{
+      font-size:12px;text-transform:uppercase;
+      letter-spacing:.07em;color:var(--muted);
+      margin-bottom:7px;
+    }
+    .ml-headline{
+      font-family:var(--serif);
+      font-size:32px;font-weight:400;
+      line-height:1.0;letter-spacing:-0.015em;
+      margin:2px 0 8px;
+    }
+    .ml-body{
+      font-size:13.5px;line-height:1.45;
+      color:var(--muted);margin-bottom:14px;
+    }
+    .ml-form{ display:flex;flex-direction:column;gap:8px; }
+    .ml-input{
+      width:100%;
+      border:1px solid var(--rule2);
+      background:#f8f8f8;
+      padding:13px 14px;
+      font-size:15px;font-family:var(--sans);
+      color:var(--ink);outline:none;
+      border-radius:0;-webkit-appearance:none;appearance:none;
+      transition:border-color 120ms ease,background 120ms ease;
+    }
+    .ml-input:focus{ border-color:var(--ink);background:#fff; }
+    .ml-input::placeholder{ color:#aaa; }
+    .ml-submit{
+      width:100%;padding:13px 14px;
+      background:var(--highlight);color:var(--ink);
+      border:1px solid rgba(0,0,0,.2);
+      font-size:14px;font-weight:500;font-family:var(--sans);
+      cursor:pointer;border-radius:0;
+      -webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;
+    }
+    @media(hover:hover)and(pointer:fine){
+      .ml-submit:hover{ background:var(--ink);color:var(--highlight);border-color:var(--ink); }
+    }
+    .ml-submit:active{ opacity:.85; }
+    .ml-small{ font-size:11px;color:var(--muted); }
+    .ml-success{ display:none;padding:12px 0 4px; }
+    .ml-success-big{ font-family:var(--serif);font-size:26px;font-weight:400;margin-bottom:5px; }
+    .ml-success-small{ font-size:13px;color:var(--muted); }
+  </style>
 </head>
 
 
@@ -1366,5 +1441,77 @@
   <footer class="watermark">
   Designed and developed by Madani, 2026
   </footer>
+
+  <!-- Email popup -->
+  <div id="ml-popup" class="ml-overlay" hidden>
+    <div class="ml-card">
+      <button class="ml-close" id="ml-close" aria-label="Close">×</button>
+      <div class="ml-kicker">Resource</div>
+      <h2 class="ml-headline">Get a free<br>design pack</h2>
+      <p class="ml-body">
+        Drop your email and I'll send you a pack with Figma templates,
+        type specimens, layout references, and things I actually use day-to-day.
+      </p>
+      <form class="ml-form" id="ml-form" novalidate>
+        <input
+          type="email"
+          name="fields[email]"
+          class="ml-input"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+          inputmode="email"
+        >
+        <button type="submit" class="ml-submit">Send me the pack</button>
+        <p class="ml-small">No spam. Unsubscribe whenever.</p>
+      </form>
+      <div class="ml-success" id="ml-success">
+        <p class="ml-success-big">You're in.</p>
+        <p class="ml-success-small">Check your inbox, the pack is on its way.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const KEY = "ml_popup_seen";
+      if (localStorage.getItem(KEY)) return;
+
+      const popup   = document.getElementById("ml-popup");
+      const closeBtn= document.getElementById("ml-close");
+      const form    = document.getElementById("ml-form");
+      const success = document.getElementById("ml-success");
+      const ML_URL  = "https://assets.mailerlite.com/jsonp/2332129/forms/186973118692066415/subscribe";
+
+      function dismiss(){
+        popup.hidden = true;
+        localStorage.setItem(KEY, "1");
+      }
+
+      setTimeout(() => { popup.hidden = false; }, 3500);
+
+      closeBtn.addEventListener("click", dismiss);
+      popup.addEventListener("click", (e) => { if (e.target === popup) dismiss(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !popup.hidden) dismiss(); });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = form.querySelector("input[type=email]");
+        if (!input.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
+          input.style.borderColor = "#d00";
+          input.focus();
+          return;
+        }
+        input.style.borderColor = "";
+        const data = new FormData();
+        data.append("fields[email]", input.value);
+        data.append("ml-submit", "1");
+        fetch(ML_URL, { method: "POST", mode: "no-cors", body: data });
+        form.style.display = "none";
+        success.style.display = "block";
+        setTimeout(dismiss, 2000);
+      });
+    })();
+  </script>
 </body>
 </html>
