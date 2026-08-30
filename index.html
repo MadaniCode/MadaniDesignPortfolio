@@ -210,6 +210,9 @@ img{display:block;max-width:100%}
   scrollbar-width:none;
 }
 .strip::-webkit-scrollbar{display:none}
+.strip{cursor:grab}
+.strip.dragging{cursor:grabbing}
+.strip.dragging a{pointer-events:none}   /* no hover lift mid-drag */
 .strip > *{
   flex:none;position:relative;display:block;
   height:var(--tile-h);width:auto;
@@ -359,7 +362,7 @@ a.chip:hover{text-decoration:underline}
 /* -- 0. the bits you'll actually want to edit ------------------------------ */
 
 const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
-const BUILD   = "index-17";
+const BUILD   = "index-18";
 console.log("madani — build", BUILD);
 
 /* Messages type themselves out. **bold** marks the black emphasis words. */
@@ -850,6 +853,39 @@ rowsEl.addEventListener("click", ev => {
     ev.stopPropagation();
   }
 }, true);
+
+/* mouse users drag the work strip like a filmstrip; trackpads and touch
+   already scroll it natively. A real drag must never count as a click. */
+document.querySelectorAll(".strip").forEach(strip => {
+  let sd = null;
+  strip.addEventListener("dragstart", ev => ev.preventDefault());
+  strip.addEventListener("pointerdown", ev => {
+    if (ev.pointerType !== "mouse" || ev.button !== 0) return;
+    sd = { x:ev.clientX, left:strip.scrollLeft, moved:false };
+  });
+  strip.addEventListener("pointermove", ev => {
+    if (!sd) return;
+    const dx = ev.clientX - sd.x;
+    if (Math.abs(dx) > 4 && !sd.moved){
+      sd.moved = true;
+      strip.classList.add("dragging");
+      try { strip.setPointerCapture(ev.pointerId); } catch (_){}
+    }
+    if (sd.moved) strip.scrollLeft = sd.left - dx;
+  });
+  const release = () => {
+    if (sd && sd.moved){
+      strip.classList.remove("dragging");
+      /* swallow the click the browser fires right after this drag */
+      strip.addEventListener("click", e => {
+        e.preventDefault(); e.stopPropagation();
+      }, { capture:true, once:true });
+    }
+    sd = null;
+  };
+  strip.addEventListener("pointerup", release);
+  strip.addEventListener("pointercancel", release);
+});
 
 document.addEventListener("keydown", ev => {
   if (ev.key === "Escape" && focused >= 0){
