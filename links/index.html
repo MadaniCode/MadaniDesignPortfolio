@@ -186,20 +186,21 @@ const el = (tag, cls) => {
 };
 const segs = s => s.split("**").map((t, i) => ({ t, b:i % 2 === 1 }));
 
-function hug(bub){
+/* settle=true only while typing: the shrink-to-fit tween is part of the
+   performance; instant re-renders land already at their final size */
+function hug(bub, settle){
   if (!bub.offsetWidth) return;
-  /* lay out at the cap first: streamed text leaves Chrome with a stale
-     preferred width, so measure against a definite, clean wrap instead */
+  /* measure with zero timing dependence: kill the pop mid-flight (it scales
+     the bubble to .97 and used to poison the measurement on instant renders),
+     lay out at the cap for a clean wrap, then read true layout coords */
+  bub.style.animation = "none";
   bub.style.width = "330px";
   void bub.offsetWidth;
   const rng = document.createRange();
   rng.selectNodeContents(bub);
-  /* the pop animation is mid-flight at scale .97 when instant renders land —
-     divide the visual measurement by the live scale or the box locks in 3%
-     narrow and folds a line that fits */
-  const scale = bub.getBoundingClientRect().width / bub.offsetWidth || 1;
-  const w = rng.getBoundingClientRect().width / scale;
-  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 33) + "px";
+  const w = rng.getBoundingClientRect().width;
+  if (!settle) bub.style.transition = "none";
+  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 34) + "px";
 }
 
 /* ---- attachments ----------------------------------------------------------- */
@@ -273,7 +274,7 @@ function playAll(){                       /* reduced motion, or a skip */
   playing = "done";
   thread.textContent = "";
   THREAD.forEach(it => {
-    if (it.say){ const b = el("div", "bubble"); fillBubble(b, it.say); thread.appendChild(b); hug(b); }
+    if (it.say){ const b = el("div", "bubble"); fillBubble(b, it.say); thread.appendChild(b); hug(b, false); }
     else thread.appendChild(it.show());
   });
 }
@@ -308,7 +309,7 @@ function next(first){
         if (parts[p].isEl) parts[p].n.textContent = parts[p].text.slice(0, c);
         else               parts[p].n.nodeValue   = parts[p].text.slice(0, c);
       }
-      if (shown >= total){ hug(bub); setTimeout(next, GAP_MS); return; }
+      if (shown >= total){ hug(bub, true); setTimeout(next, GAP_MS); return; }
       requestAnimationFrame(tick);
     };
     tick();
@@ -349,7 +350,7 @@ function onReply(ev){
   setTimeout(() => {
     ack.textContent = "";
     fillBubble(ack, "**Got it.** Check your inbox soon.");
-    hug(ack);
+    hug(ack, true);
   }, reduced.matches ? 30 : 800);
 }
 </script>

@@ -359,7 +359,7 @@ a.chip:hover{text-decoration:underline}
 /* -- 0. the bits you'll actually want to edit ------------------------------ */
 
 const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
-const BUILD   = "index-15";
+const BUILD   = "index-17";
 console.log("madani — build", BUILD);
 
 /* Messages type themselves out. **bold** marks the black emphasis words. */
@@ -617,27 +617,28 @@ function renderNow(host, msgs){
       ? Object.assign(el("b"), { textContent: sg.t })
       : document.createTextNode(sg.t)));
     host.appendChild(b);
-    hug(b);
+    hug(b, false);
   });
 }
 
 /** After a message lands, shrink the box onto its widest actual line. The
     width never goes below any line, so the wrapping cannot change — only the
     dead space on the right goes. */
-function hug(bub){
+/* settle=true only while typing: the shrink-to-fit tween is part of the
+   performance; instant re-renders land already at their final size */
+function hug(bub, settle){
   if (!bub.offsetWidth) return;
-  /* lay out at the cap first: streamed text leaves Chrome with a stale
-     preferred width, so measure against a definite, clean wrap instead */
+  /* measure with zero timing dependence: kill the pop mid-flight (it scales
+     the bubble to .97 and used to poison the measurement on instant renders),
+     lay out at the cap for a clean wrap, then read true layout coords */
+  bub.style.animation = "none";
   bub.style.width = "330px";
   void bub.offsetWidth;
   const rng = document.createRange();
   rng.selectNodeContents(bub);
-  /* the pop animation is mid-flight at scale .97 when instant renders land —
-     divide the visual measurement by the live scale or the box locks in 3%
-     narrow and folds a line that fits */
-  const scale = bub.getBoundingClientRect().width / bub.offsetWidth || 1;
-  const w = rng.getBoundingClientRect().width / scale;
-  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 33) + "px";
+  const w = rng.getBoundingClientRect().width;
+  if (!settle) bub.style.transition = "none";
+  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 34) + "px";
 }
 
 /** "a **b** c" → [{t:"a ",b:false},{t:"b",b:true},{t:" c",b:false}] */
@@ -695,7 +696,7 @@ function speak(host, msgs, done){
           if (part.isEl) part.node.textContent = part.text.slice(0, c);
           else           part.node.nodeValue   = part.text.slice(0, c);
         }
-        if (shown >= total){ hug(bub); i++; later(nextBubble, GAP_MS); return; }
+        if (shown >= total){ hug(bub, true); i++; later(nextBubble, GAP_MS); return; }
         requestAnimationFrame(tick);
       };
       tick();
