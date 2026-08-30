@@ -72,7 +72,6 @@ main{
 
 .bubble{
   max-width:min(330px,100%);
-  text-wrap:pretty;
   background:#FFFFFF;color:var(--txt);
   border:1px solid var(--rule);
   font-size:17px;line-height:1.4;letter-spacing:-0.01em;
@@ -189,9 +188,17 @@ const segs = s => s.split("**").map((t, i) => ({ t, b:i % 2 === 1 }));
 
 function hug(bub){
   if (!bub.offsetWidth) return;
+  /* lay out at the cap first: streamed text leaves Chrome with a stale
+     preferred width, so measure against a definite, clean wrap instead */
+  bub.style.width = "330px";
+  void bub.offsetWidth;
   const rng = document.createRange();
   rng.selectNodeContents(bub);
-  const w = rng.getBoundingClientRect().width;
+  /* the pop animation is mid-flight at scale .97 when instant renders land —
+     divide the visual measurement by the live scale or the box locks in 3%
+     narrow and folds a line that fits */
+  const scale = bub.getBoundingClientRect().width / bub.offsetWidth || 1;
+  const w = rng.getBoundingClientRect().width / scale;
   if (w) bub.style.width = Math.min(330, Math.ceil(w) + 33) + "px";
 }
 

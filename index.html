@@ -138,8 +138,7 @@ img{display:block;max-width:100%}
   /* every message hangs off the same left edge */
 }
 .bubble{
-  max-width:min(330px,100%);   /* tighter rag, close to the original exports */
-  text-wrap:pretty;
+  max-width:min(330px,100%);
   background:#FFFFFF;color:var(--txt);
   border:1px solid var(--rule);        /* white-on-white needs the hairline */
   font-size:17px;line-height:1.4;letter-spacing:-0.01em;
@@ -360,7 +359,7 @@ a.chip:hover{text-decoration:underline}
 /* -- 0. the bits you'll actually want to edit ------------------------------ */
 
 const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
-const BUILD   = "index-10";
+const BUILD   = "index-15";
 console.log("madani — build", BUILD);
 
 /* Messages type themselves out. **bold** marks the black emphasis words. */
@@ -627,9 +626,17 @@ function renderNow(host, msgs){
     dead space on the right goes. */
 function hug(bub){
   if (!bub.offsetWidth) return;
+  /* lay out at the cap first: streamed text leaves Chrome with a stale
+     preferred width, so measure against a definite, clean wrap instead */
+  bub.style.width = "330px";
+  void bub.offsetWidth;
   const rng = document.createRange();
   rng.selectNodeContents(bub);
-  const w = rng.getBoundingClientRect().width;
+  /* the pop animation is mid-flight at scale .97 when instant renders land —
+     divide the visual measurement by the live scale or the box locks in 3%
+     narrow and folds a line that fits */
+  const scale = bub.getBoundingClientRect().width / bub.offsetWidth || 1;
+  const w = rng.getBoundingClientRect().width / scale;
   if (w) bub.style.width = Math.min(330, Math.ceil(w) + 33) + "px";
 }
 
