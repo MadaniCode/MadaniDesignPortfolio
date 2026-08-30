@@ -1,0 +1,23 @@
+:root{
+  /* Madani node palette — sampled from nodes/01-06.svg */
+  --node01-bg: #FF2000;
+  --node01-letter: #000000;
+  --node01-strong: #FF2000; /* safe on white */
+  --node02-bg: #009352;
+  --node02-letter: #003810;
+  --node02-strong: #009352; /* safe on white */
+  --node03-bg: #0073EB;
+  --node03-letter: #F2FE00;
+  --node03-strong: #0073EB; /* safe on white */
+  --node04-bg: #9454CD;
+  --node04-letter: #FF834C;
+  --node04-strong: #9454CD; /* safe on white */
+  --node05-bg: #FFE400;
+  --node05-letter: #172701;
+  --node05-strong: #172701; /* safe on white */
+  --node06-bg: #A9F6D6;
+  --node06-letter: #009CA1;
+  --node06-strong: #009CA1; /* safe on white */
+  --chip-white: #F8F8F8;
+  --shadow-grey: #4D4D4D;
+}

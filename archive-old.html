@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Madani</title>
+  <meta name="description" content="Designer based in England.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --bg:     #e0e0e0;
+      --ink:    #111;
+      --paper:  #f4f3ef;
+      --yellow: #fff66b;
+      --serif:  "Times New Roman", Times, serif;
+      --sans:   "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: var(--bg); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+    /* ══════════════════════════════════
+       HOME
+    ══════════════════════════════════ */
+    .nav-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 36px;
+    }
+
+    .site-name {
+      font-family: var(--serif);
+      font-size: clamp(52px, 8vw, 110px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-align: center;
+      opacity: 0;
+      animation: nameIn 500ms 100ms ease forwards;
+      margin-bottom: 40px;
+    }
+    @keyframes nameIn { from{opacity:0}to{opacity:1} }
+
+    .nav-items { display:flex; flex-direction:column; align-items:center; gap:4px; }
+
+    .nav-item {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 4px 6px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    .nav-item:nth-child(1){animation:slideOut 480ms 320ms cubic-bezier(.16,1,.3,1) forwards;}
+    .nav-item:nth-child(2){animation:slideOut 480ms 400ms cubic-bezier(.16,1,.3,1) forwards;}
+    .nav-item:nth-child(3){animation:slideOut 480ms 475ms cubic-bezier(.16,1,.3,1) forwards;}
+    .nav-item:nth-child(4){animation:slideOut 480ms 545ms cubic-bezier(.16,1,.3,1) forwards;}
+    @keyframes slideOut { from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)} }
+
+    .nav-item .text {
+      display: block;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      font-size: clamp(32px, 5vw, 68px);
+      color: #555;
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--yellow);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 260ms cubic-bezier(.16,1,.3,1);
+      z-index: 0;
+    }
+    .nav-item:hover::before { transform: scaleX(1); }
+
+    /* ══════════════════════════════════
+       BACKDROP
+    ══════════════════════════════════ */
+    .backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.3);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 400ms ease;
+    }
+    .backdrop.visible { opacity:1; pointer-events:all; }
+
+    /* ══════════════════════════════════
+       FLOATING PANEL
+    ══════════════════════════════════ */
+    .panel {
+      position: fixed;
+      left: 50%;
+      bottom: 5vh;
+      width: min(90vw, 880px);
+      max-height: 80vh;
+      background: var(--paper);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-50%) translateY(calc(100% + 6vh));
+      transition: transform 580ms cubic-bezier(.16,1,.3,1);
+      will-change: transform;
+    }
+    .panel.open { transform: translateX(-50%) translateY(0); }
+
+    .panel-handle {
+      flex-shrink: 0;
+      padding: 14px 0 8px;
+      display: flex;
+      justify-content: center;
+      cursor: grab;
+      touch-action: none;
+    }
+    .panel-handle::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: rgba(0,0,0,.15);
+      border-radius: 2px;
+    }
+    .panel-handle:active { cursor: grabbing; }
+
+    .panel-scroll {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ══════════════════════════════════
+       PANEL CONTENT
+    ══════════════════════════════════ */
+    .p-title {
+      font-size: clamp(40px, 7vw, 100px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: .88;
+      padding: 4px 32px 22px;
+    }
+
+    /* Sub-project block */
+    .p-project {
+      padding: 0 32px 36px;
+    }
+    .p-project + .p-project {
+      border-top: 1px solid rgba(0,0,0,.08);
+      padding-top: 32px;
+    }
+    .p-project:last-child { padding-bottom: 36px; }
+
+    .p-project-title {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 38px);
+      font-weight: 400;
+      letter-spacing: -0.015em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .p-project-desc {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 540px;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    /* Image grids */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+    .grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:6px; align-items:start; }
+    .grid-1-2 { display:grid; grid-template-columns:1fr 2fr; gap:6px; align-items:start; }
+    .grid-gap { margin-top: 6px; }
+
+    .img-16x9  { aspect-ratio:16/9;  overflow:hidden; background:#ccc; }
+    .img-4x3   { aspect-ratio:4/3;   overflow:hidden; background:#ccc; }
+    .img-3x4   { aspect-ratio:3/4;   overflow:hidden; background:#ccc; }
+    .img-1x1   { aspect-ratio:1/1;   overflow:hidden; background:#ccc; }
+    .img-9x16  { aspect-ratio:9/16;  overflow:hidden; background:#111; }
+
+    .img-16x9 img, .img-4x3 img, .img-3x4 img, .img-1x1 img,
+    .img-9x16 video {
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+
+    /* Content design reels */
+    .content-stat {
+      font-size: clamp(60px, 10vw, 130px);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: #d0d0cc;
+      padding: 0 32px 16px;
+    }
+
+    /* Site link */
+    .p-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: .35;
+      transition: opacity 150ms ease;
+    }
+    .p-link:hover { opacity: 1; }
+
+    /* ══════════════════════════════════
+       BUSINESS CARD
+    ══════════════════════════════════ */
+    .biz-wrap {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .biz-card {
+      width: min(88vw, 400px);
+      background: var(--paper);
+      box-shadow: 0 16px 60px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.1);
+      padding: 0;
+      overflow: hidden;
+      transform: translateY(120vh) rotate(-2deg);
+      transition: transform 620ms cubic-bezier(.16,1,.3,1);
+      pointer-events: all;
+    }
+
+    .biz-card.open {
+      transform: translateY(0) rotate(-2deg);
+    }
+
+    /* Photo top-right */
+    .biz-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 20px 24px 0;
+    }
+
+    .biz-photo {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #fff;
+    }
+    .biz-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+    }
+
+    .biz-header { padding-top: 4px; }
+
+    /* Text area */
+    .biz-body { padding: 16px 24px 24px; }
+
+    .biz-name {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .biz-role {
+      font-size: 10px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 14px;
+    }
+
+    .biz-rule { height:1px; background:rgba(0,0,0,.1); margin-bottom:14px; }
+
+    .biz-bio {
+      font-family: var(--serif);
+      font-size: 13px;
+      line-height: 1.55;
+      color: #444;
+      margin-bottom: 14px;
+    }
+
+    /* 2-col links — all items including email */
+    .biz-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 12px;
+    }
+
+    .biz-link {
+      font-size: 11px;
+      letter-spacing: .04em;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: .5;
+      transition: opacity 120ms ease;
+    }
+    .biz-link:hover { opacity: 1; }
+
+    /* ══════════════════════════════════
+       EMAIL POPUP
+    ══════════════════════════════════ */
+    .ml-overlay {
+      position:fixed;inset:0;background:rgba(0,0,0,.5);
+      z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;
+    }
+    .ml-overlay[hidden]{display:none;}
+    .ml-card {
+      background:var(--paper);border:1px solid rgba(0,0,0,.1);
+      box-shadow:0 4px 32px rgba(0,0,0,.12);padding:24px;width:100%;max-width:340px;position:relative;
+    }
+    .ml-close {
+      position:absolute;top:12px;right:14px;background:none;border:none;
+      font-size:20px;color:var(--ink);opacity:.3;cursor:pointer;font-family:var(--sans);
+      line-height:1;transition:opacity 120ms ease;
+    }
+    .ml-close:hover{opacity:1;}
+    .ml-kicker{font-family:var(--sans);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:#888;margin-bottom:10px;}
+    .ml-headline{font-family:var(--sans);font-size:22px;font-weight:700;line-height:1.05;letter-spacing:-0.02em;margin-bottom:10px;}
+    .ml-body{font-size:13px;line-height:1.5;color:#888;margin-bottom:14px;}
+    .ml-form{display:flex;flex-direction:column;gap:8px;}
+    .ml-input{width:100%;border:1.5px solid var(--ink);background:transparent;padding:11px 12px;font-size:14px;font-family:var(--sans);color:var(--ink);outline:none;}
+    .ml-input::placeholder{color:#aaa;}
+    .ml-submit{width:100%;padding:11px;background:var(--ink);color:var(--paper);border:none;font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity 120ms ease;}
+    .ml-submit:hover{opacity:.75;}
+    .ml-small{font-size:10px;color:#aaa;font-family:var(--sans);}
+    .ml-success{display:none;padding:8px 0;}
+    .ml-success-big{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:4px;}
+    .ml-success-small{font-size:12px;color:#888;}
+
+    /* ══════════════════════════════════
+       MOBILE
+    ══════════════════════════════════ */
+    @media (max-width: 600px) {
+      .nav-wrap { padding: 36px 22px; }
+      .site-name { font-size: clamp(44px, 14vw, 72px); }
+      .nav-item .text { font-size: clamp(28px, 8.5vw, 48px); }
+
+      .panel { width:100vw; bottom:0; max-height:88vh; }
+
+      .p-title { padding:4px 20px 18px; }
+      .p-project { padding:0 20px 28px; }
+      .p-project+.p-project { padding-top:24px; }
+      .content-stat { padding:0 20px 12px; }
+
+      .grid-2   { grid-template-columns:1fr 1fr; }
+      .grid-3   { grid-template-columns:1fr 1fr; }
+      .grid-2-1 { grid-template-columns:1fr; }
+      .grid-1-2 { grid-template-columns:1fr; }
+
+      .biz-card { width: min(88vw, 360px); }
+      .biz-body { padding: 16px 20px 20px; }
+      .biz-name { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HOME -->
+  <div class="nav-wrap">
+    <p class="site-name">Madani</p>
+    <div class="nav-items">
+      <div class="nav-item" data-panel="content"><span class="text">Content Design</span></div>
+      <div class="nav-item" data-panel="graphic"><span class="text">Graphic Design</span></div>
+      <div class="nav-item" data-panel="websites"><span class="text">Websites</span></div>
+      <div class="nav-item" data-biz="true"><span class="text">About</span></div>
+    </div>
+  </div>
+
+  <!-- BACKDROP -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- PANEL -->
+  <div class="panel" id="panel">
+    <div class="panel-handle" id="panelHandle"></div>
+    <div class="panel-scroll" id="panelScroll">
+
+      <!-- Content Design -->
+      <div class="panel-page" id="page-content" style="display:none">
+        <h2 class="p-title">Content<br>Design</h2>
+        <div class="content-stat">5.6k</div>
+        <div class="p-project" style="border-top:none; padding-top:0">
+          <p class="p-project-desc">Design-led video content about type, culture, and the visual world. Covering type foundries, how culture shapes design, and editorial process — built to 5,600 on Instagram. Including content direction and production for Shovel Studio.</p>
+          <div class="grid-3">
+            <div class="img-9x16"><video src="CONTENTDESIGN1/ContentDesignCover2.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="img-9x16"><video src="CONTENTDESIGN1/Reel1.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="img-9x16"><video src="CONTENTDESIGN1/Reel2.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="img-9x16"><video src="ShovelStudio/Hardsun.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="img-9x16"><video src="ShovelStudio/Hanger.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+            <div class="img-9x16"><video src="CONTENTDESIGN1/Reel2.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphic Design -->
+      <div class="panel-page" id="page-graphic" style="display:none">
+        <h2 class="p-title">Graphic<br>Design</h2>
+
+        <div class="p-project">
+          <h3 class="p-project-title">Editorial Spreads</h3>
+          <p class="p-project-desc">Graphic-designed editorial spreads using Illustrator, Photoshop, my camera, personal stories, and mixed media methods.</p>
+          <div class="grid-2">
+            <div class="img-4x3"><img src="ContentDesign/spread1.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-4x3"><img src="ContentDesign/spread2.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="grid-gap grid-3">
+            <div class="img-4x3"><img src="ContentDesign/spread3.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-4x3"><img src="ContentDesign/spread5.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-4x3"><img src="ContentDesign/spread6.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+
+        <div class="p-project">
+          <h3 class="p-project-title">Dog Tags</h3>
+          <p class="p-project-desc">Direction, photography and product release. Material decisions, graphic design, and documentation for a limited physical object.</p>
+          <div class="grid-2">
+            <div class="img-3x4"><img src="DogTags/DogTagCover.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-3x4"><img src="DogTags/flick1dogs.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="grid-gap grid-2">
+            <div class="img-3x4"><img src="DogTags/flick2dogs.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-3x4"><img src="DogTags/yeahfam.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Websites -->
+      <div class="panel-page" id="page-websites" style="display:none">
+        <h2 class="p-title">Web&shy;sites</h2>
+
+        <div class="p-project">
+          <h3 class="p-project-title">Keep Magazine</h3>
+          <p class="p-project-desc">A digital-first editorial project organised as a directory, pairing interviews with bespoke digital experiences. Content is navigated systemically rather than chronologically — exploration through structure, not scroll. Featured collaborators include Frédéric Saint Parck, Slawn, and Dan Alves. Co-founded by me.</p>
+          <div class="img-16x9"><img src="KeepMagazine/HomePage.webp" alt="" loading="lazy" decoding="async"></div>
+          <div class="grid-gap grid-2">
+            <div class="img-16x9"><img src="KeepMagazine/FilesPage.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-16x9"><img src="KeepMagazine/DanPage.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="grid-gap grid-2">
+            <div class="img-16x9"><img src="KeepMagazine/ShopPage.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-16x9"><img src="KeepMagazine/ChatPage.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+          <a class="p-link" href="https://keepmagazine.online/" target="_blank" rel="noreferrer">keepmagazine.online ↗</a>
+        </div>
+
+        <div class="p-project">
+          <h3 class="p-project-title">Loops.szn</h3>
+          <p class="p-project-desc">UI and interactive portfolio with floating windows, parallax motion, and clean typographic hierarchy.</p>
+          <div class="grid-2">
+            <div class="img-16x9"><img src="Loops/Loops1.webp" alt="" loading="lazy" decoding="async"></div>
+            <div class="img-16x9"><img src="Loops/Loops2.webp" alt="" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="grid-gap img-16x9">
+            <video src="Loops/LoopsCoverVideo.mp4" autoplay muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+          </div>
+          <a class="p-link" href="https://loops-szn.com/" target="_blank" rel="noreferrer">loops-szn.com ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BUSINESS CARD -->
+  <div class="biz-wrap">
+    <div class="biz-card" id="bizCard">
+      <div class="biz-top">
+        <div class="biz-header">
+          <p class="biz-name">Madani</p>
+          <p class="biz-role">Designer &mdash; England</p>
+        </div>
+        <div class="biz-photo">
+          <img src="portrait.png" alt="Madani">
+        </div>
+      </div>
+      <div class="biz-body">
+        <div class="biz-rule"></div>
+        <p class="biz-bio">Working across content, editorial, and the web. Co-founder of Keep Magazine. I make videos about type, culture and design.</p>
+        <div class="biz-rule"></div>
+        <div class="biz-links">
+          <a class="biz-link" href="mailto:hello@madanidesign.com">hello@madanidesign.com</a>
+          <a class="biz-link" href="https://www.instagram.com/madanivision/" target="_blank" rel="noreferrer">Instagram ↗</a>
+          <a class="biz-link" href="https://www.are.na/madani/channels" target="_blank" rel="noreferrer">Are.na ↗</a>
+          <a class="biz-link" href="https://blog.madanidesign.com/" target="_blank" rel="noreferrer">Blog ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL POPUP -->
+  <div id="ml-popup" class="ml-overlay" hidden>
+    <div class="ml-card">
+      <button class="ml-close" id="ml-close">&times;</button>
+      <div class="ml-kicker">Free resource</div>
+      <h2 class="ml-headline">Get a free design pack</h2>
+      <p class="ml-body">Figma templates, type specimens, layout references, and things I actually use.</p>
+      <form class="ml-form" id="ml-form" novalidate>
+        <input type="email" name="fields[email]" class="ml-input" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+        <button type="submit" class="ml-submit">Send me the pack</button>
+        <p class="ml-small">No spam. Unsubscribe whenever.</p>
+      </form>
+      <div class="ml-success" id="ml-success">
+        <p class="ml-success-big">You're in.</p>
+        <p class="ml-success-small">Check your inbox.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const panel    = document.getElementById('panel');
+    const scroll   = document.getElementById('panelScroll');
+    const handle   = document.getElementById('panelHandle');
+    const backdrop = document.getElementById('backdrop');
+    const bizCard  = document.getElementById('bizCard');
+    const pages    = document.querySelectorAll('.panel-page');
+
+    let isOpen  = false;
+    let bizOpen = false;
+
+    // ── Open panel ────────────────────────────────────────────
+    function openPanel(key) {
+      bizCard.classList.remove('open');
+      bizOpen = false;
+      pages.forEach(p => p.style.display = 'none');
+      const page = document.getElementById('page-' + key);
+      if (page) page.style.display = 'block';
+      scroll.scrollTop = 0;
+      panel.classList.add('open');
+      backdrop.classList.add('visible');
+      isOpen = true;
+      panel.style.transform = '';
+    }
+
+    function closePanel() {
+      panel.classList.remove('open');
+      backdrop.classList.remove('visible');
+      isOpen = false;
+      panel.style.transform = '';
+    }
+
+    // ── Business card ─────────────────────────────────────────
+    function openBiz() {
+      if (isOpen) closePanel();
+      bizCard.classList.add('open');
+      backdrop.classList.add('visible');
+      bizOpen = true;
+    }
+
+    function closeBiz() {
+      bizCard.classList.remove('open');
+      backdrop.classList.remove('visible');
+      bizOpen = false;
+    }
+
+    // Nav clicks
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (item.dataset.biz) {
+          bizOpen ? closeBiz() : openBiz();
+        } else {
+          openPanel(item.dataset.panel);
+        }
+      });
+    });
+
+    // Backdrop closes everything
+    backdrop.addEventListener('click', () => {
+      if (isOpen) closePanel();
+      if (bizOpen) closeBiz();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closePanel(); closeBiz(); }
+    });
+
+    // ── Drag to dismiss panel ─────────────────────────────────
+    let dragStartY = 0;
+    let dragging   = false;
+    const THRESHOLD = 100;
+
+    function dragStart(y) { if(!isOpen) return; dragging=true; dragStartY=y; panel.style.transition='none'; }
+    function dragMove(y)  { if(!dragging) return; const dy=Math.max(0,y-dragStartY); panel.style.transform=`translateX(-50%) translateY(${dy}px)`; }
+    function dragEnd(y)   {
+      if(!dragging) return; dragging=false; panel.style.transition='';
+      const dy=Math.max(0,y-dragStartY);
+      dy > THRESHOLD ? closePanel() : (panel.style.transform='');
+    }
+
+    handle.addEventListener('mousedown', e => { e.preventDefault(); dragStart(e.clientY); });
+    window.addEventListener('mousemove', e => dragMove(e.clientY));
+    window.addEventListener('mouseup',   e => dragEnd(e.clientY));
+    handle.addEventListener('touchstart', e => dragStart(e.touches[0].clientY), {passive:true});
+    window.addEventListener('touchmove',  e => { if(dragging) dragMove(e.touches[0].clientY); }, {passive:true});
+    window.addEventListener('touchend',   e => dragEnd(e.changedTouches[0].clientY));
+
+    // ── Email popup ───────────────────────────────────────────
+    (function(){
+      const KEY='ml_popup_seen';
+      if(localStorage.getItem(KEY)) return;
+      const popup=document.getElementById('ml-popup');
+      const close=document.getElementById('ml-close');
+      const form=document.getElementById('ml-form');
+      const suc=document.getElementById('ml-success');
+      const URL='https://assets.mailerlite.com/jsonp/2332129/forms/186973118692066415/subscribe';
+      const dismiss=()=>{ popup.hidden=true; localStorage.setItem(KEY,'1'); };
+      setTimeout(()=>{ popup.hidden=false; },6000);
+      close.addEventListener('click',dismiss);
+      popup.addEventListener('click',e=>{ if(e.target===popup) dismiss(); });
+      document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!popup.hidden) dismiss(); });
+      form.addEventListener('submit',e=>{
+        e.preventDefault();
+        const inp=form.querySelector('input[type=email]');
+        if(!inp.value||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){ inp.style.borderColor='#c00'; inp.focus(); return; }
+        inp.style.borderColor='';
+        const d=new FormData();
+        d.append('fields[email]',inp.value); d.append('ml-submit','1');
+        fetch(URL,{method:'POST',mode:'no-cors',body:d});
+        form.style.display='none'; suc.style.display='block';
+        setTimeout(dismiss,2200);
+      });
+    })();
+  </script>
+</body>
+</html>

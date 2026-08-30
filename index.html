@@ -1,1517 +1,1190 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-  <title>Madani — Portfolio</title>
-  <meta name="description" content="Designer based in England, focused on editorial and content design. Co-founder of Keep Magazine.">
-
-  <!-- Favicon -->
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Madani - Portfolio">
-  <meta property="og:description" content="Designer based in England, focused on editorial and content design. Co-founder of Keep Magazine.">
-  <meta property="og:url" content="https://madanidesign.com">
-  <meta property="og:image" content="https://madanidesign.com/og-image.png">
-
-  <style>
-    :root{
-      --bg:#bfbfbf;
-      --paper:#ffffff;
-      --ink:#111111;
-      --muted:#5f5f5f;
-      --rule:#c9c9c9;
-      --rule2:#b6b6b6;
-      --chip:#efefef;
-      --chip-ink:#111;
-      --chip-on:#1c45ff;
-      --chip-on-ink:#fff;
-
-      --highlight:#fff66b;
-
-      --serif:"Times New Roman", Times, serif;
-      --sans:-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-      --max: 1180px;
-      --pad: 28px;
-      --gap: 12px;
-
-      --flip: 720ms;
-      --ease: cubic-bezier(.16,1,.3,1);
-    }
-
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--ink);
-      font-family:var(--sans);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 18px var(--pad) 70px;
-    }
-
-    /* --- masthead --- */
-    .mast{
-      display:grid;
-      grid-template-columns: 1fr auto;
-      align-items:baseline;
-      gap: 18px;
-      margin-top: 6px;
-    }
-    .brand{
-      font-family:var(--serif);
-      font-size: 48px;
-      line-height: .95;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      margin:0;
-    }
-    .mast-right{
-      display:flex;
-      align-items:baseline;
-      justify-content:flex-end;
-      gap: 14px;
-      flex-wrap:wrap;
-    }
-
-    .nav{
-      display:inline-flex;
-      align-items:baseline;
-      gap: 10px;
-      user-select:none;
-      white-space:nowrap;
-    }
-
-    .nav a{
-      font-family: var(--serif);
-      font-size: 36px;
-      line-height: 1;
-      text-decoration:none;
-      color: var(--ink);
-      opacity: .25;
-    }
-
-    .nav a.is-active{
-      opacity: 1;
-    }
-
-    .navDivider{
-      font-family: var(--serif);
-      font-size: 36px;
-      line-height: 1;
-      opacity: .35;
-    }
-
-    .search{
-      width: 220px;
-      border: 1px solid var(--rule2);
-      background: var(--paper);
-      padding: 10px 12px;
-      font-size: 14px;
-      outline:none;
-    }
-
-    /* views */
-    body[data-view="about"] #workView{ display:none; }
-    body[data-view="about"] #aboutView{ display:block; }
-    #aboutView{ display:none; margin-top: 14px; }
-
-    /* =========================================================
-       ABOUT (DEFAULT = STACKED FOR ALL NON-DESKTOP)
-       - same width for box + image + contact
-       ========================================================= */
-    .aboutLayout{
-      max-width: 760px;
-      margin: 0;
-    }
-
-    .aboutBox,
-    .aboutContact{
-      background: var(--paper);
-      border: 1px solid var(--rule2);
-      padding: 12px;
-      width: 100%;
-    }
-
-    /* title style (match contact title) */
-    .aboutKicker{
-      margin: 0 0 8px 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      color: var(--muted);
-    }
-
-    /* margin under about box */
-    .aboutBox{
-      margin-bottom: 14px;
-    }
-
-    .aboutBox p{
-      margin:0 0 10px 0;
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .aboutBox .links{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      font-size: 13px;
-    }
-    .aboutBox .links a{
-      color: var(--ink);
-      text-decoration:none;
-      border-bottom: 1px solid rgba(0,0,0,.22);
-    }
-
-    /* remove weird border/frame on the image */
-    .aboutMedia{
-      width: 100%;
-      margin: 0;
-      border: none;
-      background: transparent;
-      padding: 0;
-    }
-
-    .aboutMedia img{
-      display:block;
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      border: none;
-      background: transparent;
-    }
-
-    .aboutContact{
-      margin-top: 14px;
-    }
-
-    .aboutContact .kicker{
-      margin: 0 0 8px 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      color: var(--muted);
-    }
-
-    .aboutContact p{
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .ctaRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
-
-    .ctaBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 8px 10px;
-      border: 1px solid rgba(0,0,0,.25);
-      background: #fafafa;
-      color: var(--ink);
-      text-decoration:none;
-      font-size: 13px;
-      line-height: 1;
-      border-radius: 999px;
-      cursor: pointer;
-      user-select:none;
-    }
-
-    .ctaBtn:active{ transform: translateY(1px); }
-
-    /* =========================================================
-       ABOUT (DESKTOP ONLY) — diagonal feeling, no overlap
-       ========================================================= */
-    @media (min-width: 981px){
-      .aboutLayout{
-        max-width: 1060px;
-        display: grid;
-        grid-template-columns: 520px 520px;
-        column-gap: 24px;
-        row-gap: 18px;
-        align-items: start;
-      }
-
-      /* about box: top-left */
-      .aboutBox{
-        grid-column: 1;
-        grid-row: 1;
-        margin-bottom: 0;
-      }
-
-      /* image: top-right but pushed down to feel diagonal */
-      .aboutMedia{
-        grid-column: 2;
-        grid-row: 1;
-        margin-top: 90px;
-      }
-
-      /* contact: below about box, nudged right, less wide */
-      .aboutContact{
-        grid-column: 1;
-        grid-row: 2;
-        width: 420px;
-        max-width: 420px;
-        margin-top: 0;
-        margin-left: 80px;
-      }
-    }
-
-    /* filters */
-    .filters{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-      align-items:center;
-      margin: 0;
-    }
-    .chip{
-      border: 1px solid var(--rule2);
-      background: var(--chip);
-      color: var(--chip-ink);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 13px;
-      line-height: 1;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .08s ease;
-    }
-    .chip:active{ transform: translateY(1px); }
-    .chip.is-on{
-      background: var(--chip-on);
-      border-color: rgba(0,0,0,.12);
-      color: var(--chip-on-ink);
-    }
-
-    /* controls bar (chips left, search right) */
-    .controls{
-      margin-top: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-    }
-    .controls .search{
-      width: 320px;
-      flex: 0 0 auto;
-    }
-
-    /* =========================================================
-       ROW LAYOUT (no jumping)
-       ========================================================= */
-    .rows{
-      margin-top: 18px;
-      display:flex;
-      flex-direction:column;
-      gap: var(--gap);
-    }
-
-    .row{
-      display:flex;
-      gap: var(--gap);
-      flex-wrap: nowrap;
-      align-items: stretch;
-    }
-
-    @media (min-width: 981px){
-      .row{
-        height: 648px;
-        max-height: 648px;
-      }
-      .card{ height: 100%; }
-    }
-
-    /* =========================================================
-       CARD sizing + squeeze
-       ========================================================= */
-    .card{
-      --base: 1;
-      --openGrow: 2.2;
-
-      flex: var(--base) 1 0;
-      min-width: 0;
-      background: var(--paper);
-      border: 1px solid var(--rule2);
-      position:relative;
-      overflow: hidden;
-      border-radius: 2px;
-
-      transition:
-        flex-grow var(--flip) var(--ease),
-        border-color 220ms ease;
-    }
-
-    .card.keep{ --base: 2; }
-
-    .card.is-open{
-      flex-grow: var(--openGrow);
-      border-color: rgba(0,0,0,.35);
-    }
-    .row.has-open .card:not(.is-open){
-      flex-grow: 0.7;
-    }
-
-    /* row-specific openGrow */
-    .row[data-row="2"] .card[data-title="Content Design"]{ --openGrow: 1.1; }
-    .row[data-row="2"] .card[data-title="Editorial Spreads"]{ --openGrow: 1.55; }
-    .row[data-row="3"] .card[data-title="Shovel Studio"]{ --openGrow: 1; }
-    .row[data-row="3"] .card[data-title="Dog Tags"]{ --openGrow: 1.65; }
-
-    /* =========================================================
-       Flip mechanics (SIMPLIFIED FOR iOS)
-       ========================================================= */
-    .cardInner{
-      position:relative;
-      height: 100%;
-      perspective: 1400px;
-      -webkit-perspective: 1400px;
-      transform-style: preserve-3d;
-      -webkit-transform-style: preserve-3d;
-
-      transform: translate3d(0,0,0);
-      -webkit-transform: translate3d(0,0,0);
-
-      will-change: transform;
-      background: transparent;
-    }
-
-    .face{
-      position:absolute;
-      inset:0;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      -webkit-transform-style: preserve-3d;
-
-      will-change: transform;
-      transition: transform var(--flip) var(--ease);
-
-      display:flex;
-      flex-direction:column;
-      background: var(--paper);
-      overflow: hidden;
-      border: 0;
-    }
-
-    .hit{
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-    .hit:focus{ outline: none; }
-
-    .front{
-      transform: rotateY(0deg);
-      -webkit-transform: rotateY(0deg);
-    }
-    .back{
-      transform: rotateY(180deg);
-      -webkit-transform: rotateY(180deg);
-    }
-
-    .card.is-open .front{
-      transform: rotateY(-180deg);
-      -webkit-transform: rotateY(-180deg);
-    }
-    .card.is-open .back{
-      transform: rotateY(0deg);
-      -webkit-transform: rotateY(0deg);
-    }
-
-    .media.has-img{ position:relative; }
-    .media.has-img img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .media.has-img .caption{
-      position:absolute;
-      left:12px;
-      bottom:12px;
-    }
-
-    .media.has-video{ position:relative; }
-    .media.has-video video{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      background:#000;
-      pointer-events: none;
-    }
-    .media.has-video .caption{
-      position:absolute;
-      left:12px;
-      bottom:12px;
-      pointer-events: none;
-    }
-
-    .shot{
-      margin:0;
-      border: 1px solid var(--rule2);
-      background:#fff;
-      overflow:hidden;
-    }
-
-    .shot img,
-    .shot video{
-      width:100%;
-      height:100%;
-      display:block;
-      object-fit: contain;
-      background:#fff;
-    }
-    .shot video{ background:#000; }
-
-    .shot.span2{ grid-column: 1 / -1; }
-    .shot.square{ aspect-ratio: 1 / 1 !important; }
-
-    .front .hit{
-      all: unset;
-      display:flex;
-      flex-direction:column;
-      height: 100%;
-      width: 100%;
-    }
-
-    @media (hover: hover) and (pointer: fine){
-      .front .hit{ cursor: pointer; }
-    }
-
-    .frontHeader{ display:block; }
-
-    .topline{
-      width:100%;
-      display:grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 10px;
-      align-items:center;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--rule);
-      font-size: 12px;
-      line-height: 1;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      cursor:pointer;
-    }
-    .topline b{ color: var(--ink); font-weight:600; text-transform:none; letter-spacing:0; }
-
-    /* FIX: titles were bold because this rule was broken by a stray token */
-    .title{
-      font-family: var(--serif);
-      font-size: 34px;
-      line-height: 1.05;
-      font-weight: 400;
-      margin: 10px 12px 12px;
-      letter-spacing:-0.01em;
-      cursor:pointer;
-    }
-
-      /* hover yellow (desktop only — prevents iOS sticky hover) */
-      @media (hover: hover) and (pointer: fine){
-        .card:not(.is-open):hover .topline,
-        .card:not(.is-open):hover .title{
-          background: var(--highlight);
-        }
-        .card:not(.is-open):hover{
-          background: var(--highlight);
-          border-color: rgba(0,0,0,.35);
-        }
-        .card:not(.is-open):hover .face{
-          background: var(--highlight);
-        }
-        .card:not(.is-open):hover .media{
-          background: transparent;
-        }
-      }
-
-    .card.is-open .topline{ background: var(--highlight); color: var(--ink); }
-
-    .media{
-      border-top: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
-      background: #f6f6f6;
-      flex: 1 1 auto;
-      min-height: 180px;
-      aspect-ratio: auto;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .media .ph{
-      width:100%;
-      height:100%;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,0)),
-        repeating-linear-gradient(90deg, rgba(0,0,0,.03) 0 12px, rgba(0,0,0,0) 12px 24px);
-      display:flex;
-      align-items:flex-end;
-      padding: 10px 12px;
-    }
-
-    .caption{
-      font-size: 12px;
-      line-height: 1.2;
-      color: var(--muted);
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(0,0,0,.08);
-      padding: 6px 8px;
-      max-width: 92%;
-    }
-
-    .frontMeta{
-      margin-top: auto;
-      display:block;
-      background: var(--paper);
-    }
-
-    .tags{
-      padding: 10px 12px 12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px;
-    }
-    .tag{
-      font-size: 12px;
-      line-height: 1;
-      padding: 6px 8px;
-      border: 1px solid var(--rule);
-      border-radius: 999px;
-      color: var(--ink);
-      background: #fafafa;
-      user-select:none;
-      white-space:nowrap;
-    }
-
-    .detailTop{
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--rule);
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap: 12px;
-      background: var(--highlight);
-      cursor:pointer;
-    }
-    .detailTop h3{
-      font-family: var(--serif);
-      font-weight: 400;
-      margin: 0;
-      font-size: 26px;
-      line-height: 1.05;
-      pointer-events:none;
-    }
-    .detailTop .hint{
-      font-size: 12px;
-      color: rgba(0,0,0,.65);
-      pointer-events:none;
-    }
-
-    .detailBody{
-      padding: 12px;
-      height: calc(100% - 48px);
-      overflow:auto;
-      background:#fbfbfb;
-    }
-    .detailBody p{
-      margin:0 0 10px 0;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .kicker{
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      color: var(--muted);
-      margin: 14px 0 6px;
-    }
-    .detailGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 12px 0;
-    }
-    .phImg{
-      border: 1px solid var(--rule2);
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,0)),
-        repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0 10px, rgba(0,0,0,0) 10px 20px);
-      aspect-ratio: 4 / 3;
-      display:flex;
-      align-items:flex-end;
-      padding: 8px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .watermark{
-      margin-top: 10px;
-      padding: 20px 0;
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      opacity: 0.45;
-      user-select: none;
-      letter-spacing: 0.02em;
-    }
-    .ctaEmail{
-  font-size: 13.5px;
-  color: var(--muted);
-  opacity: 0.75;
-  line-height: 1;
-  user-select: all;   /* nice touch: easy to copy */
-    }
-    @media (hover: hover) and (pointer: fine){
-      .nav a:hover{
-        color: var(--highlight);
-      }
-    }
-    .nav a.is-active{
-      color: var(--highlight);
-    }
-
-
-
-    
-
-
-
-    @media (max-width: 980px){
-      .mast{ grid-template-columns: 1fr; gap: 8px; }
-      .mast-right{ justify-content:flex-start; }
-
-      .controls{
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .controls .search{ width: 100%; }
-
-      .row{
-        flex-direction: column;
-        flex-wrap: nowrap;
-        height: auto;
-        max-height: none;
-      }
-
-      .card{
-        flex: 0 0 auto;
-        width: 100%;
-        height: auto;
-        overflow: hidden;
-      }
-
-      .cardInner{
-        height: auto;
-        min-height: 660px;
-      }
-
-      .detailGrid{ grid-template-columns: 1fr; }
-      .detailBody{ height: 660px; }
-    }
-
-    @media (max-width: 520px){
-      .wrap{ padding-left: 16px; padding-right: 16px; }
-      .brand{ font-size: 46px; }
-      .title{ font-size: 30px; }
-    }
-  </style>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
-  <style>
-    .ml-overlay{
-      position:fixed;inset:0;
-      background:rgba(0,0,0,.55);
-      z-index:9999;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    }
-    .ml-overlay[hidden]{ display:none; }
-
-    .ml-card{
-      background:var(--paper);
-      border:1px solid var(--rule2);
-      padding:18px 18px 20px;
-      width:100%;
-      max-width:380px;
-      position:relative;
-    }
-    .ml-close{
-      position:absolute;
-      top:10px;right:12px;
-      background:none;border:none;
-      font-size:22px;line-height:1;
-      color:var(--muted);cursor:pointer;
-      padding:2px 4px;
-      font-family:var(--sans);
-    }
-    .ml-kicker{
-      font-size:12px;text-transform:uppercase;
-      letter-spacing:.07em;color:var(--muted);
-      margin-bottom:7px;
-    }
-    .ml-headline{
-      font-family:var(--serif);
-      font-size:32px;font-weight:400;
-      line-height:1.0;letter-spacing:-0.015em;
-      margin:2px 0 8px;
-    }
-    .ml-body{
-      font-size:13.5px;line-height:1.45;
-      color:var(--muted);margin-bottom:14px;
-    }
-    .ml-form{ display:flex;flex-direction:column;gap:8px; }
-    .ml-input{
-      width:100%;
-      border:1px solid var(--rule2);
-      background:#f8f8f8;
-      padding:13px 14px;
-      font-size:15px;font-family:var(--sans);
-      color:var(--ink);outline:none;
-      border-radius:0;-webkit-appearance:none;appearance:none;
-      transition:border-color 120ms ease,background 120ms ease;
-    }
-    .ml-input:focus{ border-color:var(--ink);background:#fff; }
-    .ml-input::placeholder{ color:#aaa; }
-    .ml-submit{
-      width:100%;padding:13px 14px;
-      background:var(--highlight);color:var(--ink);
-      border:1px solid rgba(0,0,0,.2);
-      font-size:14px;font-weight:500;font-family:var(--sans);
-      cursor:pointer;border-radius:0;
-      -webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;
-    }
-    @media(hover:hover)and(pointer:fine){
-      .ml-submit:hover{ background:var(--ink);color:var(--highlight);border-color:var(--ink); }
-    }
-    .ml-submit:active{ opacity:.85; }
-    .ml-small{ font-size:11px;color:var(--muted); }
-    .ml-success{ display:none;padding:12px 0 4px; }
-    .ml-success-big{ font-family:var(--serif);font-size:26px;font-weight:400;margin-bottom:5px; }
-    .ml-success-small{ font-size:13px;color:var(--muted); }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Madani</title>
+<meta name="description" content="Madani Design — Madani (@madanivision) is a designer working in design distribution: helping studios make great work and get it in front of people.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="canonical" href="https://madanidesign.com/">
+<meta property="og:title" content="Madani">
+<meta property="og:site_name" content="Madani Design">
+<meta property="og:description" content="I help studios make great work and get it in front of people.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://madanidesign.com/">
+<meta property="og:image" content="https://madanidesign.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://madanidesign.com/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Madani",
+ "alternateName":["Madani Design","Madani Vision","madanivision"],
+ "url":"https://madanidesign.com/",
+ "jobTitle":"Designer, design distribution",
+ "description":"Helping design studios make great work and get it in front of people.",
+ "sameAs":["https://www.instagram.com/madanivision/",
+           "https://www.are.na/madani/channels",
+           "https://blog.madanidesign.com/"]}
+</script>
+
+<style>
+/* ==========================================================================
+   1. Tokens
+   --------------------------------------------------------------------------
+   One shadow for every floating container — pills, bubbles, thumbnails — so
+   nothing looks like it lives on a different table.
+   ========================================================================== */
+:root{
+  --ink:#111111;
+  --txt:#3F3F42;              /* bubble + label grey; bolds land on --ink */
+  --soft:#6E6E68;
+  --paper:#FFFFFF;            /* pure white ground; hairlines + shadows carry the cards */
+  --plate:#F8F8F8;            /* pill label plate, straight from the exports */
+  --tile:#E3E2DB;
+  --mark:#FFFF00;
+  --rule:#E6E6E1;
+  --pending:#ECECE7;
+  --dot:#B9B8B3;
+
+  --shadow:0 2px 4px rgba(0,0,0,.16);
+  --dshadow:drop-shadow(0 2px 4px rgba(0,0,0,.16));   /* same shadow, alpha-shape version */
+
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --pad-x:clamp(16px, 4vw, 40px);
+  --tile-w:168px;
+  --tile-h:298px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+::selection{background:var(--mark);color:var(--ink)}
+
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+
+body{
+  margin:0;color:var(--ink);
+  /* a faint dot grid: gives the white a surface without competing with anything */
+  background:radial-gradient(rgba(17,17,17,.055) 1px, transparent 1.1px) 0 0 / 22px 22px,
+             var(--paper);
+  font-family:var(--sans);font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;min-height:100svh;
+  display:flex;flex-direction:column;
+}
+
+img{display:block;max-width:100%}
+
+:where(a,button,[tabindex]):focus-visible{
+  outline:2px solid var(--ink);outline-offset:3px;border-radius:2px;
+}
+
+.sr-only{
+  position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+.skip{
+  position:absolute;left:8px;top:-64px;z-index:200;
+  background:var(--mark);color:var(--ink);
+  font:500 13px/1 var(--sans);padding:11px 14px;text-decoration:none;
+  transition:top .15s;
+}
+.skip:focus{top:8px}
+
+/* True viewport probe. Measure from this, never window.innerWidth — page zoom
+   makes innerWidth lie (a tab at 45% reports 1680 for a 756px window). */
+#gauge{position:fixed;inset:0;height:100svh;pointer-events:none;visibility:hidden}
+
+.noscript{margin:40px var(--pad-x);max-width:52ch;font-size:15px;line-height:1.5}
+
+/* ==========================================================================
+   2. Node pills — the original SVG exports
+   --------------------------------------------------------------------------
+   The files are the Figma exports with their foreignObject backdrop-blur and
+   baked shadow filters stripped (that stack was the lag); the shadow comes
+   back as the same CSS token everything else wears. The box is sized to the
+   drawn body (canvas minus the export padding) and the image hangs over it,
+   so layout maths never sees the padding.
+   ========================================================================== */
+.node{
+  appearance:none;background:none;border:0;padding:0;margin:0;
+  position:relative;display:block;
+  width:calc(var(--bw) * 1px);max-width:100%;
+  color:inherit;cursor:pointer;
+  will-change:transform;
+  filter:var(--dshadow);
+}
+.node > img{
+  display:block;max-width:none;
+  width:calc(var(--cw) / var(--bw) * 100%);
+  margin:calc(-5.5 / var(--bw) * 100%) calc(-8.76 / var(--bw) * 100%)
+         calc(-11.25 / var(--bw) * 100%) calc(-8.25 / var(--bw) * 100%);
+  pointer-events:none;
+  user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
+  transition:transform .18s cubic-bezier(.22,1,.36,1);
+}
+@media (hover:hover){ .node:hover > img{transform:translateY(-1.5px)} }
+.node:active > img{transform:scale(.995)}
+.node:focus-visible{outline-offset:6px}
+
+/* ==========================================================================
+   3. Speech — real text bubbles that type themselves out
+   ========================================================================== */
+.msgs{
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  /* every message hangs off the same left edge */
+}
+.bubble{
+  max-width:min(330px,100%);   /* tighter rag, close to the original exports */
+  text-wrap:pretty;
+  background:#FFFFFF;color:var(--txt);
+  border:1px solid var(--rule);        /* white-on-white needs the hairline */
+  font-size:17px;line-height:1.4;letter-spacing:-0.01em;
+  padding:10px 15px 11px;
+  /* the tail corner sits bottom-left; when messages stack, the joining
+     top-left corner tightens too, the way a real thread groups */
+  border-radius:18px 18px 18px 5px;
+  box-shadow:var(--shadow);
+  transition:width .25s ease;         /* the settle after typing, never a snap */
+  animation:pop .3s cubic-bezier(.22,1,.36,1);
+}
+.bubble b{color:var(--ink);font-weight:600}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}}
+.bubble + .bubble{border-top-left-radius:5px}
+
+/* the contact chips that land under the intro */
+.intro-chips{
+  margin-top:6px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .32s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.intro-chips.on{opacity:1;transform:none}
+
+/* the three-dot "someone is typing" ellipsis */
+.dots{display:inline-flex;gap:4px;padding:3px 2px;vertical-align:middle}
+.dots i{
+  width:7px;height:7px;border-radius:50%;background:var(--dot);
+  animation:dot 1.1s ease-in-out infinite;
+}
+.dots i:nth-child(2){animation-delay:.15s}
+.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{
+  0%,60%,100%{opacity:.35;transform:translateY(0)}
+  30%{opacity:1;transform:translateY(-3px)}
+}
+
+/* ==========================================================================
+   4. Panels — messages, work strip, link chips (one shared left edge)
+   ========================================================================== */
+.panel{margin:0}
+.panel[hidden]{display:none}
+.msgs[hidden]{display:none}   /* hidden must beat the explicit display:flex */
+.panel-in{display:flex;flex-direction:column;align-items:flex-start;gap:18px}
+
+/* the work waits for the talking to finish, then rises in tile by tile */
+.panel .chips{
+  opacity:0;transform:translateY(6px);
+  transition:opacity .32s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.panel.done .chips{opacity:1;transform:none}
+.panel .strip > *{
+  opacity:0;transform:translateY(10px);
+  transition:opacity .3s ease,transform .44s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--i,0) * 60ms);
+}
+.panel.done .strip > *{opacity:1;transform:none}
+/* until the talking is done these exist for layout only — a tap that opened
+   the panel must never fall through onto them */
+.panel:not(.done) .strip a,
+.panel:not(.done) .chips a{pointer-events:none}
+
+.strip{
+  display:flex;align-items:flex-start;gap:8px;max-width:100%;
+  overflow-x:auto;
+  /* negative margins + matching padding: the scroll box gets room for the
+     tiles' shadows without moving the strip off the thread's left edge */
+  margin:-6px -8px -2px;padding:6px 8px 14px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.strip::-webkit-scrollbar{display:none}
+.strip > *{
+  flex:none;position:relative;display:block;
+  height:var(--tile-h);width:auto;
+  aspect-ratio:var(--ar,9/16);       /* each tile takes its footage's own shape */
+  border-radius:8px;background:var(--tile);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.strip img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .35s cubic-bezier(.22,1,.36,1);
+}
+.strip a{transition:transform .18s cubic-bezier(.22,1,.36,1)}
+.strip a::after{
+  content:var(--cue,"watch ↗");
+  position:absolute;left:8px;bottom:8px;
+  font:400 10px/1 var(--mono);
+  background:var(--mark);color:var(--ink);
+  padding:4px 6px;
+  opacity:0;transition:opacity .2s ease;
+}
+.strip a:hover::after,.strip a:focus-visible::after{opacity:1}
+@media (hover:hover){
+  .strip a:hover{transform:translateY(-2px)}
+  .strip a:hover img{transform:scale(1.04)}
+}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.chip{
+  display:inline-block;font:400 11px/1 var(--mono);
+  background:var(--mark);color:var(--ink);
+  padding:5px 8px;text-decoration:none;
+}
+a.chip:hover{text-decoration:underline}
+.chip.pending{background:var(--pending);color:var(--soft)}
+@media (pointer:coarse){ .chip{font-size:11px;padding:8px 10px} }
+
+/* ==========================================================================
+   5. Stage + ORBIT layout
+   ========================================================================== */
+#stage{position:relative;flex:1 0 auto;width:100%}
+#tethers{
+  position:absolute;inset:0;width:100%;height:100%;
+  overflow:visible;pointer-events:none;
+  opacity:0;transition:opacity .8s ease;
+}
+#tethers.in{opacity:1}
+
+.orbit #stage{overflow:hidden;overflow:clip}
+.orbit #stage.open{overflow:visible}
+
+.orbit .node,
+.orbit .intro,
+.orbit .panel{position:absolute;top:0;left:0;margin:0}
+
+.orbit .node{
+  z-index:20;
+  opacity:0;                       /* revealed once frame 1 has placed it */
+  transition:opacity .3s ease;
+  transform-origin:0 0;
+  touch-action:none;               /* we own the drag gesture */
+}
+.orbit .node.dim{z-index:15}
+.orbit .node.shown{opacity:1}
+.orbit .node.lit{transition:none}  /* after entrance, the loop drives opacity */
+
+.orbit .intro{z-index:40;width:min(340px,86vw)}
+.orbit .panel{z-index:40;width:min(460px,calc(100vw - var(--pad-x) * 2));transition:opacity .24s ease}
+/* swapping projects crossfades: the outgoing panel fades on its old anchor
+   while the incoming one starts talking over it */
+.orbit .panel.bye{opacity:0;pointer-events:none}
+
+/* ==========================================================================
+   6. LIST layout — narrow or short viewports
+   ========================================================================== */
+.list #stage{padding:26px var(--pad-x) 44px;display:flex;flex-direction:column}
+.list #tethers{display:none}
+.list .intro{margin:0 0 30px}
+.list .rows{display:flex;flex-direction:column}
+.list .node{
+  align-self:flex-start;max-width:100%;
+  margin:0 0 8px;
+  touch-action:manipulation;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .4s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.list .node.in{opacity:1;transform:none}
+.list .rows.busy .node{opacity:.4;transition:opacity .3s ease}
+.list .rows.busy .node[aria-expanded="true"]{opacity:1}
+.list .panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .42s cubic-bezier(.22,1,.36,1);
+}
+.list .panel.open{grid-template-rows:1fr}
+.list .panel > .clip{overflow:hidden;min-height:0}
+.list .panel-in{padding:8px 0 30px}
+
+@media (max-width:560px){
+  :root{--tile-w:132px;--tile-h:235px}
+  .bubble{font-size:16px}
+  .panel-in{gap:14px}
+}
+
+/* ==========================================================================
+   8. Motion preferences
+   ========================================================================== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
 </head>
 
+<body>
 
-<body data-view="work">
-  <main class="wrap">
+<a class="skip" href="#stage">Skip to the work</a>
+<div id="gauge" aria-hidden="true"></div>
 
-    <section class="mast">
-      <h1 class="brand">Madani</h1>
+<main id="stage">
+  <svg id="tethers" aria-hidden="true" focusable="false"></svg>
+  <div class="msgs intro" id="intro" aria-label="Introduction"></div>
+  <div class="rows" id="rows"></div>
+  <noscript>
+    <p class="noscript">This portfolio is drawn with JavaScript. Turn it on to see the
+    work, or email <a href="mailto:abdelrahmanpersonal@gmail.com">abdelrahmanpersonal@gmail.com</a> and
+    I’ll send it over.</p>
+  </noscript>
+</main>
 
-      <div class="mast-right">
-        <nav class="nav" aria-label="Sections">
-          <a href="#work" id="navWork" class="is-active">Work</a>
-          <span class="navDivider" aria-hidden="true">|</span>
-          <a href="#about" id="navAbout">About</a>
-        </nav>
-      </div>
-    </section>
 
-    <section id="aboutView" aria-label="About">
-      <div class="aboutLayout">
+<script>
+"use strict";
+/* ==========================================================================
+   Madani — orbit portfolio.  One file, no build step, no dependencies.
+   --------------------------------------------------------------------------
+   Everything on screen is real, selectable, screen-readable text — the old
+   exported SVGs (each carrying its own backdrop blur + double drop-shadow
+   filter) are gone, which is also where the lag went.
 
-        <div class="aboutBox">
-          <div class="aboutKicker">About me</div>
-          <p>
-            I’m a designer based in England, focused on editorial and content design. I’m the co-founder of Keep Magazine and work independently across publishing, layout, and visual systems.<br>
-            <br>
-            I’m somewhere in a bedroom, café or office getting designs made.
-          </p>
-          <div class="links">
-            <a href="https://www.instagram.com/madanivision/" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://blog.madanidesign.com/" target="_blank" rel="noreferrer">Blog</a>
-            <a href="https://www.are.na/madani/channels" target="_blank" rel="noreferrer">Are.na</a>
-          </div>
-        </div>
+   Two layouts share one content model and one set of DOM elements:
+     ORBIT  wide and tall enough — six pills drift round a slow ellipse on
+            tethers; click one and it flies to the centre and starts typing.
+     LIST   everything narrower — the same pills stacked; tap to expand.
+   ========================================================================== */
 
-        <div class="aboutMedia">
-          <img
-            src="aboutsection.webp"
-            alt="About section"
-            loading="lazy"
-            decoding="async"
-          >
-        </div>
+/* -- 0. the bits you'll actually want to edit ------------------------------ */
 
-        <div class="aboutContact">
-          <div class="kicker">Contact</div>
-          <p>
-            If you’ve got a project, a role, or an idea that needs taste & structure then you should probably contact me.
-          </p>
-        <div class="ctaRow">
-          <a class="ctaBtn" href="mailto:abdelrahmanpersonal@gmail.com?subject=Hello%20Madani">
-            Email
-          </a>
-          <span class="ctaEmail">abdelrahmanpersonal@gmail.com</span>
-        </div>
-        </div>
+const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
+const BUILD   = "index-10";
+console.log("madani — build", BUILD);
 
-      </div>
-    </section>
+/* Messages type themselves out. **bold** marks the black emphasis words. */
+const INTRO = [
+  "Hey, I’m **Madani**.",
+  "I help studios make great work and get it in front of people.",
+  "Reach me in these ways."
+];
 
-    <section id="workView">
-      <section class="controls" aria-label="Work controls">
-        <section class="filters" aria-label="Filters">
-          <span class="chip is-on" data-filter="all">All</span>
-          <span class="chip" data-filter="web">Web</span>
-          <span class="chip" data-filter="content">Content</span>
-          <span class="chip" data-filter="direction">Direction</span>
-        </section>
+/* the ways below — TODO: confirm the Are.na URL */
+const WAYS = [
+  ["email", "mailto:abdelrahmanpersonal@gmail.com"],
+  ["instagram", "https://www.instagram.com/madanivision/"],
+  ["are.na", "https://www.are.na/madani/channels"],
+  ["blog", "https://blog.madanidesign.com/"]
+];
 
-        <input id="q" class="search" placeholder="Search projects…" />
-      </section>
+const ENTRIES = [
+  { id:"01", name:"@madanivision", cw:336, sq:"#FF2000",
+    say:["My own channel. **600k+** views in five months."],
+    work:[
+      { href:"https://www.instagram.com/p/DXwWLcnMpBs/", alt:"@madanivision on Instagram — post 1", src:"mv-1.jpg" },
+      { href:"https://www.instagram.com/p/DXALfcbjGLR/", alt:"@madanivision on Instagram — post 2", src:"mv-2.jpg" },
+      { href:"https://www.instagram.com/p/DYmLldxhOId/", alt:"@madanivision on Instagram — post 3", src:"mv-3.jpg" },
+      { href:"https://www.instagram.com/p/DZxtqSSMrTG/", alt:"@madanivision on Instagram — post 4", src:"mv-4.jpg" },
+      { href:"https://www.instagram.com/p/DWTnIYyDMrO/", alt:"@madanivision on Instagram — post 5", src:"mv-5.jpg" }
+    ],
+    links:[["instagram", "https://www.instagram.com/madanivision/"]] },
 
-      <section class="rows" id="work" aria-label="Projects">
-        <!-- Work section unchanged -->
-        <!-- Row 1 -->
-        <div class="row" data-row="1">
-          <article class="card keep" data-cat="web" data-year="ongoing" data-title="Keep Magazine" data-tags="web, editorial, publishing, systems">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Keep Magazine">
-                  <div class="frontHeader">
-                    <div class="topline"><span>Ongoing</span><span><b>Web</b></span><span>Keep</span></div>
-                    <h2 class="title">Keep Magazine</h2>
-                  </div>
+  { id:"02", name:"ABC Dinamo", cw:302, sq:"#009352",
+    say:["Making **ABC News**, an ongoing series with the foundry.",
+         "Started as a self-directed two-parter that did **120k+** views."],
+    work:[
+      { href:"https://www.instagram.com/p/Da2e_c1h-Du/", alt:"ABC Dinamo collaboration video on Instagram", src:"dinamo-1.jpg" }
+    ],
+    links:[["abcdinamo.com", "https://abcdinamo.com/"]] },
 
-                  <div class="media has-img">
-                    <img
-                      src="KeepMagazine/KeepCover.webp"
-                      alt="Keep Magazine overview"
-                      loading="lazy"
-                      decoding="async"
-                    >
-                    <div class="caption">Publishing systems, directory logic, editorial structure.</div>
-                  </div>
+  { id:"03", name:"Shovel Studio", cw:318, sq:"#0073EB",
+    say:["I do content design for the web design studio.",
+         "A few hundred thousand views between us."],
+    work:[
+      { href:"https://www.instagram.com/p/Dbs6ytivChK/", alt:"Homer Radio, a Shovel Studio reel", src:"shovel-1.jpg" },
+      { href:"https://www.instagram.com/p/DcJSPXjlZwC/?img_index=1", alt:"Grow from freelancer to studio, a Shovel Studio carousel", src:"shovel-2.jpg", ar:"4/5", cue:"swipe ↗" },
+      { href:"https://www.instagram.com/p/DSS3xFNDyuK/", alt:"Shovel Studio on Instagram — post 3", src:"shovel-3.jpg" }
+    ],
+    links:[["shovel.studio", "https://www.shovel.studio/"]] },
 
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">Publishing</span>
-                      <span class="tag">Directory Based</span>
-                      <span class="tag">Editorial</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
+  { id:"04", name:"Garden 3D", cw:273, sq:"#9454CD",
+    say:["A worker-owned collective in New York.",
+         "I contribute to **content strategy**, design and systems."],
+    work:[],
+    links:[["garden3d.net", "https://garden3d.net/"],
+           ["instagram", "https://www.instagram.com/garden3d_net/"],
+           ["survival theatre", "https://www.instagram.com/p/DWWkvmYkdTq/"],
+           ["more in the works", null]] },
 
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Keep Magazine</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
+  { id:"05", name:"Studio Visits", cw:298, sq:"#FFE400",
+    say:["I go inside studios and document how they think.",
+         "Visiting studios around the world, **starting now**."],
+    work:[],
+    links:[["get in touch", CONTACT]] },
 
-          <article class="card" style="--base:1" data-cat="web" data-year="2024" data-title="Loops.szn" data-tags="web, ui, interaction, motion, build">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Loops.szn">
-                  <div class="frontHeader">
-                    <div class="topline"><span>Dec 2025</span><span><b>Web</b></span><span>Loops</span></div>
-                    <h2 class="title">Loops.szn</h2>
-                  </div>
+  { id:"06", name:"Collaborations", cw:331, sq:"#A9F6D6",
+    say:["Sponsored videos for people **I love** working with."],
+    work:[
+      { href:"https://www.instagram.com/p/DXbnZZvh3IM/", alt:"Parc Studio collaboration on Instagram", src:"collab-parc.jpg" },
+      { href:"https://www.instagram.com/p/DXZvL4-jJhJ/", alt:"Explorers Club collaboration on Instagram", src:"collab-explorers.jpg" },
+      { href:"https://www.instagram.com/p/DR424WtjI8K/", alt:"Pilot magazine collaboration on Instagram", src:"collab-pilot.jpg" },
+      { href:"https://www.instagram.com/p/DWWkvmYkdTq/", alt:"Survival theatre, a video for Garden 3D", src:"garden-1.jpg" }
+    ],
+    links:[["parc studio", "https://www.instagram.com/p/DXbnZZvh3IM/"],
+           ["explorers club", "https://www.instagram.com/p/DXZvL4-jJhJ/"],
+           ["pilot magazine", "https://www.instagram.com/p/DR424WtjI8K/"],
+           ["garden3d", "https://www.instagram.com/p/DWWkvmYkdTq/"], ["readymag", null]] }
+];
 
-                  <div class="media has-video">
-                    <video
-                      src="Loops/LoopsCoverVideo.mp4"
-                      autoplay
-                      muted
-                      loop
-                      playsinline
-                      preload="metadata"
-                    ></video>
+/* typing feel */
+const DOTS_MS  = 360;    /* how long the ellipsis thinks before the first message */
+const CHAR_MS  = 9;      /* per character */
+const GAP_MS   = 140;    /* breath between messages */
 
-                    <div class="caption">Interactive portfolio with floating windows, interaction decisions and parallax motion.</div>
-                  </div>
+/* resting pills sit a touch under full size; the chosen one grows to 1 */
+const REST_K   = 0.9;
 
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">UI</span>
-                      <span class="tag">Interactive</span>
-                      <span class="tag">Portfolio</span>
-                      <span class="tag">Web</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
+/* what the resting ring must keep clear in its middle (the intro block) */
+const BLOCK_W = 352, BLOCK_H = 210;   /* three bubbles + the chip row */
 
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Loops.szn</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
-        </div>
+/* -- 1. helpers ------------------------------------------------------------ */
 
-        <!-- Row 2 -->
-        <div class="row" data-row="2">
-          <article class="card" style="--base:1.55" data-cat="direction" data-year="2024" data-title="Editorial Spreads" data-tags="editorial, spreads, print, mixed media, design">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Editorial Spreads">
-                  <div class="frontHeader">
-                    <div class="topline"><span>2024</span><span><b>Direction</b></span><span>Editorial</span></div>
-                    <h2 class="title">Editorial Spreads</h2>
-                  </div>
+const $ = s => document.querySelector(s);
+const el = (tag, cls, attrs) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  for (const k in attrs || {}) n.setAttribute(k, attrs[k]);
+  return n;
+};
+const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+const lerp  = (a, b, t) => a + (b - a) * t;
 
-                  <div class="media has-img">
-                    <img src="ContentDesign/spreads.gif" alt="Editorial spreads" loading="lazy" decoding="async">
-                    <div class="caption">Graphic-designed editorial spreads using photography, illustration, type, and mixed media.</div>
-                  </div>
+const root    = document.documentElement;
+const gauge   = $("#gauge");
+const stage   = $("#stage");
+const tethers = $("#tethers");
+const introEl = $("#intro");
+const rowsEl  = $("#rows");
 
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">Editorial</span>
-                      <span class="tag">Print</span>
-                      <span class="tag">Mixed media</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+/* the orbit is the site now, at every size; narrow screens get their own ring */
+const wide  = window.matchMedia("(min-width: 1px)");
+const PHONE = window.matchMedia("(max-width: 700px)");
+const canHover = window.matchMedia("(hover: hover)");
 
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Editorial Spreads</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
+const vh = () => gauge.clientHeight;   /* never window.innerHeight — see #gauge */
 
-          <article class="card" style="--base:1" data-cat="content" data-year="2025" data-title="Content Design" data-tags="content, video, social, motion, design">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Content Design">
-                  <div class="frontHeader">
-                    <div class="topline"><span>2025</span><span><b>Content</b></span><span>Design</span></div>
-                    <h2 class="title">Content Design</h2>
-                  </div>
+/* -- 2. build -------------------------------------------------------------- */
 
-                  <div class="media has-video">
-                    <video
-                      src="CONTENTDESIGN1/ContentDesignCover2.mp4"
-                      autoplay
-                      muted
-                      loop
-                      playsinline
-                      preload="metadata"
-                    ></video>
-                    <div class="caption">Short-form and editorial video design for personal and client platforms.</div>
-                  </div>
+const nodes  = [];
+const panels = [];
+const lines  = [];
 
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">Video</span>
-                      <span class="tag">Motion</span>
-                      <span class="tag">Social</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
+ENTRIES.forEach(e => {
+  const btnId = "node-" + e.id, panId = "panel-" + e.id;
 
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Content Design</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
-        </div>
+  const btn = el("button", "node", {
+    type:"button", id:btnId, "aria-expanded":"false", "aria-controls":panId
+  });
+  btn.setAttribute("aria-label", e.id + " " + e.name);
+  btn.style.setProperty("--cw", e.cw);
+  btn.style.setProperty("--bw", e.cw - 17.01);   /* 8.25 + 8.76 side trim */
+  const img = el("img");
+  img.src = "assets/nodes/" + e.id + ".svg";
+  img.alt = "";
+  img.draggable = false;
+  btn.appendChild(img);
 
-        <!-- Row 3 -->
-        <div class="row" data-row="3">
-          <article class="card" style="--base:.8" data-cat="content" data-year="ongoing" data-title="Shovel Studio" data-tags="content, strategy, systems, reels">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Shovel Studio">
-                  <div class="frontHeader">
-                    <div class="topline"><span>Ongoing</span><span><b>Content</b></span><span>Studio</span></div>
-                    <h2 class="title">Shovel Studio</h2>
-                  </div>
+  const panel = el("section", "panel", { id:panId, "aria-labelledby":btnId, hidden:"" });
+  const clip  = el("div", "clip");
+  const inner = el("div", "panel-in");
 
-                  <div class="media has-img">
-                    <img src="ShovelStudio/ShovelCover.webp" alt="Shovel Studio cover" loading="lazy" decoding="async">
-                    <div class="caption">Making design and visual briefs for Shovel Studio.</div>
-                  </div>
+  const h2 = el("h2", "sr-only");
+  h2.textContent = e.id + " — " + e.name;
+  inner.appendChild(h2);
 
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">Systems</span>
-                      <span class="tag">Strategy</span>
-                      <span class="tag">Reels</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
+  inner.appendChild(el("div", "msgs"));
 
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Shovel Studio</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
-
-          <article class="card" style="--base:1.4" data-cat="direction" data-year="2025" data-title="Dog Tags" data-tags="direction, product, identity">
-            <div class="cardInner">
-              <section class="face front" aria-hidden="false">
-                <button class="hit" type="button" aria-expanded="false" aria-label="Open Dog Tags">
-                  <div class="frontHeader">
-                    <div class="topline"><span>Sep 2025</span><span><b>Direction</b></span><span>Objects</span></div>
-                    <h2 class="title">Dog Tags</h2>
-                  </div>
-
-                  <div class="media has-img">
-                    <img src="DogTags/DogTagCover.webp" alt="Dog Tags cover" loading="lazy" decoding="async">
-                    <div class="caption">Direction notes, material decisions.</div>
-                  </div>
-
-                  <div class="frontMeta">
-                    <div class="tags">
-                      <span class="tag">Direction</span>
-                      <span class="tag">Marketing</span>
-                      <span class="tag">Graphic Design</span>
-                    </div>
-                  </div>
-                </button>
-              </section>
-
-              <section class="face back" aria-hidden="true">
-                <div class="detailTop" data-toggle="close">
-                  <h3>Dog Tags</h3>
-                  <div class="hint">Click to close</div>
-                </div>
-                <div class="detailBody"></div>
-              </section>
-            </div>
-          </article>
-        </div>
-
-      </section>
-    </section>
-  </main>
-
-  <script>
-    const chips = Array.from(document.querySelectorAll(".chip"));
-    const q = document.getElementById("q");
-    const navWork = document.getElementById("navWork");
-    const navAbout = document.getElementById("navAbout");
-
-    const rows  = Array.from(document.querySelectorAll(".row"));
-    const cards = Array.from(document.querySelectorAll(".card"));
-
-    let activeFilter = "all";
-    let openCardEl = null;
-
-    function normalize(s){ return (s||"").toLowerCase().trim(); }
-
-    /* iOS Safari-safe tap handler: CLICK ONLY */
-    function addTap(el, handler){
-      if (!el) return;
-
-      const wrapped = (e) => {
-        const now = Date.now();
-        if (el.__lastTap && (now - el.__lastTap) < 400) return;
-        el.__lastTap = now;
-        handler(e);
-        setTimeout(() => {
-          if (document.activeElement && typeof document.activeElement.blur === "function") {
-            document.activeElement.blur();
-          }
-        }, 0);
-      };
-
-      el.addEventListener("click", wrapped);
-      el.style.touchAction = "manipulation";
-      el.style.webkitTapHighlightColor = "transparent";
-    }
-
-    function hydrateMediaRatios(scope){
-      const figures = Array.from(scope.querySelectorAll("figure.shot"));
-      figures.forEach(fig => {
-        if (fig.classList.contains("square")) return;
-
-        const img = fig.querySelector("img");
-        const vid = fig.querySelector("video");
-
-        if (img){
-          const apply = () => {
-            const w = img.naturalWidth;
-            const h = img.naturalHeight;
-            if (w && h) fig.style.aspectRatio = `${w} / ${h}`;
-          };
-          if (img.complete) apply();
-          else img.addEventListener("load", apply, { once:true });
-          return;
-        }
-
-        if (vid){
-          const apply = () => {
-            const w = vid.videoWidth;
-            const h = vid.videoHeight;
-            if (w && h) fig.style.aspectRatio = `${w} / ${h}`;
-          };
-          if (vid.readyState >= 1) apply();
-          else vid.addEventListener("loadedmetadata", apply, { once:true });
-        }
-      });
-    }
-
-    const contentFor = (title) => {
-      if (title === "Loops.szn") {
-        return `
-          <p>
-            <b>
-              <a href="https://loops-szn.com/" target="_blank" rel="noreferrer">
-                Loops.szn
-              </a>
-            </b>
-            — UI / interactive portfolio, clean hierarchy, motion-ready layouts.
-          </p>
-          <div class="kicker">Screens</div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="Loops/Loops1.webp" alt="Loops.szn still" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="Loops/Loops2.webp" alt="Loops.szn still" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="kicker">Motion</div>
-          <div class="detailGrid">
-            <figure class="shot"><video src="Loops/LoopsVideo.mp4" controls playsinline preload="metadata"></video></figure>
-            <figure class="shot"><video src="Loops/LoopsVideo2.mp4" controls playsinline preload="metadata"></video></figure>
-          </div>
-        `;
-      }
-
-      if (title === "Keep Magazine") {
-        return `
-           <p>
-            <b>Keep Magazine</b> — 
-            <a href="https://keepmagazine.online/" target="_blank" rel="noreferrer">
-              Keep Magazine
-            </a>
-            is a digital-first editorial project organised as a directory, pairing interviews with bespoke digital experiences. Content is navigated systemically rather than chronologically, encouraging exploration through structure instead of scroll.
-          </p>
-          <p>Featured collaborators include Frédéric Saint Parck, Slawn, and Dan Alves. Co-founded by me.</p>
-          <div class="kicker">Pages</div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="KeepMagazine/HomePage.webp" alt="Keep Homepage" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="KeepMagazine/FilesPage.webp" alt="Keep Files page" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="KeepMagazine/DanPage.webp" alt="Keep Dan page" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="KeepMagazine/FredericPage.webp" alt="Keep Frederic page" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="KeepMagazine/ShopPage.webp" alt="Keep Shop page" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="KeepMagazine/ChatPage.webp" alt="Keep Chat page" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="kicker">Direction</div>
-          <div class="detailGrid">
-            <figure class="shot span2"><img src="KeepMagazine/keepmanual.gif" alt="Keep manual" loading="lazy" decoding="async"></figure>
-          </div>
-        `;
-      }
-
-      if (title === "Dog Tags") {
-        return `
-          <p><b>Dog Tags</b> — Direction, photography and product release.</p>
-          <div class="kicker">Images</div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="DogTags/DogTagCover.webp" alt="Dog Tags cover" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="DogTags/flick1dogs.webp" alt="Dog Tags flick 1" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="DogTags/flick2dogs.webp" alt="Dog Tags flick 2" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="DogTags/yeahfam.webp" alt="Dog Tags yeahfam" loading="lazy" decoding="async"></figure>
-          </div>
-        `;
-      }
-
-      if (title === "Editorial Spreads") {
-        return `
-          <p><b>Editorial Spreads</b> — Editorial spreads I’ve graphic designed using Illustrator, Photoshop, my camera, personal stories, and mixed media methods.</p>
-          <div class="kicker">Spreads</div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="ContentDesign/spread1.webp" alt="Editorial spread 1" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="ContentDesign/spread2.webp" alt="Editorial spread 2" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="ContentDesign/spread3.webp" alt="Editorial spread 3" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="ContentDesign/spread4.webp" alt="Editorial spread 4" loading="lazy" decoding="async"></figure>
-          </div>
-          <div class="detailGrid">
-            <figure class="shot"><img src="ContentDesign/spread5.webp" alt="Editorial spread 5" loading="lazy" decoding="async"></figure>
-            <figure class="shot"><img src="ContentDesign/spread6.webp" alt="Editorial spread 6" loading="lazy" decoding="async"></figure>
-          </div>
-        `;
-      }
-
-      if (title === "Content Design") {
-        return `
-          <p><b>Content Design</b> — Short-form and editorial video design for personal and client platforms.</p>
-          <div class="kicker">Reels</div>
-          <div class="detailGrid">
-            <figure class="shot"><video src="CONTENTDESIGN1/Reel2.mp4" controls playsinline preload="metadata"></video></figure>
-            <figure class="shot"><video src="CONTENTDESIGN1/Reel1.mp4" controls playsinline preload="metadata"></video></figure>
-          </div>
-        `;
-      }
-
-      if (title === "Shovel Studio") {
-        return `
-          <p><b>Shovel Studio</b> — Making design and visual briefs for
-            <a href="https://www.instagram.com/shovel.studio/" target="_blank" rel="noreferrer">Shovel Studio on Instagram</a>.
-          </p>
-          <div class="kicker">Reels</div>
-          <div class="detailGrid">
-            <figure class="shot"><video src="ShovelStudio/Hardsun.mp4" controls playsinline preload="metadata"></video></figure>
-            <figure class="shot"><video src="ShovelStudio/Hanger.mp4" controls playsinline preload="metadata"></video></figure>
-          </div>
-        `;
-      }
-
-      return `
-        <p><b>${title}</b> — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <div class="kicker">Selected Screens</div>
-        <div class="detailGrid">
-          <div class="phImg">Placeholder image 01</div>
-          <div class="phImg">Placeholder image 02</div>
-          <div class="phImg">Placeholder image 03</div>
-          <div class="phImg">Placeholder image 04</div>
-        </div>
-      `;
-    };
-
-    function updateRowState(row){
-      const hasOpen = !!row.querySelector(".card.is-open");
-      row.classList.toggle("has-open", hasOpen);
-    }
-
-    function closeAnyOpen(){
-      if (!openCardEl) return;
-
-      openCardEl.classList.remove("is-open");
-      const hit = openCardEl.querySelector(".hit");
-      if (hit) hit.setAttribute("aria-expanded","false");
-
-      const back = openCardEl.querySelector(".back");
-      if (back) back.setAttribute("aria-hidden","true");
-
-      openCardEl = null;
-      rows.forEach(updateRowState);
-    }
-
-    function openCard(card){
-      if (openCardEl === card && card.classList.contains("is-open")){
-        closeAnyOpen();
+  if (e.work.length){
+    const strip = el("div", "strip");
+    let live = 0;
+    e.work.forEach((m, wi) => {
+      if (!m.href){
+        const d = el("div");
+        d.style.setProperty("--i", wi);
+        strip.appendChild(d);
         return;
       }
-
-      closeAnyOpen();
-
-      const body = card.querySelector(".detailBody");
-      if (body) {
-        body.innerHTML = contentFor(card.dataset.title);
-        hydrateMediaRatios(body);
+      live++;
+      const a = el("a", null, { href:m.href, target:"_blank", rel:"noopener", "aria-label":m.alt });
+      a.style.setProperty("--i", wi);
+      if (m.ar) a.style.setProperty("--ar", m.ar);
+      if (m.cue) a.style.setProperty("--cue", '"' + m.cue + '"');
+      if (m.src){
+        const im = el("img");
+        /* the tile takes the file's own shape — swap the jpg, the tile follows */
+        im.addEventListener("load", () => {
+          if (im.naturalWidth) a.style.setProperty("--ar", im.naturalWidth + " / " + im.naturalHeight);
+        });
+        im.src = "assets/work/" + m.src;
+        im.alt = ""; im.decoding = "async";   /* eager: ~250KB total, ready before the first click */
+        a.appendChild(im);
       }
+      strip.appendChild(a);
+    });
+    if (live){
+      strip.setAttribute("role", "group");
+      strip.setAttribute("aria-label", "Work from " + e.name);
+      strip.tabIndex = 0;
+    } else strip.setAttribute("aria-hidden", "true");
+    inner.appendChild(strip);
+  }
 
-      card.classList.add("is-open");
-
-      const hit = card.querySelector(".hit");
-      if (hit) hit.setAttribute("aria-expanded","true");
-
-      const back = card.querySelector(".back");
-      if (back) back.setAttribute("aria-hidden","false");
-
-      openCardEl = card;
-
-      const row = card.closest(".row");
-      if (row) updateRowState(row);
-
-      const isDesktop = window.matchMedia("(min-width: 981px)").matches;
-      if (isDesktop) card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+  const chips = el("ul", "chips");
+  e.links.forEach(pair => {
+    const li = el("li");
+    if (pair[1]){
+      const a = el("a", "chip", { href:pair[1] });
+      if (/^https?:/i.test(pair[1])){ a.target = "_blank"; a.rel = "noopener"; }
+      a.textContent = pair[0] + " ↗";
+      li.appendChild(a);
+    } else {
+      const sp = el("span", "chip pending");
+      sp.textContent = pair[0];
+      const note = el("span", "sr-only");
+      note.textContent = " — link coming soon";
+      sp.appendChild(note);
+      li.appendChild(sp);
     }
+    chips.appendChild(li);
+  });
+  inner.appendChild(chips);
 
-    cards.forEach(card => {
-      const hit = card.querySelector(".hit");
-      addTap(hit, (e) => {
-        e.stopPropagation();
-        if (document.body.getAttribute("data-view") === "about") return;
-        openCard(card);
+  clip.appendChild(inner);
+  panel.appendChild(clip);
+  rowsEl.append(btn, panel);
+  nodes.push(btn);
+  panels.push(panel);
+
+  /* one persistent tether per node — attributes update, nothing re-parses */
+  const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  ln.setAttribute("stroke-width", "0.7");
+  tethers.appendChild(ln);
+  lines.push(ln);
+});
+
+document.querySelectorAll('a[href^="mailto:"]').forEach(a => { a.href = CONTACT; });
+
+const ways = el("ul", "chips intro-chips");
+WAYS.forEach(pair => {
+  const li = el("li");
+  const a = el("a", "chip", { href:pair[1] });
+  if (/^https?:/i.test(pair[1])){ a.target = "_blank"; a.rel = "noopener"; }
+  a.textContent = pair[0] + " ↗";
+  li.appendChild(a);
+  ways.appendChild(li);
+});
+/** The chip row lands after the intro finishes talking. */
+function offerWays(instant){
+  introEl.appendChild(ways);
+  if (instant) ways.classList.add("on");
+  else requestAnimationFrame(() => requestAnimationFrame(() => ways.classList.add("on")));
+}
+
+/* -- 3. the typing engine --------------------------------------------------
+   Each message is one bubble: it pops in holding the three-dot ellipsis,
+   thinks for a moment, then types itself out. A token cancels everything the
+   moment the selection changes, so switching mid-sentence never leaks words
+   into the wrong panel.
+   -------------------------------------------------------------------------- */
+
+let speakToken = 0;
+let introDone  = false;   /* the intro performs once; afterwards it just is */
+const timers = [];
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+function stopSpeaking(){
+  speakToken++;
+  timers.forEach(clearTimeout);
+  timers.length = 0;
+}
+
+/** Render messages instantly (returning visitors to the intro, reduced motion). */
+function renderNow(host, msgs){
+  host.textContent = "";
+  msgs.forEach(m => {
+    const b = el("div", "bubble");
+    segs(m).forEach(sg => b.appendChild(sg.b
+      ? Object.assign(el("b"), { textContent: sg.t })
+      : document.createTextNode(sg.t)));
+    host.appendChild(b);
+    hug(b);
+  });
+}
+
+/** After a message lands, shrink the box onto its widest actual line. The
+    width never goes below any line, so the wrapping cannot change — only the
+    dead space on the right goes. */
+function hug(bub){
+  if (!bub.offsetWidth) return;
+  const rng = document.createRange();
+  rng.selectNodeContents(bub);
+  const w = rng.getBoundingClientRect().width;
+  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 33) + "px";
+}
+
+/** "a **b** c" → [{t:"a ",b:false},{t:"b",b:true},{t:" c",b:false}] */
+const segs = s => s.split("**").map((t, i) => ({ t, b: i % 2 === 1 }));
+
+/**
+ * Type `msgs` into `host`, one bubble at a time.
+ * @param {Element} host      the .msgs container
+ * @param {string[]} msgs
+ * @param {Function} [done]   runs after the last character lands
+ */
+function speak(host, msgs, done){
+  const my = ++speakToken;
+  host.textContent = "";
+
+  if (reduced.matches){                      /* no theatre, just the words */
+    renderNow(host, msgs);
+    if (done) done();
+    return;
+  }
+
+  let i = 0;
+  const nextBubble = () => {
+    if (my !== speakToken) return;
+    if (i >= msgs.length){ if (done) done(); return; }
+
+    const bub = el("div", "bubble");
+    /* the ellipsis only thinks before the opening message — follow-ups land
+       straight away, so the exchange reads quick instead of laboured */
+    if (i === 0) bub.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+    host.appendChild(bub);
+
+    later(() => {
+      if (my !== speakToken) return;
+      bub.textContent = "";
+      const parts = segs(msgs[i]).map(sg => {
+        const n = sg.b ? el("b") : document.createTextNode("");
+        bub.appendChild(n);
+        return { node: sg.b ? n : n, text: sg.t, isEl: sg.b };
       });
-    });
 
-    const closeToggles = Array.from(document.querySelectorAll(".detailTop[data-toggle='close']"));
-    closeToggles.forEach(t => {
-      addTap(t, (e) => {
-        e.stopPropagation();
-        const card = t.closest(".card");
-        if (!card) return;
-        if (openCardEl === card) closeAnyOpen();
-      });
-    });
-
-    function apply(){
-      closeAnyOpen();
-      const query = normalize(q.value);
-
-      cards.forEach(card => {
-        const cat = card.dataset.cat;
-        const title = normalize(card.dataset.title);
-        const tags = normalize(card.dataset.tags);
-
-        const filterOk = (activeFilter === "all" || activeFilter === cat);
-        const queryOk = (!query || title.includes(query) || tags.includes(query));
-
-        card.style.display = (filterOk && queryOk) ? "" : "none";
-      });
-
-      rows.forEach(row => {
-        const anyVisible = Array.from(row.querySelectorAll(".card"))
-          .some(c => c.style.display !== "none");
-        row.style.display = anyVisible ? "" : "none";
-        row.classList.remove("has-open");
-      });
-    }
-
-    chips.forEach(chip => {
-      addTap(chip, (e) => {
-        e.preventDefault();
-        chips.forEach(c => c.classList.remove("is-on"));
-        chip.classList.add("is-on");
-        activeFilter = chip.dataset.filter;
-        apply();
-      });
-    });
-
-    q.addEventListener("input", apply);
-
-    addTap(navWork, (e) => {
-      e.preventDefault();
-      document.body.setAttribute("data-view","work");
-      navWork.classList.add("is-active");
-      navAbout.classList.remove("is-active");
-    });
-
-    addTap(navAbout, (e) => {
-      e.preventDefault();
-      closeAnyOpen();
-      document.body.setAttribute("data-view","about");
-      navAbout.classList.add("is-active");
-      navWork.classList.remove("is-active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    apply();
-  </script>
-  <footer class="watermark">
-  Designed and developed by Madani, 2026
-  </footer>
-
-  <!-- Email popup -->
-  <div id="ml-popup" class="ml-overlay" hidden>
-    <div class="ml-card">
-      <button class="ml-close" id="ml-close" aria-label="Close">×</button>
-      <div class="ml-kicker">Resource</div>
-      <h2 class="ml-headline">Get a free<br>design pack</h2>
-      <p class="ml-body">
-        Drop your email and I'll send you a pack with Figma templates,
-        type specimens, layout references, and things I actually use day-to-day.
-      </p>
-      <form class="ml-form" id="ml-form" novalidate>
-        <input
-          type="email"
-          name="fields[email]"
-          class="ml-input"
-          placeholder="your@email.com"
-          required
-          autocomplete="email"
-          inputmode="email"
-        >
-        <button type="submit" class="ml-submit">Send me the pack</button>
-        <p class="ml-small">No spam. Unsubscribe whenever.</p>
-      </form>
-      <div class="ml-success" id="ml-success">
-        <p class="ml-success-big">You're in.</p>
-        <p class="ml-success-small">Check your inbox, the pack is on its way.</p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function(){
-      const KEY = "ml_popup_seen";
-      if (localStorage.getItem(KEY)) return;
-
-      const popup   = document.getElementById("ml-popup");
-      const closeBtn= document.getElementById("ml-close");
-      const form    = document.getElementById("ml-form");
-      const success = document.getElementById("ml-success");
-      const ML_URL  = "https://assets.mailerlite.com/jsonp/2332129/forms/186973118692066415/subscribe";
-
-      function dismiss(){
-        popup.hidden = true;
-        localStorage.setItem(KEY, "1");
-      }
-
-      setTimeout(() => { popup.hidden = false; }, 3500);
-
-      closeBtn.addEventListener("click", dismiss);
-      popup.addEventListener("click", (e) => { if (e.target === popup) dismiss(); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !popup.hidden) dismiss(); });
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const input = form.querySelector("input[type=email]");
-        if (!input.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-          input.style.borderColor = "#d00";
-          input.focus();
-          return;
+      let p = 0, c = 0, shown = 0;
+      const total = parts.reduce((a, sg) => a + sg.text.length, 0);
+      const t0 = performance.now();
+      const tick = () => {
+        if (my !== speakToken) return;
+        /* characters land on the animation-frame clock at CHAR_MS pace —
+           real elapsed time, so no setTimeout jitter, and slow frames catch
+           up instead of stalling */
+        const want = Math.min(total, 1 + Math.floor((performance.now() - t0) / CHAR_MS));
+        while (shown < want){
+          while (p < parts.length && c >= parts[p].text.length){ p++; c = 0; }
+          const part = parts[p];
+          c++; shown++;
+          if (part.isEl) part.node.textContent = part.text.slice(0, c);
+          else           part.node.nodeValue   = part.text.slice(0, c);
         }
-        input.style.borderColor = "";
-        const data = new FormData();
-        data.append("fields[email]", input.value);
-        data.append("ml-submit", "1");
-        fetch(ML_URL, { method: "POST", mode: "no-cors", body: data });
-        form.style.display = "none";
-        success.style.display = "block";
-        setTimeout(dismiss, 2000);
-      });
-    })();
-  </script>
+        if (shown >= total){ hug(bub); i++; later(nextBubble, GAP_MS); return; }
+        requestAnimationFrame(tick);
+      };
+      tick();
+    }, i === 0 ? DOTS_MS : 0);
+  };
+  nextBubble();
+}
+
+/* -- 4. state --------------------------------------------------------------- */
+
+let focused   = -1;
+let lastFocus = 0;
+let focusT    = 0;
+let orbiting  = false;
+let looping   = false;
+let revealed  = false;
+let theta     = 0;
+let last      = 0;
+let drag      = null;
+let hovered   = -1;
+let flashT0   = -1e9;   /* when the tether cartwheel last fired */
+let focusAt   = -1e9;   /* when the selection last changed (tap-guard) */
+let phoneListBottom = 0;   /* where the phone index column ends */
+let phonePanelTop   = 0;   /* where the thread opens: right under its row */
+let fitCache  = null;
+
+/* per node: position, drag offset, measured half-sizes */
+const P = ENTRIES.map(() => ({ x:0, y:0, ox:0, oy:0, seeded:false, w:120, h:44 }));
+
+/* measured heights of the floating blocks (intro + panels), kept fresh by a
+   ResizeObserver so the frame loop never has to force layout */
+const blockH = { intro: BLOCK_H };
+const ro = new ResizeObserver(entries => entries.forEach(en => {
+  blockH[en.target.id || "intro"] = en.contentRect.height;
+}));
+ro.observe(introEl);
+panels.forEach(p => ro.observe(p));
+
+function measureNodes(){
+  nodes.forEach((btn, i) => {
+    P[i].w = btn.offsetWidth;
+    P[i].h = btn.offsetHeight;
+  });
+}
+
+/* -- 5. opening and closing ------------------------------------------------- */
+
+function setFocus(i, opts){
+  opts = opts || {};
+  if (i === focused) return;
+
+  const prev = focused;
+  focused = i;
+  focusAt = performance.now();
+  if (i >= 0) lastFocus = i;
+  stopSpeaking();
+  fitCache = null;
+
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    nodes[k].setAttribute("aria-expanded", String(on));
+    clearTimeout(p._hide);
+    if (on){
+      p.hidden = false;
+      p.classList.remove("done", "bye");
+      requestAnimationFrame(() => p.classList.add("open"));
+      speak(p.querySelector(".msgs"), ENTRIES[k].say, () => p.classList.add("done"));
+    } else if (!p.hidden){
+      p.classList.remove("done");
+      if (orbiting){
+        p.classList.add("bye");
+        p._hide = setTimeout(() => {
+          p.hidden = true;
+          p.classList.remove("open", "bye");
+        }, reduced.matches ? 20 : 240);
+      } else {
+        p.classList.remove("open");
+        p._hide = setTimeout(() => {
+          if (!p.classList.contains("open")) p.hidden = true;
+        }, reduced.matches ? 30 : 460);
+      }
+    }
+  });
+
+  if (focused < 0){
+    introEl.hidden = false;
+    /* ride back up with the blend, so the un-focus tween happens on screen */
+    if (orbiting) window.scrollTo({ top:0, behavior:reduced.matches ? "auto" : "smooth" });
+    if (introDone){ renderNow(introEl, INTRO); offerWays(true); }
+    else speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+    if (opts.restore && prev >= 0) nodes[prev].focus();
+  } else {
+    introEl.hidden = orbiting;
+    if (!orbiting) introEl.hidden = false;
+  }
+
+  stage.classList.toggle("open", focused >= 0);
+  rowsEl.classList.toggle("busy", focused >= 0);
+
+  if (orbiting) startLoop();
+  else if (focused >= 0 && !opts.silentScroll){
+    const y = nodes[focused].getBoundingClientRect().top + window.scrollY - 16;
+    window.scrollTo({ top:Math.max(0, y), behavior: reduced.matches ? "auto" : "smooth" });
+  }
+}
+
+/* -- 6. interaction ---------------------------------------------------------- */
+
+nodes.forEach((btn, i) => {
+  btn.addEventListener("pointerdown", ev => {
+    if (!orbiting || ev.button > 0) return;
+    drag = { i, id:ev.pointerId, sx:ev.clientX, sy:ev.clientY, moved:0 };
+    try { btn.setPointerCapture(ev.pointerId); } catch (_){}
+  });
+  btn.addEventListener("pointermove", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const dx = ev.clientX - drag.sx, dy = ev.clientY - drag.sy;
+    drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+    P[i].ox = dx * 0.42;                     /* follows at 42% of the pull */
+    P[i].oy = dy * 0.42;
+  });
+  btn.addEventListener("pointerup", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const tapped = drag.moved < 6;           /* under 6px still counts as a click */
+    drag = null;
+    if (tapped) setFocus(focused === i ? -1 : i);
+  });
+  btn.addEventListener("pointercancel", ev => {
+    if (drag && drag.id === ev.pointerId) drag = null;
+  });
+  btn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    if (orbiting && ev.detail !== 0) return; /* pointerup already handled it */
+    setFocus(focused === i ? -1 : i);
+  });
+  btn.addEventListener("mouseenter", () => { if (canHover.matches) hovered = i; });
+  btn.addEventListener("mouseleave", () => { if (hovered === i) hovered = -1; });
+  btn.addEventListener("dragstart", ev => ev.preventDefault());
+});
+
+document.addEventListener("click", ev => {
+  if (focused < 0 || !orbiting) return;
+  if (ev.target.closest(".node, .panel, .skip")) return;
+  setFocus(-1);
+});
+/* the browser fires a click just after the pointerup that switched focus;
+   by then the panel sits under the finger — swallow link hits in that gap */
+rowsEl.addEventListener("click", ev => {
+  if (performance.now() - focusAt < 400 && ev.target.closest(".strip a, .chips a")){
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+}, true);
+
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && focused >= 0){
+    ev.preventDefault();
+    setFocus(-1, { restore:true });
+  }
+});
+
+/* -- 7. geometry -------------------------------------------------------------
+   The resting ring is sized so the pills clear the intro block sitting dead
+   centre; the focused dome parks the other five over the open project.
+   ---------------------------------------------------------------------------- */
+
+const CLEAR = 16;
+
+function fit(W, H){
+  if (fitCache && fitCache.W === W && fitCache.H === H) return fitCache;
+  const availW = Math.max(200, W - 56);
+  const availH = Math.max(200, H - 76);   /* bob + shadow breathing room */
+  const widest = P.reduce((m, p) => Math.max(m, p.w), 0);
+  const nodeH  = P[0].h || 44;
+
+  if (PHONE.matches){
+    const k   = 0.60;    /* six of them share one small screen — stay light */
+    const rx2 = W * 0.60;                       /* generous; slots pin to the screen */
+    const ry2 = Math.max(170, Math.min((availH - nodeH * k) / 2 - 6, 300));
+    fitCache = { W, H, rx:rx2, ry:ry2, k };
+    return fitCache;
+  }
+
+  /* in-between widths: pill scale is a continuous function of the ring's
+     room, so resizing glides instead of jumping. The ring must stay outside
+     A (half block + half pill). */
+  let rx  = Math.max(150, Math.min((availW - widest * REST_K) / 2, 470));
+  const k = Math.min(REST_K, Math.max(0.62, (2 * (rx - CLEAR) - BLOCK_W) / widest));
+  rx = Math.max(150, Math.min((availW - widest * k) / 2, 470));
+  const A = (BLOCK_W + widest * k) / 2 + CLEAR;
+  const cap = availW * 0.36;
+  if (cap >= A + 16) rx = Math.min(rx, cap);   /* keep the huddle look only when safe */
+
+  let ry = Math.max(110, Math.min((availH - nodeH * k) / 2, rx));
+  const B = (BLOCK_H + nodeH * k) / 2 + CLEAR;
+  if (rx > A){
+    const need = Math.sqrt((B * B) / (1 - (A * A) / (rx * rx)));
+    ry = Math.max(ry, Math.min(need, (availH - nodeH * k) / 2));
+  }
+  fitCache = { W, H, rx, ry, k };
+  return fitCache;
+}
+
+/* phone slots as [edge, yFactor]: edge -1 pins left, +1 pins right, 0 centres.
+   Left and right lanes sit at different heights, so even the two widest pills
+   can never meet in the middle of a shared line. */
+const SLOTS = [
+  [-1, -0.74], [0, -1], [1, -0.46],    /* 01 02 03 across the top */
+  [ 1,  0.46], [0,  1], [-1,  0.74]    /* 04 05 06 back along the bottom */
+];
+
+function restRing(W, H, rx, ry, k){
+  const cx = W / 2, cy = H / 2;
+  if (PHONE.matches){
+    /* the circle, read in order: 01 top-left, across the top, down the right,
+       back along the bottom. Nothing spins on a phone — the slots hold still
+       and the pills just breathe. Side slots pin inside the screen edge. */
+    return { cx, cy, list:ENTRIES.map((_, i) => {
+      const sd = SLOTS[i][0], yf = SLOTS[i][1];
+      const w  = P[i].w * k;
+      const x  = sd < 0 ? 8 + w / 2 : sd > 0 ? W - 8 - w / 2 : cx;
+      return { x, y:cy + yf * ry, k };
+    }) };
+  }
+  const list = ENTRIES.map((_, i) => {
+    const a = theta + (i / ENTRIES.length) * Math.PI * 2;
+    return { x:cx + Math.cos(a) * rx, y:cy + Math.sin(a) * ry, k };
+  });
+  return { cx, cy, list };
+}
+
+/* the desktop dome, folded for a phone: a fixed index. All six pills stand
+   in numerical order on the thread's left rail — nothing moves and nothing
+   reorders. The selected row is simply the big one; choose another and the
+   emphasis glides down the list. Tap the selected row to close. */
+function phoneFocusRing(W, H){
+  const list = new Array(ENTRIES.length);
+  const bh = blockH["panel-" + ENTRIES[lastFocus].id] || 0;
+  let y = Math.max(64, H * 0.10);
+  for (let i = 0; i < 6; i++){
+    const sel = i === lastFocus;
+    const kk  = sel ? 0.78 : 0.48;
+    const h   = P[i].h * kk;
+    list[i] = { x:16 + (P[i].w * kk) / 2, y:y + h / 2, k:kk };
+    y += h + (sel ? 12 : 9);
+    /* the thread opens accordion-style, right where its button is; the rows
+       after it step aside and glide back when it closes */
+    if (sel){ phonePanelTop = y + 4; y += bh + 22; }
+  }
+  phoneListBottom = y;
+  return { cx:list[lastFocus].x, cy:list[lastFocus].y, list };
+}
+
+
+function focusRing(W, H){
+  const cx = W / 2;
+  const fi = lastFocus;
+  const others = ENTRIES.map((_, i) => i).filter(i => i !== fi);
+  const n = others.length;
+
+  const cy   = clamp(H * 0.30, 165, 260);
+  const nat  = others.map(i => P[i].w);
+  const sum  = nat.reduce((a, b) => a + b, 0);
+  const room = Math.max(240, Math.min(W - 64, W * 0.72));
+  const k    = clamp((room - 16 * (n - 1)) / sum, 0.44, 0.66);
+  const gap  = Math.max(16, (room - sum * k) / (n - 1));
+  const span = sum * k + gap * (n - 1);
+
+  const rx = Math.max(1, span / 2) / 0.78;
+  const ry = clamp(cy * 0.42, 64, 110);
+
+  const list = new Array(ENTRIES.length);
+  let run = (W - span) / 2;
+  others.forEach((i, idx) => {
+    const w = nat[idx] * k;
+    const x = run + w / 2;
+    const u = clamp((x - cx) / rx, -1, 1);
+    list[i] = { x, y:cy - ry * Math.sqrt(1 - u * u), k };
+    run += w + gap;
+  });
+  list[fi] = { x:cx, y:cy, k:1 };
+  return { cx, cy, list };
+}
+
+function targets(W, H, rx, ry, k){
+  const rest = restRing(W, H, rx, ry, k);
+  if (focusT <= 0.002){
+    return { cx:rest.cx, cy:rest.cy,
+             list:rest.list.map(p => ({ x:p.x, y:p.y, k:p.k, dim:false })) };
+  }
+  const foc = PHONE.matches ? phoneFocusRing(W, H) : focusRing(W, H);
+  const t = focusT;
+  const list = ENTRIES.map((_, i) => ({
+    x:   lerp(rest.list[i].x, foc.list[i].x, t),
+    y:   lerp(rest.list[i].y, foc.list[i].y, t),
+    k:   lerp(rest.list[i].k, foc.list[i].k, t),
+    dim: i !== lastFocus
+  }));
+  return { cx:lerp(rest.cx, foc.cx, t), cy:lerp(rest.cy, foc.cy, t), list };
+}
+
+/* -- 8. the loop -------------------------------------------------------------- */
+
+function frame(now, once){
+  if (!orbiting){ looping = false; return; }
+
+  const dt = Math.min(64, now - (last || now));
+  last = now;
+
+  const W = stage.clientWidth;
+  const H = Math.max(360, vh() - stage.offsetTop);   /* the ring owns the viewport */
+  const open = focused >= 0;
+
+  /* one revolution a minute at rest; a crawl while a project is open */
+  if (!reduced.matches) theta += (dt / 60000) * Math.PI * 2 * (open ? 0.25 : 1);
+
+  const want = open ? 1 : 0;
+  focusT = once || reduced.matches ? want : focusT + (want - focusT) * 0.085;
+  if (Math.abs(want - focusT) < 0.002) focusT = want;
+
+  const f = fit(W, H);
+  const t = targets(W, H, f.rx, f.ry, f.k);
+  const ease = once ? 1 : 0.115;
+
+  nodes.forEach((btn, i) => {
+    const g = t.list[i], p = P[i];
+
+    const calm = PHONE.matches ? 1 - focusT : 1;   /* focused = perfectly still */
+    const bob = reduced.matches ? 0
+      : Math.sin(now / 2400 + i * 1.9) * (PHONE.matches ? 5 : 1.5) * calm;
+    const sway = (PHONE.matches && !reduced.matches)
+      ? Math.cos(now / 3100 + i * 2.1) * 3 * calm : 0;
+    const tx = g.x - (p.w * g.k) / 2 + sway;
+    const ty = g.y - (p.h * g.k) / 2 + bob;
+
+    if (!p.seeded){ p.x = tx; p.y = ty; p.kc = g.k; p.seeded = true; }
+    if (p.kc === undefined) p.kc = g.k;
+    p.kc += (g.k - p.kc) * (once ? 1 : 0.16);   /* size glides, never jumps */
+    p.x += (tx - p.x) * ease;
+    p.y += (ty - p.y) * ease;
+
+    if (!drag || drag.i !== i){ p.ox *= 0.88; p.oy *= 0.88; }
+    if (Math.abs(p.ox) < 0.05) p.ox = 0;
+    if (Math.abs(p.oy) < 0.05) p.oy = 0;
+
+    const x = p.x + p.ox, y = p.y + p.oy;
+    btn.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)"
+                        + (Math.abs(p.kc - 1) > 0.002 ? " scale(" + p.kc.toFixed(4) + ")" : "");
+    btn.classList.toggle("dim", g.dim);
+    /* parked pills: phone keeps them brighter (they are buttons, not décor);
+       desktop lifts the one under the cursor to meet its coloured tether */
+    const dimF = PHONE.matches ? 0.35 : (hovered === i ? 0.22 : 0.5);
+    if (revealed) btn.style.opacity =
+      (1 - dimF * focusT * (g.dim ? 1 : 0)).toFixed(3);
+
+    /* tether: persistent <line>, clipped at the pill's edge so it never shows
+       through a semi-transparent pill */
+    const ln = lines[i];
+    if (i === focused){ ln.setAttribute("stroke", "none"); return; }
+    const mx = x + (p.w * p.kc) / 2, my = y + (p.h * p.kc) / 2;
+    const dx = mx - t.cx, dy = my - t.cy;
+    const u = Math.min(1, (p.w * g.k) / 2 / Math.max(1e-6, Math.abs(dx)),
+                          (p.h * g.k) / 2 / Math.max(1e-6, Math.abs(dy)));
+    /* stop a few px past the edge, under the pill, so the join never shows */
+    const uu = Math.max(0, u - 6 / Math.max(1, Math.hypot(dx, dy)));
+    const taut = Math.hypot(p.ox, p.oy) > 4;
+
+    ln.setAttribute("x1", t.cx.toFixed(1)); ln.setAttribute("y1", t.cy.toFixed(1));
+    ln.setAttribute("x2", (mx - dx * uu).toFixed(1)); ln.setAttribute("y2", (my - dy * uu).toFixed(1));
+    const ft = now - flashT0 - i * 90;      /* the cartwheel sweeps i by i */
+    if (ft > 0 && ft < 420){
+      ln.setAttribute("stroke", ENTRIES[i].sq);
+      ln.setAttribute("stroke-width", "1.4");
+    } else {
+      ln.setAttribute("stroke", taut ? "#111111"
+                      : hovered === i ? ENTRIES[i].sq
+                      : g.dim ? "#CFCFC8" : PHONE.matches ? "#C4C3BC" : "#8E8E87");
+      ln.setAttribute("stroke-width", taut ? "1.3" : hovered === i ? "1.1" : "0.7");
+    }
+    if (g.dim) ln.setAttribute("stroke-dasharray", "2 4");
+    else ln.removeAttribute("stroke-dasharray");
+  });
+
+  /* the speech block slides between ring-centre and under-the-pill */
+  const block = open ? panels[focused] : introEl;
+  const bh = open ? (blockH[block.id] || 0) : Math.max(blockH.intro, 96);
+  const restTop  = t.cy - bh / 2;
+  const focusTop = PHONE.matches
+    ? phonePanelTop                      /* right under the selected row */
+    : t.cy + Math.max(P[lastFocus].h, 44) / 2 + 16;
+  const top = Math.round(lerp(restTop, focusTop, focusT));
+  const bx  = open ? (PHONE.matches ? 16 : t.cx - P[lastFocus].w / 2)
+                   : t.cx - block.offsetWidth / 2;  /* intro stays centred on the ring */
+  block.style.transform =
+    "translate3d(" + Math.round(bx) + "px," + top + "px,0)";
+
+  /* the index needs no tethers — they fade out with the blend on phones */
+  tethers.style.opacity = PHONE.matches ? Math.max(0, 1 - focusT * 1.4).toFixed(2) : "";
+  const needH = PHONE.matches ? phoneListBottom + 32 : top + bh + 28;
+  stage.style.height = Math.max(H, (open || focusT > 0.05) ? needH : 0) + "px";
+
+  if (once) return;
+  if (looping) requestAnimationFrame(frame);
+}
+
+function startLoop(){
+  if (looping || !orbiting) return;
+  looping = true;
+  last = 0;
+  requestAnimationFrame(frame);
+}
+
+/* -- 9. layout mode ------------------------------------------------------------ */
+
+function applyMode(){
+  const next = wide.matches;
+  if (next === orbiting && root.classList.contains(next ? "orbit" : "list")) return;
+
+  orbiting = next;
+  root.classList.toggle("orbit", orbiting);
+  root.classList.toggle("list", !orbiting);
+
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    p.hidden = !on;
+    p.classList.toggle("open", on);
+  });
+  introEl.hidden = orbiting && focused >= 0;
+  rowsEl.classList.toggle("busy", focused >= 0);
+
+  nodes.forEach(n => {
+    n.classList.toggle("in", !orbiting && revealed);
+    if (orbiting) n.style.opacity = revealed ? "" : "0";
+    else { n.style.transform = ""; n.style.opacity = ""; }
+  });
+  if (!orbiting){
+    introEl.style.transform = "";
+    panels.forEach(p => { p.style.transform = ""; });
+    stage.style.height = "";
+  }
+
+  P.forEach(p => { p.seeded = false; p.ox = p.oy = 0; });
+  measureNodes();
+  fitCache = null;
+  if (orbiting){ frame(performance.now(), true); startLoop(); }
+}
+
+if (wide.addEventListener) wide.addEventListener("change", applyMode);
+else wide.addListener(applyMode);
+
+let resizeJob;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeJob);
+  resizeJob = setTimeout(() => {
+    measureNodes();
+    fitCache = null;
+    if (orbiting) frame(performance.now(), true);
+  }, 120);
+}, { passive:true });
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) looping = false;
+  else if (orbiting) startLoop();
+});
+
+/* -- 10. entrance --------------------------------------------------------------- */
+
+applyMode();
+
+/* The pills are <img>s: until their SVGs decode they measure 0 tall, which
+   ties tethers to their top edge, parks panels 25px into the label, and
+   drops every pill half its height below its slot. Re-measure the moment
+   the images are real. */
+Promise.all(Array.prototype.map.call(document.images, im =>
+  im.decode ? im.decode().catch(() => {}) : Promise.resolve()
+)).then(() => { measureNodes(); fitCache = null; });
+window.addEventListener("load", () => { measureNodes(); fitCache = null; });
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  const step = reduced.matches ? 0 : 120;
+  nodes.forEach((n, k) => setTimeout(() => {
+    if (orbiting) n.style.opacity = "";
+    n.classList.add("shown", "in");
+  }, k * step));
+  setTimeout(() => {
+    tethers.classList.add("in");
+    /* the switch-on beat: tethers flash their project colours once, in a
+       cartwheel around the ring */
+    if (!reduced.matches) flashT0 = performance.now() + 500;
+    nodes.forEach(n => n.classList.add("lit"));
+    revealed = true;               /* from here the loop owns pill opacity */
+    speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+  }, nodes.length * step + (reduced.matches ? 0 : 240));
+}));
+</script>
+<script data-goatcounter="https://madani.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
