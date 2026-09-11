@@ -200,8 +200,15 @@ html[data-dir="back"] .step.bye{transform:translateY(30px)}
   letter-spacing:-0.02em;line-height:1.15;
 }
 .done p{margin:14px 0 0;font-size:17px;line-height:1.5;color:var(--txt);max-width:44ch;letter-spacing:-0.01em}
-.done .soon{margin-top:26px;font:400 12px/1 var(--mono);color:var(--ink);
-            background:var(--mark);display:inline-block;padding:6px 9px}
+.done .return{
+  margin-top:26px;display:inline-block;
+  font:400 12px/1 var(--mono);color:var(--ink);
+  background:var(--mark);padding:12px 16px;
+  text-decoration:none;
+  transition:transform .18s var(--tween);
+}
+@media (hover:hover){ .done .return:hover{transform:translateY(-1.5px);text-decoration:underline} }
+.done .return:active{transform:scale(.98)}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
@@ -393,7 +400,7 @@ html[data-dir="back"] .step.bye{transform:translateY(30px)}
     <div class="inner">
       <h2>Got it.</h2>
       <p id="done-copy"></p>
-      <p class="soon">talk soon</p>
+      <a class="return" href="../">back to home ↗</a>
     </div>
   </section>
 
@@ -643,8 +650,8 @@ function send(){
 
   const done = ok => {
     document.getElementById("done-copy").textContent = ok
-      ? "I’ll look at everything properly and come back to you at " + data.get("email") + " within a couple of days."
-      : "Your mail app should have opened with everything filled in. Just press send there and it reaches me.";
+      ? "I’ll look at everything properly and come back to you at " + data.get("email") + " within a couple of days. Talk soon."
+      : "Your mail app should have opened with everything filled in. Just press send there and it reaches me. Talk soon.";
     show(DONE, "fwd");
     setTimeout(celebrate, 480);   /* lands just as "Got it." settles */
   };
