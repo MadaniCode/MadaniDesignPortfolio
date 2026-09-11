@@ -1073,6 +1073,15 @@ function frame(now, once){
   const dt = Math.min(64, now - (last || now));
   last = now;
 
+  /* frame-rate-normalized easing: each factor below was tuned at 60fps, so
+     raise its per-frame keep-rate to dt/16.7 — the same real-time glide
+     whether the browser renders at 30, 60 or 120fps */
+  const fN = dt / 16.667;
+  const eFocus  = 1 - Math.pow(0.915, fN);   /* was .085/frame */
+  const ePos    = 1 - Math.pow(0.885, fN);   /* was .115/frame */
+  const eSize   = 1 - Math.pow(0.84,  fN);   /* was .16/frame  */
+  const eSpring = Math.pow(0.88, fN);        /* drag release decay */
+
   const W = stage.clientWidth;
   const H = Math.max(360, vh() - stage.offsetTop);   /* the ring owns the viewport */
   const open = focused >= 0;
@@ -1081,12 +1090,12 @@ function frame(now, once){
   if (!reduced.matches) theta += (dt / 60000) * Math.PI * 2 * (open ? 0.25 : 1);
 
   const want = open ? 1 : 0;
-  focusT = once || reduced.matches ? want : focusT + (want - focusT) * 0.085;
+  focusT = once || reduced.matches ? want : focusT + (want - focusT) * eFocus;
   if (Math.abs(want - focusT) < 0.002) focusT = want;
 
   const f = fit(W, H);
   const t = targets(W, H, f.rx, f.ry, f.k);
-  const ease = once ? 1 : 0.115;
+  const ease = once ? 1 : ePos;
 
   nodes.forEach((btn, i) => {
     const g = t.list[i], p = P[i];
@@ -1101,11 +1110,11 @@ function frame(now, once){
 
     if (!p.seeded){ p.x = tx; p.y = ty; p.kc = g.k; p.seeded = true; }
     if (p.kc === undefined) p.kc = g.k;
-    p.kc += (g.k - p.kc) * (once ? 1 : 0.16);   /* size glides, never jumps */
+    p.kc += (g.k - p.kc) * (once ? 1 : eSize);   /* size glides, never jumps */
     p.x += (tx - p.x) * ease;
     p.y += (ty - p.y) * ease;
 
-    if (!drag || drag.i !== i){ p.ox *= 0.88; p.oy *= 0.88; }
+    if (!drag || drag.i !== i){ p.ox *= eSpring; p.oy *= eSpring; }
     if (Math.abs(p.ox) < 0.05) p.ox = 0;
     if (Math.abs(p.oy) < 0.05) p.oy = 0;
 
