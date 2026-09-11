@@ -184,11 +184,11 @@ img{display:block;max-width:100%}
 .panel-in{display:flex;flex-direction:column;align-items:flex-start;gap:18px}
 
 /* the work waits for the talking to finish, then rises in tile by tile */
-.panel .chips{
+.panel .chips,.panel .cta{
   opacity:0;transform:translateY(6px);
   transition:opacity .32s ease,transform .4s cubic-bezier(.22,1,.36,1);
 }
-.panel.done .chips{opacity:1;transform:none}
+.panel.done .chips,.panel.done .cta{opacity:1;transform:none}
 .panel .strip > *{
   opacity:0;transform:translateY(10px);
   transition:opacity .3s ease,transform .44s cubic-bezier(.22,1,.36,1);
@@ -198,6 +198,7 @@ img{display:block;max-width:100%}
 /* until the talking is done these exist for layout only — a tap that opened
    the panel must never fall through onto them */
 .panel:not(.done) .strip a,
+.panel:not(.done) .cta,
 .panel:not(.done) .chips a{pointer-events:none}
 
 .strip{
@@ -238,6 +239,25 @@ img{display:block;max-width:100%}
   .strip a:hover{transform:translateY(-2px)}
   .strip a:hover img{transform:scale(1.04)}
 }
+
+/* the visit card: one line in the thread's own language, so the ask
+   carries the same weight as the work */
+.cta{
+  display:inline-block;
+  background:#FFFFFF;border:1px solid var(--rule);border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:12px 16px;
+  font-size:15px;font-weight:600;letter-spacing:-0.01em;
+  text-decoration:none;color:var(--ink);
+  transition:transform .18s cubic-bezier(.22,1,.36,1),
+             opacity .32s ease;
+}
+@media (hover:hover){
+  .panel.done .cta:hover{transform:translateY(-2px);text-decoration:underline}
+}
+.cta:active{transform:scale(.99)}
+/* once revealed, the card lifts at chip speed rather than entrance speed */
+.panel.done .cta{transition:transform .18s cubic-bezier(.22,1,.36,1)}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
 .chip{
@@ -362,7 +382,7 @@ a.chip:hover{text-decoration:underline}
 /* -- 0. the bits you'll actually want to edit ------------------------------ */
 
 const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
-const BUILD   = "index-20";
+const BUILD   = "index-21";
 console.log("madani — build", BUILD);
 
 /* Messages type themselves out. **bold** marks the black emphasis words. */
@@ -423,11 +443,13 @@ const ENTRIES = [
     say:["I go inside studios and document how they think.",
          "Visiting studios around the world, **starting now**."],
     work:[],
-    links:[["get in touch", CONTACT]] },
+    cta:{ title:"Request a studio visit", href:"visit/" },
+    links:[] },
 
   { id:"06", name:"Collaborations", cw:331, sq:"#A9F6D6",
     say:["Sponsored videos for people **I love** working with."],
     work:[
+      { href:"https://www.instagram.com/reel/DdG9j04s-Y8/", alt:"A video for Readymag", src:"collab-readymag.jpg" },
       { href:"https://www.instagram.com/p/Daz9pklBIND/", alt:"A video for the Barbican Centre", src:"collab-barbican.jpg" },
       { href:"https://www.instagram.com/p/DXbnZZvh3IM/", alt:"Parc Studio collaboration on Instagram", src:"collab-parc.jpg" },
       { href:"https://www.instagram.com/p/DXZvL4-jJhJ/", alt:"Explorers Club collaboration on Instagram", src:"collab-explorers.jpg" },
@@ -438,7 +460,8 @@ const ENTRIES = [
            ["parc studio", "https://www.instagram.com/p/DXbnZZvh3IM/"],
            ["explorers club", "https://www.instagram.com/p/DXZvL4-jJhJ/"],
            ["pilot magazine", "https://www.instagram.com/p/DR424WtjI8K/"],
-           ["garden3d", "https://www.instagram.com/p/DWWkvmYkdTq/"], ["readymag", null]] }
+           ["garden3d", "https://www.instagram.com/p/DWWkvmYkdTq/"],
+           ["readymag", "https://www.instagram.com/reel/DdG9j04s-Y8/"]] }
 ];
 
 /* typing feel */
@@ -545,6 +568,12 @@ ENTRIES.forEach(e => {
     inner.appendChild(strip);
   }
 
+  if (e.cta){
+    const a = el("a", "cta", { href:e.cta.href });
+    a.textContent = e.cta.title + " ↗";
+    inner.appendChild(a);
+  }
+
   const chips = el("ul", "chips");
   e.links.forEach(pair => {
     const li = el("li");
@@ -563,7 +592,7 @@ ENTRIES.forEach(e => {
     }
     chips.appendChild(li);
   });
-  inner.appendChild(chips);
+  if (e.links.length) inner.appendChild(chips);
 
   clip.appendChild(inner);
   panel.appendChild(clip);
@@ -1226,7 +1255,10 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
     if (!reduced.matches) flashT0 = performance.now() + 500;
     nodes.forEach(n => n.classList.add("lit"));
     revealed = true;               /* from here the loop owns pill opacity */
-    speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+    /* a fast click can have a panel talking before this timer lands — the
+       intro must not steal its speech mid-thread, so it renders quietly */
+    if (focused < 0) speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+    else { renderNow(introEl, INTRO); introDone = true; offerWays(true); }
   }, nodes.length * step + (reduced.matches ? 0 : 240));
 }));
 </script>
