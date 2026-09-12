@@ -236,14 +236,14 @@ html[data-dir="back"] .step.bye{transform:translateY(30px)}
       <div class="notes">
         <section>
           <h2>What happens</h2>
-          <p>I spend at least half a day with you. We talk, I film the space,
+          <p>I spend at least half a day with you. We talk, we film the space,
           the work, and whatever’s on the desks. Then I cut it into a short
           film for your channels and mine.</p>
         </section>
         <section>
           <h2>What you need to give me</h2>
           <p>Half a day minimum, and someone who can talk about the work. That’s
-          it. You don’t need to tidy up.</p>
+          it. You don’t need to tidy up :)</p>
         </section>
       </div>
       <div class="row">
@@ -656,17 +656,22 @@ function send(){
     setTimeout(celebrate, 480);   /* lands just as "Got it." settles */
   };
 
-  fetch(ENDPOINT, { method:"POST", body:data, headers:{ Accept:"application/json" } })
-    .then(r => { if (!r.ok) throw 0; return r.json(); })
-    .then(() => done(true))
+  /* fire and move on: FormSubmit delivers even on its slow days, and
+     keepalive lets the request finish in the background after they leave.
+     "Got it." shows immediately; only an outright network failure pulls the
+     mail-app parachute so the request is never lost. */
+  fetch(ENDPOINT, { method:"POST", body:data,
+                    headers:{ Accept:"application/json" }, keepalive:true })
+    .then(r => { if (!r.ok) throw 0; })
     .catch(() => {
-      /* relay unreachable: the request rides email instead of vanishing */
       const lines = QUESTIONS.map(q => q[1] + "\n" + (data.get(q[0]) || "-")).join("\n\n");
       location.href = "mailto:" + CONTACT
         + "?subject=" + encodeURIComponent("Studio Visit request: " + (data.get("studio") || ""))
         + "&body=" + encodeURIComponent(lines);
-      done(false);
+      document.getElementById("done-copy").textContent =
+        "Your mail app should have opened with everything filled in. Just press send there and it reaches me. Talk soon.";
     });
+  done(true);
 }
 
 form.addEventListener("submit", ev => { ev.preventDefault(); next(); });
