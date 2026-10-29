@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>00 parts — Madani</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="parts/Tooltip.svg" type="image/svg+xml">
+
+<style>
+/* ==========================================================================
+   Before any code. The brief and a folder of Figma exports, laid out on the
+   mat exactly as they arrived on 16 August: pills still named by frame
+   number, one sheet of speech per project, one favicon.
+   ========================================================================== */
+:root{
+  --ink:#111111;
+  --txt:#3F3F42;
+  --soft:#6E6E68;
+  --paper:#FFFFFF;
+  --mark:#FFFF00;
+  --rule:#E6E6E1;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --pad-x:clamp(20px, 5vw, 48px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+body{
+  margin:0;color:var(--ink);
+  background:radial-gradient(rgba(17,17,17,.055) 1px, transparent 1.1px) 0 0 / 22px 22px,
+             var(--paper);
+  font-family:var(--sans);font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;min-height:100svh;
+}
+.page{max-width:1240px;margin:0 auto;padding:clamp(28px,6vh,64px) var(--pad-x) 96px}
+
+.k{display:inline-block;font:400 11px/1 var(--mono);color:var(--ink);background:var(--mark);padding:5px 8px}
+h1{margin:18px 0 0;font-size:clamp(24px,4.6vw,32px);font-weight:600;letter-spacing:-0.02em;line-height:1.2}
+
+/* the brief, quoted as it was written */
+.brief{
+  margin:22px 0 0;max-width:62ch;
+  padding:16px 18px;border-left:1px solid var(--rule);
+  font-size:14px;line-height:1.55;color:var(--txt);
+}
+.brief b{color:var(--ink);font-weight:600}
+.brief p{margin:0 0 10px}
+.brief p:last-child{margin:0}
+.brief .file{font:400 11px/1 var(--mono);color:var(--soft);display:block;margin-bottom:10px}
+
+/* the mat */
+h2{margin:44px 0 14px;font:400 11px/1 var(--mono);color:var(--soft);text-transform:lowercase}
+.mat{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.part{display:flex;flex-direction:column;gap:6px}
+.part img{display:block;height:auto;max-width:100%}
+.part .name{font:400 11px/1 var(--mono);color:var(--soft)}
+.pills .part img{width:min(300px, 80vw)}
+.sheets .part img{width:min(420px, 100%)}
+.icon .part img{width:44px}
+</style>
+</head>
+
+<body>
+<main class="page">
+  <p class="k">00 · parts</p>
+  <h1>A brief and a folder of exports.</h1>
+
+  <blockquote class="brief">
+    <span class="file">orbit-brief.md</span>
+    <p>The site is a <b>constellation</b>. Six project nodes orbit slowly around
+    a centre point. Clicking a node pulls it to the centre, the rest park in a
+    flat arc at the top, and speech bubbles appear underneath saying what that
+    project is, followed by a strip of work thumbnails and link chips.</p>
+    <p>It is a <b>conversation, not a grid</b>. The bubbles are Madani speaking
+    in first person. Hierarchy lives in the writing, not in type size. Every
+    node is the same size deliberately.</p>
+  </blockquote>
+
+  <h2>Icons/</h2>
+  <div class="mat pills">
+    <figure class="part"><img src="parts/Frame 608.svg" alt=""><figcaption class="name">Frame 608.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Frame 609.svg" alt=""><figcaption class="name">Frame 609.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Frame 610.svg" alt=""><figcaption class="name">Frame 610.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Frame 611.svg" alt=""><figcaption class="name">Frame 611.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Frame 612.svg" alt=""><figcaption class="name">Frame 612.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Frame 613.svg" alt=""><figcaption class="name">Frame 613.svg</figcaption></figure>
+  </div>
+  <div class="mat icon" style="margin-top:22px">
+    <figure class="part"><img src="parts/Tooltip.svg" alt=""><figcaption class="name">Tooltip.svg</figcaption></figure>
+  </div>
+
+  <h2>Text Boxes/</h2>
+  <div class="mat sheets">
+    <figure class="part"><img src="parts/Intro.svg" alt=""><figcaption class="name">Intro.svg</figcaption></figure>
+    <figure class="part"><img src="parts/@madanivision.svg" alt=""><figcaption class="name">@madanivision.svg</figcaption></figure>
+    <figure class="part"><img src="parts/ABC Dinamo.svg" alt=""><figcaption class="name">ABC Dinamo.svg</figcaption></figure>
+    <figure class="part"><img src="parts/ShovelStudio.svg" alt=""><figcaption class="name">ShovelStudio.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Garden3D.svg" alt=""><figcaption class="name">Garden3D.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Studio Visits.svg" alt=""><figcaption class="name">Studio Visits.svg</figcaption></figure>
+    <figure class="part"><img src="parts/Collaborations.svg" alt=""><figcaption class="name">Collaborations.svg</figcaption></figure>
+  </div>
+</main>
+</body>
+</html>
