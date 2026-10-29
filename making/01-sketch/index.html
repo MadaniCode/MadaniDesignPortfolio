@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 sketch — Madani</title>
+<style>
+  :root{
+    --ink:#111111;
+    --paper:#FBFAF7;
+    --hair:#9A9A95;
+    --hair-dim:#D8D6CE;
+    --plate:#E4E2DA;
+    --plate-edge:#C8C6BE;
+    --mark:#FFFF00;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- chrome ---------- */
+  header{
+    position:fixed;inset:0 0 auto 0;z-index:60;
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:20px 24px;pointer-events:none;
+  }
+  .wordmark{font-size:14px;font-weight:500;letter-spacing:-0.01em}
+  .role{font-family:var(--mono);font-size:11px;color:#8A8A85;margin-left:10px}
+  header a{
+    pointer-events:auto;font-family:var(--mono);font-size:11px;
+    color:var(--ink);background:var(--mark);padding:2px 7px;text-decoration:none;
+  }
+  header a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* ---------- stage ---------- */
+  #stage{position:fixed;inset:0;z-index:1}
+  #wires{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:0;transition:opacity .7s}
+
+  .node{
+    position:absolute;top:0;left:0;
+    display:flex;align-items:center;
+    cursor:pointer;user-select:none;-webkit-user-select:none;
+    background:none;border:0;padding:0;
+    opacity:0;transition:opacity .4s;
+    will-change:transform;touch-action:none;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.10));
+  }
+  .node img{display:block;height:auto;pointer-events:none}
+  .node:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+
+  .bubble{
+    position:absolute;top:0;left:0;z-index:40;
+    opacity:0;pointer-events:none;transition:opacity .28s;
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.22));
+  }
+  .bubble img{display:block;height:auto}
+
+  #extras{
+    position:absolute;z-index:45;display:flex;flex-direction:column;gap:10px;
+    pointer-events:none;
+  }
+  #plates{display:flex;gap:8px;overflow-x:auto;opacity:0;transition:opacity .3s;pointer-events:auto;scrollbar-width:none}
+  #plates::-webkit-scrollbar{display:none}
+  #plates div{
+    width:196px;height:245px;flex:none;border-radius:8px;
+    background:var(--plate);box-shadow:0 2px 4px rgba(0,0,0,.20);
+  }
+  #links{display:flex;gap:6px;flex-wrap:wrap;opacity:0;transition:opacity .3s}
+  #links a{
+    pointer-events:auto;font-family:var(--mono);font-size:11px;
+    color:var(--ink);background:var(--mark);padding:3px 8px;text-decoration:none;
+  }
+  #links a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  #reset{
+    position:fixed;left:24px;bottom:20px;z-index:60;
+    font-family:var(--mono);font-size:11px;color:var(--ink);
+    background:var(--mark);border:0;padding:3px 8px;cursor:pointer;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  #reset.on{opacity:1;pointer-events:auto}
+
+  @media (prefers-reduced-motion: reduce){
+    .node,.bubble,#plates,#links,#wires{transition-duration:.01ms}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div><span class="wordmark">Madani</span><span class="role">design distribution</span></div>
+  <a href="mailto:hello@example.com">contact</a>
+</header>
+
+<div id="stage" aria-label="Portfolio index">
+  <svg id="wires" aria-hidden="true"></svg>
+</div>
+
+<button id="reset">back to everything</button>
+
+<script>
+/* ------------------------------------------------------------------
+   Drop your SVGs into ./images/ using exactly these filenames.
+   Nothing else needs editing.
+------------------------------------------------------------------ */
+const INTRO = ["bubbles/intro.svg"];
+
+const ENTRIES = [
+  { file:"nodes/01.svg", name:"@madanivision",
+    bubbles:["bubbles/madanivision.svg"], plates:5,
+    links:[["instagram","https://instagram.com/madanivision"]] },
+
+  { file:"nodes/02.svg", name:"ABC Dinamo",
+    bubbles:["bubbles/dinamo.svg"], plates:3,
+    links:[["watch the series","#"],["abcdinamo.com","https://abcdinamo.com"]] },
+
+  { file:"nodes/03.svg", name:"Shovel Studio",
+    bubbles:["bubbles/shovel.svg"], plates:4,
+    links:[["shovel.studio","https://shovel.studio"],["shovel on instagram","#"]] },
+
+  { file:"nodes/04.svg", name:"Garden 3D",
+    bubbles:["bubbles/garden.svg"], plates:2,
+    links:[["garden3d.net","https://garden3d.net"],["field report","#"]] },
+
+  { file:"nodes/05.svg", name:"Studio Visits",
+    bubbles:["bubbles/visits.svg"], plates:1,
+    links:[["get in touch","mailto:hello@example.com"]] },
+
+  { file:"nodes/06.svg", name:"Collaborations",
+    bubbles:["bubbles/collabs.svg"], plates:4,
+    links:[["readymag","#"],["pilot magazine","#"],["explorers club","#"],["parc studio","#"]] }
+];
+
+const DIR = "../../assets/";
+const NODE_SCALE = 1;      // shrink the pills if your SVGs export large
+const BUBBLE_SCALE = 1;
+
+/* ---------------- build ---------------- */
+const stage   = document.getElementById("stage");
+const wires   = document.getElementById("wires");
+const resetBtn= document.getElementById("reset");
+
+const extras = document.createElement("div");
+extras.id = "extras";
+extras.innerHTML = '<div id="plates"></div><div id="links"></div>';
+stage.appendChild(extras);
+const plates = extras.querySelector("#plates");
+const links  = extras.querySelector("#links");
+
+const bubbleEls = {};
+function makeBubble(file){
+  const d = document.createElement("div");
+  d.className = "bubble";
+  d.innerHTML = '<img src="' + DIR + file + '" alt="">';
+  stage.appendChild(d);
+  bubbleEls[file] = d;
+  return d;
+}
+INTRO.forEach(makeBubble);
+ENTRIES.forEach(e => e.bubbles.forEach(makeBubble));
+
+const nodes = ENTRIES.map((e, i) => {
+  const b = document.createElement("button");
+  b.className = "node";
+  b.type = "button";
+  b.setAttribute("aria-label", e.name);
+  b.innerHTML = '<img src="' + DIR + e.file + '" alt="">';
+  stage.appendChild(b);
+  return b;
+});
+
+/* ---------------- state ---------------- */
+let focus = -1, theta = 0, drag = null, revealed = false, timers = [];
+const st = ENTRIES.map(() => ({ x:0, y:0, ox:0, oy:0, seeded:false }));
+
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function hideBubbles(){
+  Object.values(bubbleEls).forEach(el => { el.style.opacity = 0; el.style.pointerEvents = "none"; });
+}
+
+function paint(){
+  clearTimers(); hideBubbles();
+  plates.style.opacity = 0; links.style.opacity = 0;
+  resetBtn.classList.toggle("on", focus >= 0);
+
+  const list = focus < 0 ? INTRO : ENTRIES[focus].bubbles;
+  list.forEach((file, i) => {
+    timers.push(setTimeout(() => {
+      const el = bubbleEls[file];
+      el.style.opacity = 1; el.style.pointerEvents = "auto";
+    }, 100 + i * 300));
+  });
+
+  if (focus < 0){ plates.innerHTML = ""; links.innerHTML = ""; return; }
+
+  const e = ENTRIES[focus];
+  timers.push(setTimeout(() => {
+    plates.innerHTML = Array.from({length:e.plates}, () => "<div></div>").join("");
+    links.innerHTML  = e.links.map(l =>
+      '<a href="' + l[1] + '"' + (/^https?:/.test(l[1]) ? ' target="_blank" rel="noopener"' : '') + '>' + l[0] + ' \u2197</a>'
+    ).join("");
+    plates.scrollLeft = 0;
+    plates.style.opacity = 1; links.style.opacity = 1;
+  }, 100 + list.length * 300));
+}
+
+/* ---------------- interaction ---------------- */
+nodes.forEach((el, i) => {
+  el.addEventListener("pointerdown", ev => {
+    ev.preventDefault(); ev.stopPropagation();
+    drag = { i, sx: ev.clientX, sy: ev.clientY, moved: 0 };
+    el.setPointerCapture(ev.pointerId);
+  });
+  el.addEventListener("pointermove", ev => {
+    if (!drag || drag.i !== i) return;
+    const dx = ev.clientX - drag.sx, dy = ev.clientY - drag.sy;
+    drag.moved = Math.max(drag.moved, Math.abs(dx) + Math.abs(dy));
+    st[i].ox = dx * 0.42; st[i].oy = dy * 0.42;
+  });
+  el.addEventListener("pointerup", ev => {
+    if (!drag || drag.i !== i) return;
+    if (drag.moved < 6){ focus = (focus === i) ? -1 : i; paint(); }
+    drag = null;
+  });
+  el.addEventListener("keydown", ev => {
+    if (ev.key === "Enter" || ev.key === " "){
+      ev.preventDefault();
+      focus = (focus === i) ? -1 : i; paint();
+    }
+  });
+});
+
+document.addEventListener("click", ev => {
+  if (extras.contains(ev.target)) return;
+  if (nodes.some(n => n === ev.target || n.contains(ev.target))) return;
+  if (focus >= 0){ focus = -1; paint(); }
+});
+resetBtn.addEventListener("click", ev => { ev.stopPropagation(); focus = -1; paint(); });
+document.addEventListener("keydown", ev => { if (ev.key === "Escape" && focus >= 0){ focus = -1; paint(); } });
+
+/* ---------------- loop ---------------- */
+function frame(){
+  const W = stage.clientWidth, H = stage.clientHeight;
+  const mobile = W < 760;
+  const f = focus >= 0;
+
+  const cx = W / 2;
+  const cy = f ? H * (mobile ? 0.12 : 0.14) : H * (mobile ? 0.30 : 0.34);
+
+  let widest = 0;
+  nodes.forEach(n => { if (n.offsetWidth > widest) widest = n.offsetWidth; });
+
+  const rx = Math.min(W * (mobile ? 0.30 : 0.34), (W - widest) / 2 - 16);
+  const ry = H * (f ? 0.07 : (mobile ? 0.20 : 0.23));
+
+  if (!f) theta += 0.0005;
+
+  const others = ENTRIES.map((_, j) => j).filter(j => j !== focus);
+  let path = "";
+
+  nodes.forEach((el, i) => {
+    let gx, gy;
+    if (i === focus){ gx = cx; gy = cy; }
+    else {
+      const k = others.indexOf(i), n = others.length;
+      const a = f ? Math.PI + (k + 0.5) / n * Math.PI
+                  : theta + (k / n) * Math.PI * 2;
+      gx = cx + Math.cos(a) * rx;
+      gy = cy + Math.sin(a) * ry;
+    }
+
+    const tx = gx - el.offsetWidth / 2;
+    const ty = gy - el.offsetHeight / 2;
+
+    if (!drag || drag.i !== i){ st[i].ox *= 0.9; st[i].oy *= 0.9; }
+    if (!st[i].seeded){ st[i].x = tx; st[i].y = ty; st[i].seeded = true; }
+    st[i].x += (tx - st[i].x) * 0.085;
+    st[i].y += (ty - st[i].y) * 0.085;
+
+    const px = st[i].x + st[i].ox, py = st[i].y + st[i].oy;
+    el.style.transform = "translate(" + px + "px," + py + "px) scale(" + NODE_SCALE + ")";
+    if (revealed) el.style.opacity = (f && i !== focus) ? 0.45 : 1;
+
+    const mx = px + el.offsetWidth / 2, my = py + el.offsetHeight / 2;
+    const dim = f && i !== focus;
+    const tug = Math.abs(st[i].ox) + Math.abs(st[i].oy) > 4;
+    path += '<line x1="' + cx + '" y1="' + cy + '" x2="' + mx + '" y2="' + my + '"'
+         +  ' stroke="' + (tug ? "#111111" : (dim ? "var(--hair-dim)" : "var(--hair)")) + '"'
+         +  ' stroke-width="' + (tug ? 1.2 : 0.7) + '"'
+         +  (dim ? ' stroke-dasharray="2 4"' : '') + ' />';
+  });
+  wires.innerHTML = path;
+
+  /* bubbles: left-aligned as a group, centred on the widest */
+  const list = f ? ENTRIES[focus].bubbles : INTRO;
+  let widestBubble = 0;
+  list.forEach(file => { const w = bubbleEls[file].offsetWidth; if (w > widestBubble) widestBubble = w; });
+  const left = Math.round(cx - widestBubble / 2);
+  let top = cy + (f ? 46 : 34);
+
+  list.forEach(file => {
+    const el = bubbleEls[file];
+    el.style.transform = "translate(" + left + "px," + Math.round(top) + "px) scale(" + BUBBLE_SCALE + ")";
+    top += Math.max(6, el.offsetHeight - 14);
+  });
+
+  extras.style.left = left + "px";
+  extras.style.top  = Math.round(top + 10) + "px";
+  extras.style.maxWidth = Math.min(760, W - left - 32) + "px";
+
+  requestAnimationFrame(frame);
+}
+
+/* ---------------- entrance ---------------- */
+function start(){
+  frame();
+  setTimeout(() => {
+    nodes.forEach((el, k) => setTimeout(() => { el.style.opacity = 1; }, k * 120));
+    setTimeout(() => {
+      wires.style.opacity = 1;
+      revealed = true;
+      paint();
+    }, nodes.length * 120 + 300);
+  }, 400);
+}
+
+if (document.readyState === "complete") start();
+else window.addEventListener("load", start);
+</script>
+</body>
+</html>
