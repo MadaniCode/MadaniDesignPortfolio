@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>04 shipped — Madani</title>
+<meta name="description" content="Madani Design — Madani (@madanivision) is a designer working in design distribution: helping studios make great work and get it in front of people.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+<link rel="canonical" href="https://madanidesign.com/">
+<meta property="og:title" content="Madani">
+<meta property="og:site_name" content="Madani Design">
+<meta property="og:description" content="I help studios make great work and get it in front of people.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://madanidesign.com/">
+<meta property="og:image" content="https://madanidesign.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://madanidesign.com/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Madani",
+ "alternateName":["Madani Design","Madani Vision","madanivision"],
+ "url":"https://madanidesign.com/",
+ "jobTitle":"Designer, design distribution",
+ "description":"Helping design studios make great work and get it in front of people.",
+ "sameAs":["https://www.instagram.com/madanivision/",
+           "https://www.are.na/madani/channels",
+           "https://blog.madanidesign.com/"]}
+</script>
+
+<style>
+/* ==========================================================================
+   1. Tokens
+   --------------------------------------------------------------------------
+   One shadow for every floating container — pills, bubbles, thumbnails — so
+   nothing looks like it lives on a different table.
+   ========================================================================== */
+:root{
+  --ink:#111111;
+  --txt:#3F3F42;              /* bubble + label grey; bolds land on --ink */
+  --soft:#6E6E68;
+  --paper:#FFFFFF;            /* pure white ground; hairlines + shadows carry the cards */
+  --plate:#F8F8F8;            /* pill label plate, straight from the exports */
+  --tile:#E3E2DB;
+  --mark:#FFFF00;
+  --rule:#E6E6E1;
+  --pending:#ECECE7;
+  --dot:#B9B8B3;
+
+  --shadow:0 2px 4px rgba(0,0,0,.16);
+  --dshadow:drop-shadow(0 2px 4px rgba(0,0,0,.16));   /* same shadow, alpha-shape version */
+
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --pad-x:clamp(16px, 4vw, 40px);
+  --tile-w:168px;
+  --tile-h:298px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+::selection{background:var(--mark);color:var(--ink)}
+
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+
+body{
+  margin:0;color:var(--ink);
+  /* a faint dot grid: gives the white a surface without competing with anything */
+  background:radial-gradient(rgba(17,17,17,.055) 1px, transparent 1.1px) 0 0 / 22px 22px,
+             var(--paper);
+  font-family:var(--sans);font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;min-height:100svh;
+  display:flex;flex-direction:column;
+}
+
+img{display:block;max-width:100%}
+
+:where(a,button,[tabindex]):focus-visible{
+  outline:2px solid var(--ink);outline-offset:3px;border-radius:2px;
+}
+
+.sr-only{
+  position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+.skip{
+  position:absolute;left:8px;top:-64px;z-index:200;
+  background:var(--mark);color:var(--ink);
+  font:500 13px/1 var(--sans);padding:11px 14px;text-decoration:none;
+  transition:top .15s;
+}
+.skip:focus{top:8px}
+
+/* True viewport probe. Measure from this, never window.innerWidth — page zoom
+   makes innerWidth lie (a tab at 45% reports 1680 for a 756px window). */
+#gauge{position:fixed;inset:0;height:100svh;pointer-events:none;visibility:hidden}
+
+.noscript{margin:40px var(--pad-x);max-width:52ch;font-size:15px;line-height:1.5}
+
+/* ==========================================================================
+   2. Node pills — the original SVG exports
+   --------------------------------------------------------------------------
+   The files are the Figma exports with their foreignObject backdrop-blur and
+   baked shadow filters stripped (that stack was the lag); the shadow comes
+   back as the same CSS token everything else wears. The box is sized to the
+   drawn body (canvas minus the export padding) and the image hangs over it,
+   so layout maths never sees the padding.
+   ========================================================================== */
+.node{
+  appearance:none;background:none;border:0;padding:0;margin:0;
+  position:relative;display:block;
+  width:calc(var(--bw) * 1px);max-width:100%;
+  color:inherit;cursor:pointer;
+  will-change:transform;
+  filter:var(--dshadow);
+}
+.node > img{
+  display:block;max-width:none;
+  width:calc(var(--cw) / var(--bw) * 100%);
+  margin:calc(-5.5 / var(--bw) * 100%) calc(-8.76 / var(--bw) * 100%)
+         calc(-11.25 / var(--bw) * 100%) calc(-8.25 / var(--bw) * 100%);
+  pointer-events:none;
+  user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
+  transition:transform .18s cubic-bezier(.22,1,.36,1);
+}
+@media (hover:hover){ .node:hover > img{transform:translateY(-1.5px)} }
+.node:active > img{transform:scale(.995)}
+.node:focus-visible{outline-offset:6px}
+
+/* ==========================================================================
+   3. Speech — real text bubbles that type themselves out
+   ========================================================================== */
+.msgs{
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  /* every message hangs off the same left edge */
+}
+.bubble{
+  max-width:min(330px,100%);
+  background:#FFFFFF;color:var(--txt);
+  border:1px solid var(--rule);        /* white-on-white needs the hairline */
+  font-size:17px;line-height:1.4;letter-spacing:-0.01em;
+  padding:10px 15px 11px;
+  /* the tail corner sits bottom-left; when messages stack, the joining
+     top-left corner tightens too, the way a real thread groups */
+  border-radius:18px 18px 18px 5px;
+  box-shadow:var(--shadow);
+  transition:width .25s ease;         /* the settle after typing, never a snap */
+  animation:pop .3s cubic-bezier(.22,1,.36,1);
+}
+.bubble b{color:var(--ink);font-weight:600}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}}
+.bubble + .bubble{border-top-left-radius:5px}
+
+/* the contact chips that land under the intro */
+.intro-chips{
+  margin-top:6px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .32s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.intro-chips.on{opacity:1;transform:none}
+
+/* the three-dot "someone is typing" ellipsis */
+.dots{display:inline-flex;gap:4px;padding:3px 2px;vertical-align:middle}
+.dots i{
+  width:7px;height:7px;border-radius:50%;background:var(--dot);
+  animation:dot 1.1s ease-in-out infinite;
+}
+.dots i:nth-child(2){animation-delay:.15s}
+.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{
+  0%,60%,100%{opacity:.35;transform:translateY(0)}
+  30%{opacity:1;transform:translateY(-3px)}
+}
+
+/* ==========================================================================
+   4. Panels — messages, work strip, link chips (one shared left edge)
+   ========================================================================== */
+.panel{margin:0}
+.panel[hidden]{display:none}
+.msgs[hidden]{display:none}   /* hidden must beat the explicit display:flex */
+.panel-in{display:flex;flex-direction:column;align-items:flex-start;gap:18px}
+
+/* the work waits for the talking to finish, then rises in tile by tile */
+.panel .chips,.panel .cta{
+  opacity:0;transform:translateY(6px);
+  transition:opacity .32s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.panel.done .chips,.panel.done .cta{opacity:1;transform:none}
+.panel .strip > *{
+  opacity:0;transform:translateY(10px);
+  transition:opacity .3s ease,transform .44s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--i,0) * 60ms);
+}
+.panel.done .strip > *{opacity:1;transform:none}
+/* until the talking is done these exist for layout only — a tap that opened
+   the panel must never fall through onto them */
+.panel:not(.done) .strip a,
+.panel:not(.done) .cta,
+.panel:not(.done) .chips a{pointer-events:none}
+
+.strip{
+  display:flex;align-items:flex-start;gap:8px;max-width:100%;
+  overflow-x:auto;
+  /* negative margins + matching padding: the scroll box gets room for the
+     tiles' shadows without moving the strip off the thread's left edge */
+  margin:-6px -8px -2px;padding:6px 8px 14px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.strip::-webkit-scrollbar{display:none}
+.strip{cursor:grab}
+.strip.dragging{cursor:grabbing}
+.strip.dragging a{pointer-events:none}   /* no hover lift mid-drag */
+.strip > *{
+  flex:none;position:relative;display:block;
+  height:var(--tile-h);width:auto;
+  aspect-ratio:var(--ar,9/16);       /* each tile takes its footage's own shape */
+  border-radius:8px;background:var(--tile);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.strip img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .35s cubic-bezier(.22,1,.36,1);
+}
+.strip a{transition:transform .18s cubic-bezier(.22,1,.36,1)}
+.strip a::after{
+  content:var(--cue,"watch ↗");
+  position:absolute;left:8px;bottom:8px;
+  font:400 10px/1 var(--mono);
+  background:var(--mark);color:var(--ink);
+  padding:4px 6px;
+  opacity:0;transition:opacity .2s ease;
+}
+.strip a:hover::after,.strip a:focus-visible::after{opacity:1}
+@media (hover:hover){
+  .strip a:hover{transform:translateY(-2px)}
+  .strip a:hover img{transform:scale(1.04)}
+}
+
+/* the visit card: one line in the thread's own language, so the ask
+   carries the same weight as the work */
+.cta{
+  display:inline-block;
+  background:#FFFFFF;border:1px solid var(--rule);border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:12px 16px;
+  font-size:15px;font-weight:600;letter-spacing:-0.01em;
+  text-decoration:none;color:var(--ink);
+  transition:transform .18s cubic-bezier(.22,1,.36,1),
+             opacity .32s ease;
+}
+@media (hover:hover){
+  .panel.done .cta:hover{transform:translateY(-2px);text-decoration:underline}
+}
+.cta:active{transform:scale(.99)}
+/* once revealed, the card lifts at chip speed rather than entrance speed */
+.panel.done .cta{transition:transform .18s cubic-bezier(.22,1,.36,1)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.chip{
+  display:inline-block;font:400 11px/1 var(--mono);
+  background:var(--mark);color:var(--ink);
+  padding:5px 8px;text-decoration:none;
+}
+a.chip:hover{text-decoration:underline}
+.chip.pending{background:var(--pending);color:var(--soft)}
+@media (pointer:coarse){ .chip{font-size:11px;padding:8px 10px} }
+
+/* ==========================================================================
+   5. Stage + ORBIT layout
+   ========================================================================== */
+#stage{position:relative;flex:1 0 auto;width:100%}
+#tethers{
+  position:absolute;inset:0;width:100%;height:100%;
+  overflow:visible;pointer-events:none;
+  opacity:0;transition:opacity .8s ease;
+}
+#tethers.in{opacity:1}
+
+.orbit #stage{overflow:hidden;overflow:clip}
+.orbit #stage.open{overflow:visible}
+
+.orbit .node,
+.orbit .intro,
+.orbit .panel{position:absolute;top:0;left:0;margin:0}
+
+.orbit .node{
+  z-index:20;
+  opacity:0;                       /* revealed once frame 1 has placed it */
+  transition:opacity .3s ease;
+  transform-origin:0 0;
+  touch-action:none;               /* we own the drag gesture */
+}
+.orbit .node.dim{z-index:15}
+.orbit .node.shown{opacity:1}
+.orbit .node.lit{transition:none}  /* after entrance, the loop drives opacity */
+
+.orbit .intro{z-index:40;width:min(340px,86vw)}
+.orbit .panel{z-index:40;width:min(460px,calc(100vw - var(--pad-x) * 2));transition:opacity .24s ease}
+/* swapping projects crossfades: the outgoing panel fades on its old anchor
+   while the incoming one starts talking over it */
+.orbit .panel.bye{opacity:0;pointer-events:none}
+
+/* ==========================================================================
+   6. LIST layout — narrow or short viewports
+   ========================================================================== */
+.list #stage{padding:26px var(--pad-x) 44px;display:flex;flex-direction:column}
+.list #tethers{display:none}
+.list .intro{margin:0 0 30px}
+.list .rows{display:flex;flex-direction:column}
+.list .node{
+  align-self:flex-start;max-width:100%;
+  margin:0 0 8px;
+  touch-action:manipulation;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .4s ease,transform .4s cubic-bezier(.22,1,.36,1);
+}
+.list .node.in{opacity:1;transform:none}
+.list .rows.busy .node{opacity:.4;transition:opacity .3s ease}
+.list .rows.busy .node[aria-expanded="true"]{opacity:1}
+.list .panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .42s cubic-bezier(.22,1,.36,1);
+}
+.list .panel.open{grid-template-rows:1fr}
+.list .panel > .clip{overflow:hidden;min-height:0}
+.list .panel-in{padding:8px 0 30px}
+
+@media (max-width:560px){
+  :root{--tile-w:132px;--tile-h:235px}
+  .bubble{font-size:16px}
+  .panel-in{gap:14px}
+}
+
+/* ==========================================================================
+   8. Motion preferences
+   ========================================================================== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<a class="skip" href="#stage">Skip to the work</a>
+<div id="gauge" aria-hidden="true"></div>
+
+<main id="stage">
+  <svg id="tethers" aria-hidden="true" focusable="false"></svg>
+  <div class="msgs intro" id="intro" aria-label="Introduction"></div>
+  <div class="rows" id="rows"></div>
+  <noscript>
+    <p class="noscript">This portfolio is drawn with JavaScript. Turn it on to see the
+    work, or email <a href="mailto:abdelrahmanpersonal@gmail.com">abdelrahmanpersonal@gmail.com</a> and
+    I’ll send it over.</p>
+  </noscript>
+</main>
+
+
+<script>
+"use strict";
+/* ==========================================================================
+   Madani — orbit portfolio.  One file, no build step, no dependencies.
+   --------------------------------------------------------------------------
+   Everything on screen is real, selectable, screen-readable text — the old
+   exported SVGs (each carrying its own backdrop blur + double drop-shadow
+   filter) are gone, which is also where the lag went.
+
+   Two layouts share one content model and one set of DOM elements:
+     ORBIT  wide and tall enough — six pills drift round a slow ellipse on
+            tethers; click one and it flies to the centre and starts typing.
+     LIST   everything narrower — the same pills stacked; tap to expand.
+   ========================================================================== */
+
+/* -- 0. the bits you'll actually want to edit ------------------------------ */
+
+const CONTACT = "mailto:abdelrahmanpersonal@gmail.com";
+const BUILD   = "index-21";
+console.log("madani — build", BUILD);
+
+/* Messages type themselves out. **bold** marks the black emphasis words. */
+const INTRO = [
+  "Hey, I’m **Madani**.",
+  "I help studios make great work and get it in front of people.",
+  "Reach me in these ways."
+];
+
+/* the ways below — TODO: confirm the Are.na URL */
+const WAYS = [
+  ["email", "mailto:abdelrahmanpersonal@gmail.com"],
+  ["instagram", "https://www.instagram.com/madanivision/"],
+  ["are.na", "https://www.are.na/madani/channels"],
+  ["blog", "https://blog.madanidesign.com/"]
+];
+
+const ENTRIES = [
+  { id:"01", name:"@madanivision", cw:336, sq:"#FF2000",
+    say:["My own channel. **600k+** views in five months."],
+    work:[
+      { href:"https://www.instagram.com/p/DXwWLcnMpBs/", alt:"@madanivision on Instagram — post 1", src:"mv-1.jpg" },
+      { href:"https://www.instagram.com/p/DXALfcbjGLR/", alt:"@madanivision on Instagram — post 2", src:"mv-2.jpg" },
+      { href:"https://www.instagram.com/p/DYmLldxhOId/", alt:"@madanivision on Instagram — post 3", src:"mv-3.jpg" },
+      { href:"https://www.instagram.com/p/DZxtqSSMrTG/", alt:"@madanivision on Instagram — post 4", src:"mv-4.jpg" },
+      { href:"https://www.instagram.com/p/DWTnIYyDMrO/", alt:"@madanivision on Instagram — post 5", src:"mv-5.jpg" }
+    ],
+    links:[["instagram", "https://www.instagram.com/madanivision/"]] },
+
+  { id:"02", name:"ABC Dinamo", cw:302, sq:"#009352",
+    say:["Making **ABC News**, an ongoing series with the foundry.",
+         "Started as a self-directed two-parter that did **120k+** views."],
+    work:[
+      { href:"https://www.instagram.com/p/DctR3XYKqhB/", alt:"The latest ABC News video for Dinamo", src:"dinamo-2.jpg" },
+      { href:"https://www.instagram.com/p/Da2e_c1h-Du/", alt:"ABC Dinamo collaboration video on Instagram", src:"dinamo-1.jpg" }
+    ],
+    links:[["abcdinamo.com", "https://abcdinamo.com/"]] },
+
+  { id:"03", name:"Shovel Studio", cw:318, sq:"#0073EB",
+    say:["I do content design for the web design studio.",
+         "A few hundred thousand views between us."],
+    work:[
+      { href:"https://www.instagram.com/p/Dbs6ytivChK/", alt:"Homer Radio, a Shovel Studio reel", src:"shovel-1.jpg" },
+      { href:"https://www.instagram.com/p/DcJSPXjlZwC/?img_index=1", alt:"Grow from freelancer to studio, a Shovel Studio carousel", src:"shovel-2.jpg", ar:"4/5", cue:"swipe ↗" },
+      { href:"https://www.instagram.com/p/DSS3xFNDyuK/", alt:"Shovel Studio on Instagram — post 3", src:"shovel-3.jpg" }
+    ],
+    links:[["shovel.studio", "https://www.shovel.studio/"]] },
+
+  { id:"04", name:"Garden 3D", cw:273, sq:"#9454CD",
+    say:["A creative collective based in New York.",
+         "I contribute to **content strategy** and design."],
+    work:[],
+    links:[["garden3d.net", "https://garden3d.net/"],
+           ["instagram", "https://www.instagram.com/garden3d_net/"],
+           ["survival theatre", "https://www.instagram.com/p/DWWkvmYkdTq/"],
+           ["more in the works", null]] },
+
+  { id:"05", name:"Studio Visits", cw:298, sq:"#FFE400",
+    say:["I go inside studios and document how they think.",
+         "Visiting studios around the world, **starting now**."],
+    work:[],
+    cta:{ title:"Request a studio visit", href:"../../visit/" },
+    links:[] },
+
+  { id:"06", name:"Collaborations", cw:331, sq:"#A9F6D6",
+    say:["Sponsored videos for people **I love** working with."],
+    work:[
+      { href:"https://www.instagram.com/reel/DdG9j04s-Y8/", alt:"A video for Readymag", src:"collab-readymag.jpg" },
+      { href:"https://www.instagram.com/p/Daz9pklBIND/", alt:"A video for the Barbican Centre", src:"collab-barbican.jpg" },
+      { href:"https://www.instagram.com/p/DXbnZZvh3IM/", alt:"Parc Studio collaboration on Instagram", src:"collab-parc.jpg" },
+      { href:"https://www.instagram.com/p/DXZvL4-jJhJ/", alt:"Explorers Club collaboration on Instagram", src:"collab-explorers.jpg" },
+      { href:"https://www.instagram.com/p/DR424WtjI8K/", alt:"Pilot magazine collaboration on Instagram", src:"collab-pilot.jpg" },
+      { href:"https://www.instagram.com/p/DWWkvmYkdTq/", alt:"Survival theatre, a video for Garden 3D", src:"garden-1.jpg" }
+    ],
+    links:[["barbican centre", "https://www.instagram.com/barbicancentre/"],
+           ["parc studio", "https://www.instagram.com/p/DXbnZZvh3IM/"],
+           ["explorers club", "https://www.instagram.com/p/DXZvL4-jJhJ/"],
+           ["pilot magazine", "https://www.instagram.com/p/DR424WtjI8K/"],
+           ["garden3d", "https://www.instagram.com/p/DWWkvmYkdTq/"],
+           ["readymag", "https://www.instagram.com/reel/DdG9j04s-Y8/"]] }
+];
+
+/* typing feel */
+const DOTS_MS  = 360;    /* how long the ellipsis thinks before the first message */
+const CHAR_MS  = 9;      /* per character */
+const GAP_MS   = 140;    /* breath between messages */
+
+/* resting pills sit a touch under full size; the chosen one grows to 1 */
+const REST_K   = 0.9;
+
+/* what the resting ring must keep clear in its middle (the intro block) */
+const BLOCK_W = 352, BLOCK_H = 210;   /* three bubbles + the chip row */
+
+/* -- 1. helpers ------------------------------------------------------------ */
+
+const $ = s => document.querySelector(s);
+const el = (tag, cls, attrs) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  for (const k in attrs || {}) n.setAttribute(k, attrs[k]);
+  return n;
+};
+const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+const lerp  = (a, b, t) => a + (b - a) * t;
+
+const root    = document.documentElement;
+const gauge   = $("#gauge");
+const stage   = $("#stage");
+const tethers = $("#tethers");
+const introEl = $("#intro");
+const rowsEl  = $("#rows");
+
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+/* the orbit is the site now, at every size; narrow screens get their own ring */
+const wide  = window.matchMedia("(min-width: 1px)");
+const PHONE = window.matchMedia("(max-width: 700px)");
+const canHover = window.matchMedia("(hover: hover)");
+
+const vh = () => gauge.clientHeight;   /* never window.innerHeight — see #gauge */
+
+/* -- 2. build -------------------------------------------------------------- */
+
+const nodes  = [];
+const panels = [];
+const lines  = [];
+
+ENTRIES.forEach(e => {
+  const btnId = "node-" + e.id, panId = "panel-" + e.id;
+
+  const btn = el("button", "node", {
+    type:"button", id:btnId, "aria-expanded":"false", "aria-controls":panId
+  });
+  btn.setAttribute("aria-label", e.id + " " + e.name);
+  btn.style.setProperty("--cw", e.cw);
+  btn.style.setProperty("--bw", e.cw - 17.01);   /* 8.25 + 8.76 side trim */
+  const img = el("img");
+  img.src = "../../assets/nodes/" + e.id + ".svg";
+  img.alt = "";
+  img.draggable = false;
+  btn.appendChild(img);
+
+  const panel = el("section", "panel", { id:panId, "aria-labelledby":btnId, hidden:"" });
+  const clip  = el("div", "clip");
+  const inner = el("div", "panel-in");
+
+  const h2 = el("h2", "sr-only");
+  h2.textContent = e.id + " — " + e.name;
+  inner.appendChild(h2);
+
+  inner.appendChild(el("div", "msgs"));
+
+  if (e.work.length){
+    const strip = el("div", "strip");
+    let live = 0;
+    e.work.forEach((m, wi) => {
+      if (!m.href){
+        const d = el("div");
+        d.style.setProperty("--i", wi);
+        strip.appendChild(d);
+        return;
+      }
+      live++;
+      const a = el("a", null, { href:m.href, target:"_blank", rel:"noopener", "aria-label":m.alt });
+      a.style.setProperty("--i", wi);
+      if (m.ar) a.style.setProperty("--ar", m.ar);
+      if (m.cue) a.style.setProperty("--cue", '"' + m.cue + '"');
+      if (m.src){
+        const im = el("img");
+        /* the tile takes the file's own shape — swap the jpg, the tile follows */
+        im.addEventListener("load", () => {
+          if (im.naturalWidth) a.style.setProperty("--ar", im.naturalWidth + " / " + im.naturalHeight);
+        });
+        im.src = "../../assets/work/" + m.src;
+        im.alt = ""; im.decoding = "async";   /* eager: ~250KB total, ready before the first click */
+        a.appendChild(im);
+      }
+      strip.appendChild(a);
+    });
+    if (live){
+      strip.setAttribute("role", "group");
+      strip.setAttribute("aria-label", "Work from " + e.name);
+      strip.tabIndex = 0;
+    } else strip.setAttribute("aria-hidden", "true");
+    inner.appendChild(strip);
+  }
+
+  if (e.cta){
+    const a = el("a", "cta", { href:e.cta.href });
+    a.textContent = e.cta.title + " ↗";
+    inner.appendChild(a);
+  }
+
+  const chips = el("ul", "chips");
+  e.links.forEach(pair => {
+    const li = el("li");
+    if (pair[1]){
+      const a = el("a", "chip", { href:pair[1] });
+      if (/^https?:/i.test(pair[1])){ a.target = "_blank"; a.rel = "noopener"; }
+      a.textContent = pair[0] + " ↗";
+      li.appendChild(a);
+    } else {
+      const sp = el("span", "chip pending");
+      sp.textContent = pair[0];
+      const note = el("span", "sr-only");
+      note.textContent = " — link coming soon";
+      sp.appendChild(note);
+      li.appendChild(sp);
+    }
+    chips.appendChild(li);
+  });
+  if (e.links.length) inner.appendChild(chips);
+
+  clip.appendChild(inner);
+  panel.appendChild(clip);
+  rowsEl.append(btn, panel);
+  nodes.push(btn);
+  panels.push(panel);
+
+  /* one persistent tether per node — attributes update, nothing re-parses */
+  const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  ln.setAttribute("stroke-width", "0.7");
+  tethers.appendChild(ln);
+  lines.push(ln);
+});
+
+document.querySelectorAll('a[href^="mailto:"]').forEach(a => { a.href = CONTACT; });
+
+const ways = el("ul", "chips intro-chips");
+WAYS.forEach(pair => {
+  const li = el("li");
+  const a = el("a", "chip", { href:pair[1] });
+  if (/^https?:/i.test(pair[1])){ a.target = "_blank"; a.rel = "noopener"; }
+  a.textContent = pair[0] + " ↗";
+  li.appendChild(a);
+  ways.appendChild(li);
+});
+/** The chip row lands after the intro finishes talking. */
+function offerWays(instant){
+  introEl.appendChild(ways);
+  if (instant) ways.classList.add("on");
+  else requestAnimationFrame(() => requestAnimationFrame(() => ways.classList.add("on")));
+}
+
+/* -- 3. the typing engine --------------------------------------------------
+   Each message is one bubble: it pops in holding the three-dot ellipsis,
+   thinks for a moment, then types itself out. A token cancels everything the
+   moment the selection changes, so switching mid-sentence never leaks words
+   into the wrong panel.
+   -------------------------------------------------------------------------- */
+
+let speakToken = 0;
+let introDone  = false;   /* the intro performs once; afterwards it just is */
+const timers = [];
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+function stopSpeaking(){
+  speakToken++;
+  timers.forEach(clearTimeout);
+  timers.length = 0;
+}
+
+/** Render messages instantly (returning visitors to the intro, reduced motion). */
+function renderNow(host, msgs){
+  host.textContent = "";
+  msgs.forEach(m => {
+    const b = el("div", "bubble");
+    segs(m).forEach(sg => b.appendChild(sg.b
+      ? Object.assign(el("b"), { textContent: sg.t })
+      : document.createTextNode(sg.t)));
+    host.appendChild(b);
+    hug(b, false);
+  });
+}
+
+/** After a message lands, shrink the box onto its widest actual line. The
+    width never goes below any line, so the wrapping cannot change — only the
+    dead space on the right goes. */
+/* settle=true only while typing: the shrink-to-fit tween is part of the
+   performance; instant re-renders land already at their final size */
+function hug(bub, settle){
+  if (!bub.offsetWidth) return;
+  /* measure with zero timing dependence: kill the pop mid-flight (it scales
+     the bubble to .97 and used to poison the measurement on instant renders),
+     lay out at the cap for a clean wrap, then read true layout coords */
+  bub.style.animation = "none";
+  bub.style.width = "330px";
+  void bub.offsetWidth;
+  const rng = document.createRange();
+  rng.selectNodeContents(bub);
+  const w = rng.getBoundingClientRect().width;
+  if (!settle) bub.style.transition = "none";
+  if (w) bub.style.width = Math.min(330, Math.ceil(w) + 34) + "px";
+}
+
+/** "a **b** c" → [{t:"a ",b:false},{t:"b",b:true},{t:" c",b:false}] */
+const segs = s => s.split("**").map((t, i) => ({ t, b: i % 2 === 1 }));
+
+/**
+ * Type `msgs` into `host`, one bubble at a time.
+ * @param {Element} host      the .msgs container
+ * @param {string[]} msgs
+ * @param {Function} [done]   runs after the last character lands
+ */
+function speak(host, msgs, done){
+  const my = ++speakToken;
+  host.textContent = "";
+
+  if (reduced.matches){                      /* no theatre, just the words */
+    renderNow(host, msgs);
+    if (done) done();
+    return;
+  }
+
+  let i = 0;
+  const nextBubble = () => {
+    if (my !== speakToken) return;
+    if (i >= msgs.length){ if (done) done(); return; }
+
+    const bub = el("div", "bubble");
+    /* the ellipsis only thinks before the opening message — follow-ups land
+       straight away, so the exchange reads quick instead of laboured */
+    if (i === 0) bub.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+    host.appendChild(bub);
+
+    later(() => {
+      if (my !== speakToken) return;
+      bub.textContent = "";
+      const parts = segs(msgs[i]).map(sg => {
+        const n = sg.b ? el("b") : document.createTextNode("");
+        bub.appendChild(n);
+        return { node: sg.b ? n : n, text: sg.t, isEl: sg.b };
+      });
+
+      let p = 0, c = 0, shown = 0;
+      const total = parts.reduce((a, sg) => a + sg.text.length, 0);
+      const t0 = performance.now();
+      const tick = () => {
+        if (my !== speakToken) return;
+        /* characters land on the animation-frame clock at CHAR_MS pace —
+           real elapsed time, so no setTimeout jitter, and slow frames catch
+           up instead of stalling */
+        const want = Math.min(total, 1 + Math.floor((performance.now() - t0) / CHAR_MS));
+        while (shown < want){
+          while (p < parts.length && c >= parts[p].text.length){ p++; c = 0; }
+          const part = parts[p];
+          c++; shown++;
+          if (part.isEl) part.node.textContent = part.text.slice(0, c);
+          else           part.node.nodeValue   = part.text.slice(0, c);
+        }
+        if (shown >= total){ hug(bub, true); i++; later(nextBubble, GAP_MS); return; }
+        requestAnimationFrame(tick);
+      };
+      tick();
+    }, i === 0 ? DOTS_MS : 0);
+  };
+  nextBubble();
+}
+
+/* -- 4. state --------------------------------------------------------------- */
+
+let focused   = -1;
+let lastFocus = 0;
+let focusT    = 0;
+let orbiting  = false;
+let looping   = false;
+let revealed  = false;
+let theta     = 0;
+let last      = 0;
+let drag      = null;
+let hovered   = -1;
+let flashT0   = -1e9;   /* when the tether cartwheel last fired */
+let focusAt   = -1e9;   /* when the selection last changed (tap-guard) */
+let phoneListBottom = 0;   /* where the phone index column ends */
+let phonePanelTop   = 0;   /* where the thread opens: right under its row */
+let fitCache  = null;
+
+/* per node: position, drag offset, measured half-sizes */
+const P = ENTRIES.map(() => ({ x:0, y:0, ox:0, oy:0, seeded:false, w:120, h:44 }));
+
+/* measured heights of the floating blocks (intro + panels), kept fresh by a
+   ResizeObserver so the frame loop never has to force layout */
+const blockH = { intro: BLOCK_H };
+const ro = new ResizeObserver(entries => entries.forEach(en => {
+  blockH[en.target.id || "intro"] = en.contentRect.height;
+}));
+ro.observe(introEl);
+panels.forEach(p => ro.observe(p));
+
+function measureNodes(){
+  nodes.forEach((btn, i) => {
+    P[i].w = btn.offsetWidth;
+    P[i].h = btn.offsetHeight;
+  });
+}
+
+/* -- 5. opening and closing ------------------------------------------------- */
+
+function setFocus(i, opts){
+  opts = opts || {};
+  if (i === focused) return;
+
+  const prev = focused;
+  focused = i;
+  focusAt = performance.now();
+  if (i >= 0) lastFocus = i;
+  stopSpeaking();
+  fitCache = null;
+
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    nodes[k].setAttribute("aria-expanded", String(on));
+    clearTimeout(p._hide);
+    if (on){
+      p.hidden = false;
+      p.classList.remove("done", "bye");
+      requestAnimationFrame(() => p.classList.add("open"));
+      speak(p.querySelector(".msgs"), ENTRIES[k].say, () => p.classList.add("done"));
+    } else if (!p.hidden){
+      p.classList.remove("done");
+      if (orbiting){
+        p.classList.add("bye");
+        p._hide = setTimeout(() => {
+          p.hidden = true;
+          p.classList.remove("open", "bye");
+        }, reduced.matches ? 20 : 240);
+      } else {
+        p.classList.remove("open");
+        p._hide = setTimeout(() => {
+          if (!p.classList.contains("open")) p.hidden = true;
+        }, reduced.matches ? 30 : 460);
+      }
+    }
+  });
+
+  if (focused < 0){
+    introEl.hidden = false;
+    /* ride back up with the blend, so the un-focus tween happens on screen */
+    if (orbiting) window.scrollTo({ top:0, behavior:reduced.matches ? "auto" : "smooth" });
+    if (introDone){ renderNow(introEl, INTRO); offerWays(true); }
+    else speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+    if (opts.restore && prev >= 0) nodes[prev].focus();
+  } else {
+    introEl.hidden = orbiting;
+    if (!orbiting) introEl.hidden = false;
+  }
+
+  stage.classList.toggle("open", focused >= 0);
+  rowsEl.classList.toggle("busy", focused >= 0);
+
+  if (orbiting) startLoop();
+  else if (focused >= 0 && !opts.silentScroll){
+    const y = nodes[focused].getBoundingClientRect().top + window.scrollY - 16;
+    window.scrollTo({ top:Math.max(0, y), behavior: reduced.matches ? "auto" : "smooth" });
+  }
+}
+
+/* -- 6. interaction ---------------------------------------------------------- */
+
+nodes.forEach((btn, i) => {
+  btn.addEventListener("pointerdown", ev => {
+    if (!orbiting || ev.button > 0) return;
+    drag = { i, id:ev.pointerId, sx:ev.clientX, sy:ev.clientY, moved:0 };
+    try { btn.setPointerCapture(ev.pointerId); } catch (_){}
+  });
+  btn.addEventListener("pointermove", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const dx = ev.clientX - drag.sx, dy = ev.clientY - drag.sy;
+    drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+    P[i].ox = dx * 0.42;                     /* follows at 42% of the pull */
+    P[i].oy = dy * 0.42;
+  });
+  btn.addEventListener("pointerup", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const tapped = drag.moved < 6;           /* under 6px still counts as a click */
+    drag = null;
+    if (tapped) setFocus(focused === i ? -1 : i);
+  });
+  btn.addEventListener("pointercancel", ev => {
+    if (drag && drag.id === ev.pointerId) drag = null;
+  });
+  btn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    if (orbiting && ev.detail !== 0) return; /* pointerup already handled it */
+    setFocus(focused === i ? -1 : i);
+  });
+  btn.addEventListener("mouseenter", () => { if (canHover.matches) hovered = i; });
+  btn.addEventListener("mouseleave", () => { if (hovered === i) hovered = -1; });
+  btn.addEventListener("dragstart", ev => ev.preventDefault());
+});
+
+document.addEventListener("click", ev => {
+  if (focused < 0 || !orbiting) return;
+  if (ev.target.closest(".node, .panel, .skip")) return;
+  setFocus(-1);
+});
+/* the browser fires a click just after the pointerup that switched focus;
+   by then the panel sits under the finger — swallow link hits in that gap */
+rowsEl.addEventListener("click", ev => {
+  if (performance.now() - focusAt < 400 && ev.target.closest(".strip a, .chips a")){
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+}, true);
+
+/* mouse users drag the work strip like a filmstrip; trackpads and touch
+   already scroll it natively. A real drag must never count as a click. */
+document.querySelectorAll(".strip").forEach(strip => {
+  let sd = null;
+  strip.addEventListener("dragstart", ev => ev.preventDefault());
+  strip.addEventListener("pointerdown", ev => {
+    if (ev.pointerType !== "mouse" || ev.button !== 0) return;
+    sd = { x:ev.clientX, left:strip.scrollLeft, moved:false };
+  });
+  strip.addEventListener("pointermove", ev => {
+    if (!sd) return;
+    const dx = ev.clientX - sd.x;
+    if (Math.abs(dx) > 4 && !sd.moved){
+      sd.moved = true;
+      strip.classList.add("dragging");
+      try { strip.setPointerCapture(ev.pointerId); } catch (_){}
+    }
+    if (sd.moved) strip.scrollLeft = sd.left - dx;
+  });
+  const release = () => {
+    if (sd && sd.moved){
+      strip.classList.remove("dragging");
+      /* swallow the click the browser fires right after this drag */
+      strip.addEventListener("click", e => {
+        e.preventDefault(); e.stopPropagation();
+      }, { capture:true, once:true });
+    }
+    sd = null;
+  };
+  strip.addEventListener("pointerup", release);
+  strip.addEventListener("pointercancel", release);
+});
+
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && focused >= 0){
+    ev.preventDefault();
+    setFocus(-1, { restore:true });
+  }
+});
+
+/* -- 7. geometry -------------------------------------------------------------
+   The resting ring is sized so the pills clear the intro block sitting dead
+   centre; the focused dome parks the other five over the open project.
+   ---------------------------------------------------------------------------- */
+
+const CLEAR = 16;
+
+function fit(W, H){
+  if (fitCache && fitCache.W === W && fitCache.H === H) return fitCache;
+  const availW = Math.max(200, W - 56);
+  const availH = Math.max(200, H - 76);   /* bob + shadow breathing room */
+  const widest = P.reduce((m, p) => Math.max(m, p.w), 0);
+  const nodeH  = P[0].h || 44;
+
+  if (PHONE.matches){
+    const k   = 0.60;    /* six of them share one small screen — stay light */
+    const rx2 = W * 0.60;                       /* generous; slots pin to the screen */
+    const ry2 = Math.max(170, Math.min((availH - nodeH * k) / 2 - 6, 300));
+    fitCache = { W, H, rx:rx2, ry:ry2, k };
+    return fitCache;
+  }
+
+  /* in-between widths: pill scale is a continuous function of the ring's
+     room, so resizing glides instead of jumping. The ring must stay outside
+     A (half block + half pill). */
+  let rx  = Math.max(150, Math.min((availW - widest * REST_K) / 2, 470));
+  const k = Math.min(REST_K, Math.max(0.62, (2 * (rx - CLEAR) - BLOCK_W) / widest));
+  rx = Math.max(150, Math.min((availW - widest * k) / 2, 470));
+  const A = (BLOCK_W + widest * k) / 2 + CLEAR;
+  const cap = availW * 0.36;
+  if (cap >= A + 16) rx = Math.min(rx, cap);   /* keep the huddle look only when safe */
+
+  let ry = Math.max(110, Math.min((availH - nodeH * k) / 2, rx));
+  const B = (BLOCK_H + nodeH * k) / 2 + CLEAR;
+  if (rx > A){
+    const need = Math.sqrt((B * B) / (1 - (A * A) / (rx * rx)));
+    ry = Math.max(ry, Math.min(need, (availH - nodeH * k) / 2));
+  }
+  fitCache = { W, H, rx, ry, k };
+  return fitCache;
+}
+
+/* phone slots as [edge, yFactor]: edge -1 pins left, +1 pins right, 0 centres.
+   Left and right lanes sit at different heights, so even the two widest pills
+   can never meet in the middle of a shared line. */
+const SLOTS = [
+  [-1, -0.74], [0, -1], [1, -0.46],    /* 01 02 03 across the top */
+  [ 1,  0.46], [0,  1], [-1,  0.74]    /* 04 05 06 back along the bottom */
+];
+
+function restRing(W, H, rx, ry, k){
+  const cx = W / 2, cy = H / 2;
+  if (PHONE.matches){
+    /* the circle, read in order: 01 top-left, across the top, down the right,
+       back along the bottom. Nothing spins on a phone — the slots hold still
+       and the pills just breathe. Side slots pin inside the screen edge. */
+    return { cx, cy, list:ENTRIES.map((_, i) => {
+      const sd = SLOTS[i][0], yf = SLOTS[i][1];
+      const w  = P[i].w * k;
+      const x  = sd < 0 ? 8 + w / 2 : sd > 0 ? W - 8 - w / 2 : cx;
+      return { x, y:cy + yf * ry, k };
+    }) };
+  }
+  const list = ENTRIES.map((_, i) => {
+    const a = theta + (i / ENTRIES.length) * Math.PI * 2;
+    return { x:cx + Math.cos(a) * rx, y:cy + Math.sin(a) * ry, k };
+  });
+  return { cx, cy, list };
+}
+
+/* the desktop dome, folded for a phone: a fixed index. All six pills stand
+   in numerical order on the thread's left rail — nothing moves and nothing
+   reorders. The selected row is simply the big one; choose another and the
+   emphasis glides down the list. Tap the selected row to close. */
+function phoneFocusRing(W, H){
+  const list = new Array(ENTRIES.length);
+  const bh = blockH["panel-" + ENTRIES[lastFocus].id] || 0;
+  let y = Math.max(64, H * 0.10);
+  for (let i = 0; i < 6; i++){
+    const sel = i === lastFocus;
+    const kk  = sel ? 0.78 : 0.48;
+    const h   = P[i].h * kk;
+    list[i] = { x:16 + (P[i].w * kk) / 2, y:y + h / 2, k:kk };
+    y += h + (sel ? 12 : 9);
+    /* the thread opens accordion-style, right where its button is; the rows
+       after it step aside and glide back when it closes */
+    if (sel){ phonePanelTop = y + 4; y += bh + 22; }
+  }
+  phoneListBottom = y;
+  return { cx:list[lastFocus].x, cy:list[lastFocus].y, list };
+}
+
+
+function focusRing(W, H){
+  const cx = W / 2;
+  const fi = lastFocus;
+  const others = ENTRIES.map((_, i) => i).filter(i => i !== fi);
+  const n = others.length;
+
+  const cy   = clamp(H * 0.30, 165, 260);
+  const nat  = others.map(i => P[i].w);
+  const sum  = nat.reduce((a, b) => a + b, 0);
+  const room = Math.max(240, Math.min(W - 64, W * 0.72));
+  const k    = clamp((room - 16 * (n - 1)) / sum, 0.44, 0.66);
+  const gap  = Math.max(16, (room - sum * k) / (n - 1));
+  const span = sum * k + gap * (n - 1);
+
+  const rx = Math.max(1, span / 2) / 0.78;
+  const ry = clamp(cy * 0.42, 64, 110);
+
+  const list = new Array(ENTRIES.length);
+  let run = (W - span) / 2;
+  others.forEach((i, idx) => {
+    const w = nat[idx] * k;
+    const x = run + w / 2;
+    const u = clamp((x - cx) / rx, -1, 1);
+    list[i] = { x, y:cy - ry * Math.sqrt(1 - u * u), k };
+    run += w + gap;
+  });
+  list[fi] = { x:cx, y:cy, k:1 };
+  return { cx, cy, list };
+}
+
+function targets(W, H, rx, ry, k){
+  const rest = restRing(W, H, rx, ry, k);
+  if (focusT <= 0.002){
+    return { cx:rest.cx, cy:rest.cy,
+             list:rest.list.map(p => ({ x:p.x, y:p.y, k:p.k, dim:false })) };
+  }
+  const foc = PHONE.matches ? phoneFocusRing(W, H) : focusRing(W, H);
+  const t = focusT;
+  const list = ENTRIES.map((_, i) => ({
+    x:   lerp(rest.list[i].x, foc.list[i].x, t),
+    y:   lerp(rest.list[i].y, foc.list[i].y, t),
+    k:   lerp(rest.list[i].k, foc.list[i].k, t),
+    dim: i !== lastFocus
+  }));
+  return { cx:lerp(rest.cx, foc.cx, t), cy:lerp(rest.cy, foc.cy, t), list };
+}
+
+/* -- 8. the loop -------------------------------------------------------------- */
+
+function frame(now, once){
+  if (!orbiting){ looping = false; return; }
+
+  const dt = Math.min(64, now - (last || now));
+  last = now;
+
+  /* frame-rate-normalized easing: each factor below was tuned at 60fps, so
+     raise its per-frame keep-rate to dt/16.7 — the same real-time glide
+     whether the browser renders at 30, 60 or 120fps */
+  const fN = dt / 16.667;
+  const eFocus  = 1 - Math.pow(0.915, fN);   /* was .085/frame */
+  const ePos    = 1 - Math.pow(0.885, fN);   /* was .115/frame */
+  const eSize   = 1 - Math.pow(0.84,  fN);   /* was .16/frame  */
+  const eSpring = Math.pow(0.88, fN);        /* drag release decay */
+
+  const W = stage.clientWidth;
+  const H = Math.max(360, vh() - stage.offsetTop);   /* the ring owns the viewport */
+  const open = focused >= 0;
+
+  /* one revolution a minute at rest; a crawl while a project is open */
+  if (!reduced.matches) theta += (dt / 60000) * Math.PI * 2 * (open ? 0.25 : 1);
+
+  const want = open ? 1 : 0;
+  focusT = once || reduced.matches ? want : focusT + (want - focusT) * eFocus;
+  if (Math.abs(want - focusT) < 0.002) focusT = want;
+
+  const f = fit(W, H);
+  const t = targets(W, H, f.rx, f.ry, f.k);
+  const ease = once ? 1 : ePos;
+
+  nodes.forEach((btn, i) => {
+    const g = t.list[i], p = P[i];
+
+    const calm = PHONE.matches ? 1 - focusT : 1;   /* focused = perfectly still */
+    const bob = reduced.matches ? 0
+      : Math.sin(now / 2400 + i * 1.9) * (PHONE.matches ? 5 : 1.5) * calm;
+    const sway = (PHONE.matches && !reduced.matches)
+      ? Math.cos(now / 3100 + i * 2.1) * 3 * calm : 0;
+    const tx = g.x - (p.w * g.k) / 2 + sway;
+    const ty = g.y - (p.h * g.k) / 2 + bob;
+
+    if (!p.seeded){ p.x = tx; p.y = ty; p.kc = g.k; p.seeded = true; }
+    if (p.kc === undefined) p.kc = g.k;
+    p.kc += (g.k - p.kc) * (once ? 1 : eSize);   /* size glides, never jumps */
+    p.x += (tx - p.x) * ease;
+    p.y += (ty - p.y) * ease;
+
+    if (!drag || drag.i !== i){ p.ox *= eSpring; p.oy *= eSpring; }
+    if (Math.abs(p.ox) < 0.05) p.ox = 0;
+    if (Math.abs(p.oy) < 0.05) p.oy = 0;
+
+    const x = p.x + p.ox, y = p.y + p.oy;
+    btn.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)"
+                        + (Math.abs(p.kc - 1) > 0.002 ? " scale(" + p.kc.toFixed(4) + ")" : "");
+    btn.classList.toggle("dim", g.dim);
+    /* parked pills: phone keeps them brighter (they are buttons, not décor);
+       desktop lifts the one under the cursor to meet its coloured tether */
+    const dimF = PHONE.matches ? 0.35 : (hovered === i ? 0.22 : 0.5);
+    if (revealed) btn.style.opacity =
+      (1 - dimF * focusT * (g.dim ? 1 : 0)).toFixed(3);
+
+    /* tether: persistent <line>, clipped at the pill's edge so it never shows
+       through a semi-transparent pill */
+    const ln = lines[i];
+    if (i === focused){ ln.setAttribute("stroke", "none"); return; }
+    const mx = x + (p.w * p.kc) / 2, my = y + (p.h * p.kc) / 2;
+    const dx = mx - t.cx, dy = my - t.cy;
+    const u = Math.min(1, (p.w * g.k) / 2 / Math.max(1e-6, Math.abs(dx)),
+                          (p.h * g.k) / 2 / Math.max(1e-6, Math.abs(dy)));
+    /* stop a few px past the edge, under the pill, so the join never shows */
+    const uu = Math.max(0, u - 6 / Math.max(1, Math.hypot(dx, dy)));
+    const taut = Math.hypot(p.ox, p.oy) > 4;
+
+    ln.setAttribute("x1", t.cx.toFixed(1)); ln.setAttribute("y1", t.cy.toFixed(1));
+    ln.setAttribute("x2", (mx - dx * uu).toFixed(1)); ln.setAttribute("y2", (my - dy * uu).toFixed(1));
+    const ft = now - flashT0 - i * 90;      /* the cartwheel sweeps i by i */
+    if (ft > 0 && ft < 420){
+      ln.setAttribute("stroke", ENTRIES[i].sq);
+      ln.setAttribute("stroke-width", "1.4");
+    } else {
+      ln.setAttribute("stroke", taut ? "#111111"
+                      : hovered === i ? ENTRIES[i].sq
+                      : g.dim ? "#CFCFC8" : PHONE.matches ? "#C4C3BC" : "#8E8E87");
+      ln.setAttribute("stroke-width", taut ? "1.3" : hovered === i ? "1.1" : "0.7");
+    }
+    if (g.dim) ln.setAttribute("stroke-dasharray", "2 4");
+    else ln.removeAttribute("stroke-dasharray");
+  });
+
+  /* the speech block slides between ring-centre and under-the-pill */
+  const block = open ? panels[focused] : introEl;
+  const bh = open ? (blockH[block.id] || 0) : Math.max(blockH.intro, 96);
+  const restTop  = t.cy - bh / 2;
+  const focusTop = PHONE.matches
+    ? phonePanelTop                      /* right under the selected row */
+    : t.cy + Math.max(P[lastFocus].h, 44) / 2 + 16;
+  const top = Math.round(lerp(restTop, focusTop, focusT));
+  const bx  = open ? (PHONE.matches ? 16 : t.cx - P[lastFocus].w / 2)
+                   : t.cx - block.offsetWidth / 2;  /* intro stays centred on the ring */
+  block.style.transform =
+    "translate3d(" + Math.round(bx) + "px," + top + "px,0)";
+
+  /* the index needs no tethers — they fade out with the blend on phones */
+  tethers.style.opacity = PHONE.matches ? Math.max(0, 1 - focusT * 1.4).toFixed(2) : "";
+  const needH = PHONE.matches ? phoneListBottom + 32 : top + bh + 28;
+  stage.style.height = Math.max(H, (open || focusT > 0.05) ? needH : 0) + "px";
+
+  if (once) return;
+  if (looping) requestAnimationFrame(frame);
+}
+
+function startLoop(){
+  if (looping || !orbiting) return;
+  looping = true;
+  last = 0;
+  requestAnimationFrame(frame);
+}
+
+/* -- 9. layout mode ------------------------------------------------------------ */
+
+function applyMode(){
+  const next = wide.matches;
+  if (next === orbiting && root.classList.contains(next ? "orbit" : "list")) return;
+
+  orbiting = next;
+  root.classList.toggle("orbit", orbiting);
+  root.classList.toggle("list", !orbiting);
+
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    p.hidden = !on;
+    p.classList.toggle("open", on);
+  });
+  introEl.hidden = orbiting && focused >= 0;
+  rowsEl.classList.toggle("busy", focused >= 0);
+
+  nodes.forEach(n => {
+    n.classList.toggle("in", !orbiting && revealed);
+    if (orbiting) n.style.opacity = revealed ? "" : "0";
+    else { n.style.transform = ""; n.style.opacity = ""; }
+  });
+  if (!orbiting){
+    introEl.style.transform = "";
+    panels.forEach(p => { p.style.transform = ""; });
+    stage.style.height = "";
+  }
+
+  P.forEach(p => { p.seeded = false; p.ox = p.oy = 0; });
+  measureNodes();
+  fitCache = null;
+  if (orbiting){ frame(performance.now(), true); startLoop(); }
+}
+
+if (wide.addEventListener) wide.addEventListener("change", applyMode);
+else wide.addListener(applyMode);
+
+let resizeJob;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeJob);
+  resizeJob = setTimeout(() => {
+    measureNodes();
+    fitCache = null;
+    if (orbiting) frame(performance.now(), true);
+  }, 120);
+}, { passive:true });
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) looping = false;
+  else if (orbiting) startLoop();
+});
+
+/* -- 10. entrance --------------------------------------------------------------- */
+
+applyMode();
+
+/* The pills are <img>s: until their SVGs decode they measure 0 tall, which
+   ties tethers to their top edge, parks panels 25px into the label, and
+   drops every pill half its height below its slot. Re-measure the moment
+   the images are real. */
+Promise.all(Array.prototype.map.call(document.images, im =>
+  im.decode ? im.decode().catch(() => {}) : Promise.resolve()
+)).then(() => { measureNodes(); fitCache = null; });
+window.addEventListener("load", () => { measureNodes(); fitCache = null; });
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  const step = reduced.matches ? 0 : 120;
+  nodes.forEach((n, k) => setTimeout(() => {
+    if (orbiting) n.style.opacity = "";
+    n.classList.add("shown", "in");
+  }, k * step));
+  setTimeout(() => {
+    tethers.classList.add("in");
+    /* the switch-on beat: tethers flash their project colours once, in a
+       cartwheel around the ring */
+    if (!reduced.matches) flashT0 = performance.now() + 500;
+    nodes.forEach(n => n.classList.add("lit"));
+    revealed = true;               /* from here the loop owns pill opacity */
+    /* a fast click can have a panel talking before this timer lands — the
+       intro must not steal its speech mid-thread, so it renders quietly */
+    if (focused < 0) speak(introEl, INTRO, () => { introDone = true; offerWays(false); });
+    else { renderNow(introEl, INTRO); introDone = true; offerWays(true); }
+  }, nodes.length * step + (reduced.matches ? 0 : 240));
+}));
+</script>
+</body>
+</html>
