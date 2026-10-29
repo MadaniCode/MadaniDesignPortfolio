@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Madani — Making of</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
+
+<style>
+/* ==========================================================================
+   The portfolio, in the states it passed through. Each card is the real
+   build from that day, running live and scaled down; click one to open it
+   full size. Same materials as the site: white, dot grid, SF Pro, mono on
+   yellow, one shadow.
+   ========================================================================== */
+:root{
+  --ink:#111111;
+  --txt:#3F3F42;
+  --soft:#6E6E68;
+  --paper:#FFFFFF;
+  --plate:#F8F8F8;
+  --mark:#FFFF00;
+  --rule:#E6E6E1;
+  --shadow:0 2px 4px rgba(0,0,0,.16);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --pad-x:clamp(20px, 5vw, 48px);
+  --tween:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+::selection{background:var(--mark);color:var(--ink)}
+
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+body{
+  margin:0;color:var(--ink);
+  background:radial-gradient(rgba(17,17,17,.055) 1px, transparent 1.1px) 0 0 / 22px 22px,
+             var(--paper);
+  font-family:var(--sans);font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  min-height:100svh;
+}
+:where(a):focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+.page{max-width:1400px;margin:0 auto;padding:clamp(32px,7vh,72px) var(--pad-x) 96px}
+
+/* ---- head ------------------------------------------------------------------- */
+.k{
+  display:inline-block;margin:0 0 18px;
+  font:400 11px/1 var(--mono);color:var(--ink);
+  background:var(--mark);padding:5px 8px;
+}
+h1{
+  margin:0;font-size:clamp(27px,5.6vw,40px);font-weight:600;
+  letter-spacing:-0.02em;line-height:1.15;text-wrap:pretty;
+}
+.lede{margin:14px 0 0;font-size:17px;line-height:1.5;color:var(--txt);max-width:46ch;letter-spacing:-0.01em}
+
+/* ---- the stages ------------------------------------------------------------- */
+.stages{
+  list-style:none;margin:44px 0 0;padding:0;
+  display:grid;gap:28px 22px;
+  grid-template-columns:1fr;
+}
+@media (min-width:640px){ .stages{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:900px){ .stages{grid-template-columns:repeat(3,1fr)} }
+@media (min-width:1180px){ .stages{grid-template-columns:repeat(5,1fr);gap:28px 16px} }
+.stage{display:block;text-decoration:none;color:inherit}
+
+/* a real page, shrunk: the frame renders at desktop size and scales to fit */
+.shot{
+  position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;
+  background:var(--paper);border:1px solid var(--rule);border-radius:12px;
+  box-shadow:var(--shadow);
+  transition:transform .18s var(--tween);
+}
+.shot iframe{
+  position:absolute;top:0;left:0;width:1280px;height:800px;border:0;
+  transform-origin:0 0;transform:scale(var(--k,.25));
+  pointer-events:none;background:#FFF;
+}
+.shot::after{
+  content:"open ↗";
+  position:absolute;right:10px;bottom:10px;
+  font:400 10px/1 var(--mono);background:var(--mark);color:var(--ink);padding:4px 6px;
+  opacity:0;transition:opacity .2s ease;
+}
+@media (hover:hover){
+  .stage:hover .shot{transform:translateY(-2px)}
+  .stage:hover .shot::after{opacity:1}
+  .stage:hover .name{text-decoration:underline}
+}
+.stage:active .shot{transform:scale(.995)}
+
+.meta{display:flex;align-items:baseline;gap:10px;margin-top:12px}
+.meta .n{font:400 11px/1 var(--mono);color:var(--ink);background:var(--mark);padding:5px 8px;flex:none}
+.meta .name{font-size:15px;font-weight:600;letter-spacing:-0.01em}
+.meta .date{margin-left:auto;font:400 11px/1 var(--mono);color:var(--soft);flex:none}
+.note{margin:6px 0 0;font-size:14px;line-height:1.5;color:var(--soft);text-wrap:pretty}
+
+/* the site that came before: text row, no live preview */
+.before{
+  margin:44px 0 0;padding-top:22px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;
+  font-size:14px;color:var(--soft);
+}
+.before a{color:var(--ink);font-weight:600;text-decoration:none}
+@media (hover:hover){ .before a:hover{text-decoration:underline} }
+
+.home{
+  display:inline-block;margin-top:44px;
+  font:400 12px/1 var(--mono);color:var(--ink);background:var(--mark);
+  padding:12px 16px;text-decoration:none;
+  transition:transform .18s var(--tween);
+}
+@media (hover:hover){ .home:hover{transform:translateY(-1.5px);text-decoration:underline} }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+  <p class="k">making of</p>
+  <h1>The portfolio, in five states.</h1>
+  <p class="lede">The same six projects and the same words, held five different
+  ways over a month. Each one below is the real build from that day, running
+  live. Click one to open it full size.</p>
+
+  <ol class="stages">
+    <li>
+      <a class="stage" href="00-parts/">
+        <div class="shot"><iframe src="00-parts/" title="00 parts" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="meta"><span class="n">00</span><span class="name">Parts</span><span class="date">16 Aug</span></div>
+        <p class="note">Before any code: a brief and a folder of Figma exports.
+        Six pills still named Frame 608 to 613, one sheet of speech per
+        project, a favicon. Everything the site would be, in pieces.</p>
+      </a>
+    </li>
+    <li>
+      <a class="stage" href="01-sketch/">
+        <div class="shot"><iframe src="01-sketch/" title="01 sketch" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="meta"><span class="n">01</span><span class="name">Sketch</span><span class="date">16 Aug</span></div>
+        <p class="note">First pass. Six pills on a ring, speech bubbles exported
+        from Figma as SVG, grey tiles standing in for the work. The bubbles
+        were too big and the lines ran straight through them.</p>
+      </a>
+    </li>
+    <li>
+      <a class="stage" href="02-vector/">
+        <div class="shot"><iframe src="02-vector/" title="02 vector" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="meta"><span class="n">02</span><span class="name">Vector</span><span class="date">18 Aug</span></div>
+        <p class="note">The ring learned to fit the screen and park the others
+        in a dome. Real thumbnails, a footer, the SVG bubbles rescaled. It
+        looked right and it lagged, because every bubble carried a blur
+        filter.</p>
+      </a>
+    </li>
+    <li>
+      <a class="stage" href="03-typed/">
+        <div class="shot"><iframe src="03-typed/" title="03 typed" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="meta"><span class="n">03</span><span class="name">Typed</span><span class="date">30 Aug</span></div>
+        <p class="note">The bubbles stopped being pictures and became text
+        that types itself. White ground, dot grid, tethers that colour on
+        hover. The first version that felt like a conversation.</p>
+      </a>
+    </li>
+    <li>
+      <a class="stage" href="04-shipped/">
+        <div class="shot"><iframe src="04-shipped/" title="04 shipped" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="meta"><span class="n">04</span><span class="name">Shipped</span><span class="date">14 Sep</span></div>
+        <p class="note">A phone layout of its own, pills you can drag, the
+        studio visit card, and a hundred small fixes: tether joins, bubble
+        widths, animations that run at the same speed on every screen.</p>
+      </a>
+    </li>
+  </ol>
+
+  <p class="before"><span class="k" style="margin:0">before</span>
+    <a href="../archive.html">The site before this one ↗</a>
+    <span>Grids, covers, videos. Live from July 2025 until August.</span>
+  </p>
+
+  <a class="home" href="../">back to home ↗</a>
+</main>
+
+<script>
+"use strict";
+/* size each preview: the frame is a 1280x800 desktop viewport, scaled so
+   its width matches the card */
+const shots = [...document.querySelectorAll(".shot")];
+const fit = () => shots.forEach(s => s.style.setProperty("--k", (s.clientWidth / 1280).toFixed(4)));
+fit();
+new ResizeObserver(fit).observe(document.body);
+</script>
+</body>
+</html>
