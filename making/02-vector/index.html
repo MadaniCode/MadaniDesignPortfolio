@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>02 vector — Madani</title>
+<meta name="description" content="Madani is a freelance designer working in design distribution — making the work design studios do legible to people outside the studio.">
+<meta name="theme-color" content="#FBFAF7">
+<link rel="icon" href="../../assets/mark.svg" type="image/svg+xml">
+<meta property="og:title" content="Madani — design distribution">
+<meta property="og:description" content="I help studios make great work and get it in front of people.">
+<meta property="og:type" content="website">
+
+<style>
+/* ==========================================================================
+   1. Tokens
+   ========================================================================== */
+:root{
+  --ink:#111111;
+  --ink-soft:#6E6E68;
+  --paper:#FBFAF7;
+  --plate:#E4E2DA;
+  --mark:#FFFF00;
+  --rule:#E6E3DA;
+  --pending:#EDEBE2;
+
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --pad-x:clamp(16px, 4vw, 40px);
+  /* 9:16, because the covers are Reels. On a 4:5 tile `cover` has to zoom a
+     vertical still 0.544 but a square one only 0.383, so a carousel cover
+     lands ~30% smaller than its neighbours. Matching the tile to the footage
+     puts every cover at exactly the same zoom. */
+  --thumb-w:176px;
+  --thumb-h:313px;
+
+  --s:1;                    /* global artwork scale, set by JS */
+  --speech:0.85;            /* speech sits a notch below the pills — see SPEECH */
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  -webkit-text-size-adjust:100%;
+  color-scheme:light;       /* white artwork on warm paper — don't let the UA invert */
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  min-height:100svh;
+  display:flex;flex-direction:column;
+}
+
+img,svg{display:block;max-width:100%}
+
+:where(a,button,[tabindex]):focus-visible{
+  outline:2px solid var(--ink);outline-offset:3px;border-radius:2px;
+}
+
+.sr-only{
+  position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+.skip{
+  position:absolute;left:8px;top:-64px;z-index:200;
+  background:var(--mark);color:var(--ink);
+  font:500 13px/1 var(--sans);padding:11px 14px;text-decoration:none;
+  transition:top .15s;
+}
+.skip:focus{top:8px}
+
+/* True viewport probe. Measure from this, never window.innerWidth — page zoom
+   makes innerWidth lie (a tab at 45% reports 1680 for a 756px window). */
+#gauge{position:fixed;inset:0;height:100svh;pointer-events:none;visibility:hidden}
+
+.noscript{margin:40px var(--pad-x);max-width:52ch;font-size:15px;line-height:1.5}
+
+/* ==========================================================================
+   2. Artwork sizing
+   --------------------------------------------------------------------------
+   Every export carries transparent padding around the drawn shape so its baked
+   drop shadow has room. We size the *box* to the drawn body and pull the
+   bitmap back out over the edges with negative margins, so:
+
+     • layout maths never has to know the padding exists,
+     • nothing is ever clipped — the shadow simply overhangs the box,
+     • the margins are percentages of the box width, so it all holds at any
+       scale.
+
+   Bubbles:  20 left / 20 right / 16 top / 24 bottom  → body = canvas − 40 both ways
+   Pills:    8.25 left / 8.76 right / 5.5 top / 11.25 bottom
+   ========================================================================== */
+.art{position:relative;display:block;flex:none}
+.art > img{
+  width:calc(var(--cw) / var(--bw) * 100%);
+  height:auto;max-width:none;
+  pointer-events:none;
+  user-select:none;-webkit-user-select:none;-webkit-user-drag:none;
+}
+/* percentage margins all resolve against the box's width, so they scale with it */
+.say > img{
+  margin:calc(-16 / var(--bw) * 100%) calc(-20 / var(--bw) * 100%)
+         calc(-24 / var(--bw) * 100%);
+}
+.node > img{
+  margin:calc(-5.5 / var(--bw) * 100%) calc(-8.76 / var(--bw) * 100%)
+         calc(-11.25 / var(--bw) * 100%) calc(-8.25 / var(--bw) * 100%);
+}
+
+/* The pills are vector, so --s can squeeze them to fit the ring for free.
+   The speech is a raster export, so it gets its own scale and is NEVER also
+   multiplied by --s — stacking the two was resampling it to ~0.70 of native
+   and that is what made the type look chewed. --speech is the only thing that
+   ever resizes it. */
+.say{margin:0;width:calc(var(--bw) * 1px * var(--speech))}
+.node{width:calc(var(--bw) * 1px * var(--s))}
+.say,.node{max-width:100%}
+
+/* ==========================================================================
+   3. Node pills
+   ========================================================================== */
+.node{
+  appearance:none;background:none;border:0;padding:0;margin:0;
+  color:inherit;cursor:pointer;overflow:visible;
+}
+.node > img{transition:transform .18s cubic-bezier(.22,1,.36,1)}
+@media (hover:hover){ .node:hover > img{transform:translateY(-1.5px) scale(1.015)} }
+.node:active > img{transform:scale(.99)}
+.node:focus-visible{outline-offset:6px}
+
+/* ==========================================================================
+   4. Panels
+   ========================================================================== */
+.panel{margin:0}
+.panel[hidden]{display:none}
+.panel-in{display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+
+.strip{
+  display:flex;gap:8px;max-width:100%;
+  /* scroll clips vertically, so give the thumbnails' shadow its own room */
+  overflow-x:auto;margin-top:-4px;padding:4px 0 8px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+/* thumbnails ride the same scale as the artwork, so the strip stays in
+   proportion with the speech it sits under */
+.strip > *{
+  flex:none;display:block;
+  width:calc(var(--thumb-w) * var(--speech));
+  height:calc(var(--thumb-h) * var(--speech));
+  border-radius:8px;background:var(--plate);
+  box-shadow:0 2px 4px rgba(0,0,0,.20);overflow:hidden;
+}
+.strip img{width:100%;height:100%;object-fit:cover}
+.strip a{transition:transform .18s cubic-bezier(.22,1,.36,1),box-shadow .18s ease}
+@media (hover:hover){
+  .strip a:hover{transform:translateY(-2px);box-shadow:0 5px 10px rgba(0,0,0,.22)}
+}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.chip{
+  display:inline-block;font:400 11px/1 var(--mono);
+  background:var(--mark);color:var(--ink);
+  padding:5px 8px;text-decoration:none;
+}
+a.chip:hover{text-decoration:underline}
+.chip.pending{background:var(--pending);color:var(--ink-soft)}
+
+@media (pointer:coarse){ .chip{font-size:12px;padding:10px 12px} }
+
+/* ==========================================================================
+   5. Stage
+   ========================================================================== */
+#stage{position:relative;flex:1 0 auto;width:100%}
+#tethers{
+  position:absolute;inset:0;width:100%;height:100%;
+  overflow:visible;pointer-events:none;
+  opacity:0;transition:opacity .4s ease;
+}
+#tethers.in{opacity:1}
+
+/* One quiet fade when a block appears — no chained, one-after-another reveals.
+   Only ever fade the outermost block, or the speech nested inside a panel gets
+   its own opacity and never comes back. */
+.intro{opacity:0;transition:opacity .26s ease}
+.intro.in{opacity:1}
+/* Swapping projects doesn't just cut: the incoming panel settles in from a
+   hair under size while the outgoing one fades off the same anchor. */
+.panel-in{
+  opacity:0;transform:scale(.978);transform-origin:0 0;
+  transition:opacity .26s ease, transform .45s cubic-bezier(.22,1,.36,1);
+}
+.panel.in .panel-in{opacity:1;transform:none}
+/* the panel on its way out must not eat clicks meant for the one arriving */
+.panel:not(.in){pointer-events:none}
+
+/* ==========================================================================
+   6. ORBIT layout — wide, tall viewports
+   ========================================================================== */
+.orbit .node,
+.orbit .intro,
+.orbit .panel{position:absolute;top:0;left:0;margin:0}
+
+.orbit .node{
+  z-index:20;opacity:0;      /* revealed only once frame 1 has placed it */
+  touch-action:none;         /* we own the drag gesture */
+  transition:opacity .3s ease;
+}
+.orbit .node.dim{z-index:15}
+.orbit .node.shown{opacity:1}
+/* Once the entrance is done the loop drives opacity directly (it blends with
+   the focus transition), so the CSS transition has to get out of the way. */
+.orbit .node.lit{transition:none}
+
+/* The panel is exactly as wide as the bubble artwork's drawn body, so putting
+   its centre on the orbit's centre line centres the speech itself. */
+.orbit .intro,
+.orbit .panel{z-index:40;width:calc(var(--bw) * 1px * var(--speech))}
+.orbit .panel{padding-bottom:64px}
+
+/* ==========================================================================
+   7. LIST layout — narrow or short viewports
+   ========================================================================== */
+.list #stage{padding:0 var(--pad-x) 48px;display:flex;flex-direction:column}
+.list #tethers{display:none}
+.list .intro{margin:30px 0 40px}
+.list .rows{display:flex;flex-direction:column}
+.list .node{align-self:flex-start;margin:0 0 10px;touch-action:manipulation}
+.list .panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1);
+}
+.list .panel.open{grid-template-rows:1fr}
+/* With a project open the other rows step back, so the column reads as one
+   conversation rather than six competing headings. */
+.list .rows.busy .node{opacity:.4;transition:opacity .3s ease}
+.list .rows.busy .node[aria-expanded="true"]{opacity:1}
+/* The clip is what makes the 0fr→1fr accordion work, but it would also shave
+   the speech bubbles' drop shadow. Bleed it out past the artwork and pad the
+   difference back so the shadow has somewhere to land. */
+.list .panel > .clip{overflow:hidden;min-height:0;margin:0 -12px;padding:0 12px}
+.list .panel-in{padding:10px 0 36px}
+
+/* ==========================================================================
+   8. Footer
+   ========================================================================== */
+.foot{
+  flex:none;background:var(--paper);
+  border-top:1px solid var(--rule);
+  padding:18px var(--pad-x) calc(18px + env(safe-area-inset-bottom));
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:10px 24px;
+  font-family:var(--mono);font-size:11px;color:var(--ink-soft);
+}
+.foot a{color:var(--ink);text-decoration:none;border-bottom:1px solid #D8D6CE}
+.foot .chip{border-bottom:0}                /* the yellow chip is the contact */
+.foot a:hover{border-bottom-color:var(--ink)}
+.foot ul{display:flex;flex-wrap:wrap;gap:18px;list-style:none;margin:0;padding:0}
+@media (pointer:coarse){ .foot{font-size:12px} .foot ul{gap:22px} }
+
+/* ==========================================================================
+   9. Motion preferences
+   ========================================================================== */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<a class="skip" href="#stage">Skip to the work</a>
+<div id="gauge" aria-hidden="true"></div>
+
+<main id="stage">
+  <svg id="tethers" aria-hidden="true" focusable="false"></svg>
+  <div class="rows" id="rows"></div>
+  <noscript>
+    <p class="noscript">This portfolio is drawn with JavaScript. Turn it on to see the
+    work, or email <a href="mailto:hello@example.com">hello@example.com</a> and
+    I’ll send it over.</p>
+  </noscript>
+</main>
+
+<footer class="foot">
+  <span>Madani — design distribution</span>
+  <ul>
+    <li><a href="https://instagram.com/madanivision" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a class="mail chip" href="mailto:hello@example.com">email &#8599;</a></li>
+    <li><span id="year"></span></li>
+  </ul>
+</footer>
+
+<script>
+"use strict";
+/* ==========================================================================
+   Madani — orbit portfolio.  One file, no build step, no dependencies.
+   --------------------------------------------------------------------------
+   Two layouts share one content model and one set of DOM elements:
+
+     ORBIT  wide and tall enough — six pills drift round a slow ellipse on
+            tethers, with the speech sitting in the middle of the ring. Click
+            a pill: it takes the centre, the rest park across the top, and its
+            panel opens underneath.
+     LIST   anything narrower or shorter — the same pills stacked, tap to
+            expand. Six 300px pills do not fit on a 390px phone.
+
+   Switching only toggles a class on <html> and re-runs layout; nothing is
+   rebuilt, so focus and open state survive a resize or a rotate.
+   ========================================================================== */
+
+/* -- 0. the bits you'll actually want to edit ----------------------------- */
+
+const CONTACT = "mailto:hello@example.com";   /* ← put the real address here */
+const DIR     = "../../assets/";
+/* How big the speech renders, as a fraction of the export's own pixels.
+   1 = one image pixel per CSS pixel, which is as sharp as a raster export can
+   be; anything lower is resampled and softens the type. Nothing else scales
+   the speech — the ring sizes itself around it. */
+const SPEECH  = 0.85;
+
+/* Speech artwork, exported in the batches they appear in. `w`/`h` are the
+   source canvas; every one carries 20px of transparent padding left and right
+   and 16 / 24 top and bottom, which §3 of the CSS cancels out. `t` is what the
+   picture says — the type is outlined in the export, so this is the only thing
+   a screen reader has to go on. */
+const SAYS = {
+  intro:        { f:"intro.svg",        w:514, h:246,
+    t:"Hey, I’m Madani. I help studios make great work and get it in front of people." },
+  madanivision: { f:"madanivision.svg", w:443, h:157,
+    t:"My own channel. 600k+ views in five months." },
+  dinamo:       { f:"dinamo.svg",       w:518, h:288,
+    t:"Making ABC News, an ongoing series with the foundry. Started as a self directed two-parter that did 120k+ views." },
+  shovel:       { f:"shovel.svg",       w:489, h:288,
+    t:"I do content design for the web design studio. A few hundred thousand views between us." },
+  garden:       { f:"garden.svg",       w:508, h:288,
+    t:"A worker-owned collective in New York. I contribute to content strategy, design and systems." },
+  visits:       { f:"visits.svg",       w:465, h:288,
+    t:"I go inside studios and document how they think. Visiting studios around the world, starting now." },
+  collabs:      { f:"collabs.svg",      w:457, h:157,
+    t:"Sponsored videos for people I love working with." }
+};
+
+/* The six nodes. `cw` is the source canvas width of the pill SVG.
+   `work` is the thumbnail strip. Each entry is either
+       { href:"…", alt:"…" }   a link, grey plate until a screenshot lands
+       { href:"…", alt:"…", src:"file.jpg" }   with one, from assets/work/
+       { }                     an inert placeholder, no link yet
+   `links` are the chips underneath; a null URL renders as an inert "coming
+   soon" chip rather than a focusable href="#" that goes nowhere. */
+const ENTRIES = [
+  { id:"01", name:"@madanivision",  cw:336, say:"madanivision",
+    work:[
+      { href:"https://www.instagram.com/p/DXwWLcnMpBs/", alt:"@madanivision on Instagram — post 1", src:"mv-1.jpg" },
+      { href:"https://www.instagram.com/p/DXALfcbjGLR/", alt:"@madanivision on Instagram — post 2", src:"mv-2.jpg" },
+      { href:"https://www.instagram.com/p/DYmLldxhOId/", alt:"@madanivision on Instagram — post 3", src:"mv-3.jpg" },
+      { href:"https://www.instagram.com/p/DZxtqSSMrTG/", alt:"@madanivision on Instagram — post 4", src:"mv-4.jpg" },
+      { href:"https://www.instagram.com/p/DWTnIYyDMrO/", alt:"@madanivision on Instagram — post 5", src:"mv-5.jpg" }
+    ],
+    links:[["instagram", "https://www.instagram.com/madanivision/"]] },
+
+  { id:"02", name:"ABC Dinamo",     cw:302, say:"dinamo",
+    work:[
+      { href:"https://www.instagram.com/p/Da2e_c1h-Du/", alt:"ABC Dinamo collaboration video on Instagram", src:"dinamo-1.jpg" }
+    ],
+    links:[["abcdinamo.com", "https://abcdinamo.com/"]] },
+
+  { id:"03", name:"Shovel Studio",  cw:318, say:"shovel",
+    work:[
+      { href:"https://www.instagram.com/p/Dbs6ytivChK/", alt:"Shovel Studio on Instagram — post 1", src:"shovel-1.jpg" },
+      { href:"https://www.instagram.com/p/DblKstIlZI9/?img_index=1", alt:"Shovel Studio on Instagram — post 2", src:"shovel-2.jpg" },
+      { href:"https://www.instagram.com/p/DSS3xFNDyuK/", alt:"Shovel Studio on Instagram — post 3", src:"shovel-3.jpg" }
+    ],
+    links:[["shovel.studio", "https://www.shovel.studio/"]] },
+
+  { id:"04", name:"Garden 3D",      cw:273, say:"garden",
+    work:[{}, {}],
+    links:[["garden3d.net", "https://garden3d.net"], ["field report", null]] },
+
+  /* Studio Visits is deliberately just the speech and a way to get in touch. */
+  { id:"05", name:"Studio Visits",  cw:298, say:"visits",
+    work:[],
+    links:[["get in touch", CONTACT]] },
+
+  { id:"06", name:"Collaborations", cw:331, say:"collabs",
+    work:[
+      { href:"https://www.instagram.com/p/DXbnZZvh3IM/", alt:"Parc Studio collaboration on Instagram", src:"collab-parc.jpg" },
+      { href:"https://www.instagram.com/p/DXZvL4-jJhJ/", alt:"Explorers Club collaboration on Instagram", src:"collab-explorers.jpg" }
+    ],
+    links:[["parc studio", "https://www.instagram.com/p/DXbnZZvh3IM/"],
+           ["explorers club", "https://www.instagram.com/p/DXZvL4-jJhJ/"],
+           ["readymag", null], ["pilot magazine", null]] }
+];
+
+/* Padding measured off the source files. */
+const BUB  = { padX:20, padTop:16, padBottom:24 };
+const NODE = { h:68, padL:8.25, padR:8.76, padTop:5.5, padBottom:11.25 };
+NODE.bh = NODE.h - NODE.padTop - NODE.padBottom;          /* 51.25 */
+
+const nodeBodyW = cw => cw - NODE.padL - NODE.padR;
+const sayBodyW  = k  => SAYS[k].w - BUB.padX * 2;
+const sayBodyH  = k  => SAYS[k].h - BUB.padTop - BUB.padBottom;
+
+/* -- 1. helpers ----------------------------------------------------------- */
+
+const $ = sel => document.querySelector(sel);
+const el = (tag, cls, attrs) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  for (const k in attrs || {}) n.setAttribute(k, attrs[k]);
+  return n;
+};
+const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+const root    = document.documentElement;
+const gauge   = $("#gauge");
+const stage   = $("#stage");
+const tethers = $("#tethers");
+const rowsEl  = $("#rows");
+const footEl  = document.querySelector(".foot");
+
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+/* The ring only reads properly with room for six pills *around* the speech. */
+const wide    = window.matchMedia("(min-width: 940px) and (min-height: 640px)");
+
+const vh = () => gauge.clientHeight;      /* never window.innerHeight — see #gauge */
+
+/* -- 2. build ------------------------------------------------------------- */
+
+/** One speech export, boxed to its drawn body. */
+function makeSay(key, extraClass){
+  const s = SAYS[key];
+  const fig = el("figure", "art say" + (extraClass ? " " + extraClass : ""));
+  fig.style.setProperty("--cw", s.w);
+  fig.style.setProperty("--bw", sayBodyW(key));
+  const img = el("img");
+  img.src = DIR + "bubbles/" + s.f;
+  img.alt = s.t;
+  img.decoding = "async";
+  img.draggable = false;
+  fig.appendChild(img);
+  return fig;
+}
+
+const introEl = makeSay("intro", "intro");
+rowsEl.parentNode.insertBefore(introEl, rowsEl);
+
+const nodes  = [];
+const panels = [];
+
+ENTRIES.forEach(e => {
+  const btnId = "node-" + e.id;
+  const panId = "panel-" + e.id;
+
+  /* ---- the pill ----------------------------------------------------- */
+  const btn = el("button", "art node", {
+    type:"button", id:btnId, "aria-expanded":"false", "aria-controls":panId
+  });
+  btn.style.setProperty("--cw", e.cw);
+  btn.style.setProperty("--bw", nodeBodyW(e.cw));
+  const img = el("img");
+  img.src = DIR + "nodes/" + e.id + ".svg";
+  img.alt = e.id + " " + e.name;          /* the SVG's own type is outlined */
+  img.draggable = false;
+  btn.appendChild(img);
+
+  /* ---- its panel ---------------------------------------------------- */
+  const panel = el("section", "panel", { id:panId, "aria-labelledby":btnId, hidden:"" });
+  panel.style.setProperty("--bw", sayBodyW(e.say));
+
+  const clip  = el("div", "clip");
+  const inner = el("div", "panel-in");
+
+  const h2 = el("h2", "sr-only");
+  h2.textContent = e.id + " — " + e.name;
+  inner.appendChild(h2);
+
+  inner.appendChild(makeSay(e.say));
+
+  if (e.work.length){
+    const strip = el("div", "strip");
+    let live = 0;
+    e.work.forEach(m => {
+      if (!m.href){ strip.appendChild(el("div")); return; }   /* inert plate */
+      live++;
+      const a = el("a", null, {
+        href:m.href, target:"_blank", rel:"noopener", "aria-label":m.alt
+      });
+      /* Grey until a screenshot lands; the link works either way. */
+      if (m.src){
+        const im = el("img");
+        im.src = DIR + "work/" + m.src;
+        im.alt = "";                 /* the link's aria-label already says it */
+        im.loading = "lazy";
+        a.appendChild(im);
+      }
+      strip.appendChild(a);
+    });
+    if (live){
+      strip.setAttribute("role", "group");
+      strip.setAttribute("aria-label", "Work from " + e.name);
+      strip.tabIndex = 0;                        /* keyboard-scrollable */
+    } else {
+      /* all placeholders — nothing to announce, and nothing to tab to */
+      strip.setAttribute("aria-hidden", "true");
+    }
+    inner.appendChild(strip);
+  }
+
+  const chips = el("ul", "chips");
+  e.links.forEach(pair => {
+    const label = pair[0], href = pair[1];
+    const li = el("li");
+    if (href){
+      const a = el("a", "chip", { href });
+      if (/^https?:/i.test(href)){ a.target = "_blank"; a.rel = "noopener"; }
+      a.textContent = label + " ↗";
+      li.appendChild(a);
+    } else {
+      const s = el("span", "chip pending");
+      s.textContent = label;
+      const note = el("span", "sr-only");
+      note.textContent = " — link coming soon";
+      s.appendChild(note);
+      li.appendChild(s);
+    }
+    chips.appendChild(li);
+  });
+  inner.appendChild(chips);
+
+  clip.appendChild(inner);
+  panel.appendChild(clip);
+  rowsEl.appendChild(btn);
+  rowsEl.appendChild(panel);
+  nodes.push(btn);
+  panels.push(panel);
+});
+
+document.querySelector(".foot .mail").href = CONTACT;
+$("#year").textContent = new Date().getFullYear();
+
+/* -- 3. state ------------------------------------------------------------- */
+
+let focused  = -1;
+let orbiting = false;
+let looping  = false;
+let revealed = false;
+let theta    = 0;        /* orbit angle, radians */
+let last     = 0;        /* previous rAF timestamp */
+let drag     = null;     /* { i, id, sx, sy, moved } */
+let turn     = 0;        /* bumped on every selection change, guards late reveals */
+let fitCache = null;     /* memoised scale + ellipse */
+let arcCache = null;     /* memoised parked-row maths */
+let focusT   = 0;        /* 0 = resting ring, 1 = focused dome; lerped */
+let lastFocus = 0;       /* the entry the dome is built around — kept after a
+                            dismiss so the layout has something to blend out of */
+
+const P = ENTRIES.map(() => ({ x:0, y:0, ox:0, oy:0, seeded:false }));
+
+const widestNode = ENTRIES.reduce((m, e) => Math.max(m, nodeBodyW(e.cw)), 0);
+const widestSay  = Object.keys(SAYS).reduce((m, k) => Math.max(m, sayBodyW(k)), 0);
+/* What the ring has to clear. Fixed, because the speech no longer shrinks
+   with the ring — the ring adapts around it instead. */
+const introW = sayBodyW("intro") * SPEECH, introH = sayBodyH("intro") * SPEECH;
+
+/** Speech scale for the current width: SPEECH, unless the column is narrower. */
+function speechScale(avail){ return Math.min(SPEECH, avail / widestSay); }
+
+/* -- 4. fitting the ring around the speech --------------------------------
+   The speech sits dead centre, so the ellipse has to clear the block it
+   encloses. For a pill of half-size (nw, nh) orbiting a block of half-size
+   (bw, bh), the two never meet as long as the ellipse stays outside the
+   rectangle A = bw + nw + clearance, B = bh + nh + clearance — which holds when
+
+       ry² · (1 − A²/rx²)  ≥  B²
+
+   The speech block is a FIXED size here — only the pills scale, because they
+   are vector and cost nothing to shrink. We binary-search the largest pill
+   scale (never above 1:1) that still clears the speech.
+   ------------------------------------------------------------------------ */
+
+const CLEAR = 14;
+
+function fit(W, H){
+  if (fitCache && fitCache.W === W && fitCache.H === H) return fitCache;
+
+  const availW = Math.max(200, W - 60);
+  const availH = Math.max(200, H - 60);
+  const sp = speechScale(availW);
+  const blockW = sayBodyW("intro") * sp, blockH = sayBodyH("intro") * sp;
+
+  const geom = s => {
+    const rx = (availW - widestNode * s) / 2;
+    const ry = Math.min((availH - NODE.bh * s) / 2, rx);   /* never taller than wide */
+    if (rx < 60 || ry < 50) return null;
+    const A = (blockW + widestNode * s) / 2 + CLEAR;
+    const B = (blockH + NODE.bh * s) / 2 + CLEAR;
+    if (rx <= A) return null;
+    if (ry * ry * (1 - (A * A) / (rx * rx)) < B * B) return null;
+    return { rx, ry };
+  };
+
+  let s = 1, g = geom(1);
+  if (!g){
+    let lo = 0.34, hi = 1;
+    g = geom(lo);
+    for (let k = 0; k < 20; k++){
+      const mid = (lo + hi) / 2;
+      const m = geom(mid);
+      if (m){ lo = mid; g = m; } else hi = mid;
+    }
+    s = lo;
+  }
+  /* last resort on a hostile window: shrink hard and accept a tight ring */
+  if (!g){
+    s = 0.34;
+    const rx = Math.max(80, (availW - widestNode * s) / 2);
+    g = { rx, ry:Math.max(60, Math.min((availH - NODE.bh * s) / 2, rx)) };
+  }
+
+  fitCache = { W, H, s, sp, rx:g.rx, ry:g.ry };
+  return fitCache;
+}
+
+/* -- 5. opening and closing ----------------------------------------------- */
+
+function setFocus(i, opts){
+  opts = opts || {};
+  if (i === focused) return;
+
+  const prev = focused;
+  focused = i;
+  if (i >= 0) lastFocus = i;
+  turn++;                 /* invalidates any reveal still queued from before */
+  arcCache = null;
+
+  /* Swapping straight from one project to another crossfades: the outgoing
+     panel keeps its place and fades out while the incoming one fades up over
+     it. Both sit on the same anchor in the ring, so they dissolve in place. */
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    nodes[k].setAttribute("aria-expanded", String(on));
+    clearTimeout(p._hide);
+
+    if (on){
+      p.hidden = false;
+      p.classList.add("open");
+      /* Two frames: one to un-hide, one to give the fade a value to leave.
+         Check we're still the current selection when it lands — switching
+         again inside those two frames would otherwise fade in a panel that
+         has already been deselected, and it would never hide again. */
+      const mine = turn;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (turn === mine && focused === k) p.classList.add("in");
+      }));
+    } else if (!p.hidden){
+      p.classList.remove("in");
+      if (!orbiting) p.classList.remove("open");
+      p._hide = setTimeout(() => {
+        if (!p.classList.contains("in")){ p.hidden = true; p.classList.remove("open"); }
+      }, reduced.matches ? 30 : (orbiting ? 260 : 440));
+    }
+  });
+
+  if (focused < 0){
+    introEl.hidden = false;
+    requestAnimationFrame(() => introEl.classList.add("in"));
+    if (opts.restore && prev >= 0) nodes[prev].focus();
+  } else if (orbiting){
+    introEl.classList.remove("in");
+    introEl.hidden = true;
+  }
+
+  rowsEl.classList.toggle("busy", focused >= 0);
+  relayout(false);
+
+  /* in the list, bring the row that just opened up to the top of the screen */
+  if (!orbiting && focused >= 0){
+    const y = nodes[focused].getBoundingClientRect().top + window.scrollY - 16;
+    window.scrollTo({ top:Math.max(0, y), behavior: reduced.matches ? "auto" : "smooth" });
+  }
+}
+
+/* -- 6. interaction -------------------------------------------------------- */
+
+nodes.forEach((btn, i) => {
+  /* Grab a pill and it follows at 42% of the pull, then springs back. Travel
+     under 6px counts as a click, so a shaky tap still opens the node. */
+  btn.addEventListener("pointerdown", ev => {
+    if (!orbiting || ev.button > 0) return;
+    drag = { i, id:ev.pointerId, sx:ev.clientX, sy:ev.clientY, moved:0 };
+    try { btn.setPointerCapture(ev.pointerId); } catch (_){}
+  });
+
+  btn.addEventListener("pointermove", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const dx = ev.clientX - drag.sx, dy = ev.clientY - drag.sy;
+    drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+    P[i].ox = dx * 0.42;
+    P[i].oy = dy * 0.42;
+  });
+
+  btn.addEventListener("pointerup", ev => {
+    if (!drag || drag.i !== i || drag.id !== ev.pointerId) return;
+    const tapped = drag.moved < 6;
+    drag = null;
+    if (tapped) setFocus(focused === i ? -1 : i);
+  });
+
+  btn.addEventListener("pointercancel", ev => {
+    if (drag && drag.id === ev.pointerId) drag = null;
+  });
+
+  /* Keyboard activation, and the whole story in LIST mode. In ORBIT the
+     pointerup above already handled it, so this only has to stop the click
+     reaching the dismiss handler below. */
+  btn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    if (orbiting && ev.detail !== 0) return;      /* detail 0 = keyboard */
+    setFocus(focused === i ? -1 : i);
+  });
+
+  btn.addEventListener("dragstart", ev => ev.preventDefault());
+});
+
+/* Click anywhere outside an open node or its panel and it closes. */
+document.addEventListener("click", ev => {
+  if (focused < 0) return;
+  if (ev.target.closest(".node, .panel, .foot, .skip")) return;
+  setFocus(-1);
+});
+
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && focused >= 0){
+    ev.preventDefault();
+    setFocus(-1, { restore:true });
+  }
+});
+
+/* -- 7. layout ------------------------------------------------------------- */
+
+/**
+ * @param {boolean} snap  true = re-place everything this instant (a resize or
+ *   a layout-mode flip: easing there just looks like lag). false = only drop
+ *   the cached maths and let the running loop ease to the new target, which is
+ *   what a selection wants — snapping here is what killed the transition.
+ */
+function relayout(snap){
+  fitCache = null;
+  arcCache = null;
+  if (orbiting){
+    if (snap) frame(performance.now(), true);
+    else startLoop();
+    return;
+  }
+
+  /* In the list the column is the constraint: the speech takes it, and the
+     pills follow at whatever keeps them in proportion. */
+  const padL = parseFloat(getComputedStyle(stage).paddingLeft) || 0;
+  const contentW = Math.max(200, stage.clientWidth - padL * 2);
+  const sp = speechScale(contentW);
+  root.style.setProperty("--speech", sp.toFixed(4));
+  root.style.setProperty("--s", Math.min(1, contentW / widestNode).toFixed(4));
+
+  /* opacity too — the ring drives it inline, and it must not leak into the
+     list when the window crosses the breakpoint mid-selection */
+  nodes.forEach(n => { n.style.transform = ""; n.style.opacity = ""; });
+  introEl.style.transform = "";
+  panels.forEach(p => { p.style.transform = ""; });
+  stage.style.height = "";
+  tethers.innerHTML = "";
+}
+
+const lerp = (a, b, t) => a + (b - a) * t;
+
+/** Resting: six pills on the slow ellipse, symmetric about the middle. */
+function restRing(W, H, rx, ry){
+  const cx = W / 2, cy = H / 2;
+  const list = ENTRIES.map((_, i) => {
+    const a = theta + (i / ENTRIES.length) * Math.PI * 2;
+    return { x:cx + Math.cos(a) * rx, y:cy + Math.sin(a) * ry, k:1 };
+  });
+  return { cx, cy, list };
+}
+
+/**
+ * Focused: the open pill sits in the upper-middle of the stage — not pinned to
+ * the very top — and the other five curve over it in a shallow dome, so they
+ * read as gathered around the open project rather than filed into a header.
+ *
+ * Spacing is distributed evenly across the width FIRST and only then lifted
+ * onto the arc. Placing them at even angles instead bunches them towards the
+ * ends of the ellipse, where they overlap.
+ */
+function focusRing(W, H, s){
+  const cx = W / 2;
+  const fi = lastFocus;
+  const others = ENTRIES.map((_, i) => i).filter(i => i !== fi);
+  const n = others.length;
+
+  const cy = clamp(H * 0.32, 175, 280);
+
+  /* Deliberately narrower than the stage: spanning the full width files them
+     into a header strip, and the whole point is that they stay gathered. */
+  const nat  = others.map(i => nodeBodyW(ENTRIES[i].cw) * s);
+  const sum  = nat.reduce((a, b) => a + b, 0);
+  const room = Math.max(240, Math.min(W - 64, W * 0.74));
+  const k    = clamp((room - 16 * (n - 1)) / sum, 0.40, 0.60);
+  const gap  = Math.max(16, (room - sum * k) / (n - 1));
+  const span = sum * k + gap * (n - 1);
+
+  /* 0.78 keeps the outermost pills riding high on the dome instead of dropping
+     all the way to the open pill's own eye line */
+  const rx = Math.max(1, span / 2) / 0.78;
+  const ry = clamp(cy * 0.42, 70, 120);
+
+  const list = new Array(ENTRIES.length);
+  let run = (W - span) / 2;
+  others.forEach((i, idx) => {
+    const w = nat[idx] * k;
+    const x = run + w / 2;
+    const u = clamp((x - cx) / rx, -1, 1);
+    list[i] = { x, y:cy - ry * Math.sqrt(1 - u * u), k };
+    run += w + gap;
+  });
+  list[fi] = { x:cx, y:cy, k:1 };
+  return { cx, cy, list };
+}
+
+/**
+ * The two states, blended by `focusT`. Selecting a project morphs the ring
+ * into the dome rather than cutting to it, and every pill keeps moving the
+ * whole way — including when you swap straight from one project to another.
+ */
+function targets(W, H, s, rx, ry){
+  const rest = restRing(W, H, rx, ry);
+  if (focusT <= 0.002){
+    return { cx:rest.cx, cy:rest.cy,
+             list:rest.list.map(p => ({ x:p.x, y:p.y, k:p.k, dim:false })) };
+  }
+  const foc = focusRing(W, H, s);
+  const t = focusT;
+  const list = ENTRIES.map((_, i) => ({
+    x:   lerp(rest.list[i].x, foc.list[i].x, t),
+    y:   lerp(rest.list[i].y, foc.list[i].y, t),
+    k:   lerp(rest.list[i].k, foc.list[i].k, t),
+    dim: i !== lastFocus
+  }));
+  return { cx:rest.cx, cy:lerp(rest.cy, foc.cy, t), list };
+}
+
+/* -- 8. the loop ----------------------------------------------------------- */
+
+function frame(now, once){
+  if (!orbiting){ looping = false; return; }
+
+  const dt = Math.min(64, now - (last || now));
+  last = now;
+
+  const W = stage.clientWidth;
+  const H = Math.max(360, vh() - footEl.offsetHeight - stage.offsetTop);
+  const open = focused >= 0;
+
+  const f = fit(W, H);
+  root.style.setProperty("--s", f.s.toFixed(4));
+  root.style.setProperty("--speech", f.sp.toFixed(4));
+
+  /* Roughly a revolution a minute. It keeps turning at a crawl while a project
+     is open too, so the ring is never actually frozen behind the dome. */
+  if (!reduced.matches) theta += (dt / 60000) * Math.PI * 2 * (open ? 0.25 : 1);
+
+  /* how far into the focused layout we are — this is what stops the snap */
+  const want = open ? 1 : 0;
+  focusT = once || reduced.matches ? want : focusT + (want - focusT) * 0.085;
+  if (Math.abs(want - focusT) < 0.002) focusT = want;
+
+  const t = targets(W, H, f.s, f.rx, f.ry);
+  const ease = once ? 1 : 0.115;
+  let wire = "";
+
+  nodes.forEach((btn, i) => {
+    const g = t.list[i], p = P[i];
+    const bw = nodeBodyW(ENTRIES[i].cw) * f.s;
+
+    /* a breath of drift so the constellation never sits perfectly still */
+    const bob = reduced.matches ? 0 : Math.sin(now / 2400 + i * 1.9) * 1.5;
+
+    /* place the drawn body's centre, not the canvas centre */
+    const tx = g.x - (bw * g.k) / 2;
+    const ty = g.y - (NODE.bh * f.s * g.k) / 2 + bob;
+
+    if (!p.seeded){ p.x = tx; p.y = ty; p.seeded = true; }
+    p.x += (tx - p.x) * ease;
+    p.y += (ty - p.y) * ease;
+
+    if (!drag || drag.i !== i){ p.ox *= 0.88; p.oy *= 0.88; }   /* spring back */
+    if (Math.abs(p.ox) < 0.05) p.ox = 0;
+    if (Math.abs(p.oy) < 0.05) p.oy = 0;
+
+    const x = p.x + p.ox, y = p.y + p.oy;
+    btn.style.transformOrigin = "0 0";
+    btn.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)"
+                        + (g.k !== 1 ? " scale(" + g.k.toFixed(4) + ")" : "");
+    btn.classList.toggle("dim", g.dim);
+    /* dimming rides the same blend, so nothing flicks to 45% mid-morph */
+    if (revealed) btn.style.opacity = (1 - 0.5 * focusT * (g.dim ? 1 : 0)).toFixed(3);
+
+    if (i === focused) return;                                  /* no self-tether */
+
+    const mx = x + (bw * g.k) / 2, my = y + (NODE.bh * f.s * g.k) / 2;
+
+    /* Stop the tether at the pill's edge rather than running it to the centre.
+       A dimmed pill is semi-transparent, so a line drawn underneath it shows
+       straight through — this is why the dashes looked like they cut across. */
+    const dx = mx - t.cx, dy = my - t.cy;
+    const halfW = (bw * g.k) / 2, halfH = (NODE.bh * f.s * g.k) / 2;
+    const u = Math.min(1, halfW / Math.max(1e-6, Math.abs(dx)),
+                          halfH / Math.max(1e-6, Math.abs(dy)));
+    const ex = mx - dx * u, ey = my - dy * u;
+
+    const taut = Math.hypot(p.ox, p.oy) > 4;
+    wire += '<line x1="' + t.cx.toFixed(1) + '" y1="' + t.cy.toFixed(1) + '"'
+          + ' x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) + '"'
+          + ' stroke="' + (taut ? "#111111" : g.dim ? "#D8D6CE" : "#9A9A95") + '"'
+          + ' stroke-width="' + (taut ? 1.3 : 0.7) + '"'
+          + (g.dim ? ' stroke-dasharray="2 4"' : "") + " />";
+  });
+  tethers.innerHTML = wire;
+
+  /* ---- the speech -------------------------------------------------------
+     Resting, it sits dead centre of the ring: its drawn body is centred on
+     (cx, cy). Focused, it hangs just under the pill. Either way we position
+     the artwork's *body*, then subtract the export's own padding so the box
+     lands where the drawing does. */
+  const block = open ? panels[focused] : introEl;
+  const key   = open ? ENTRIES[focused].say : "intro";
+  const bodyW = sayBodyW(key) * f.sp;
+  const bodyH = sayBodyH(key) * f.sp;
+  /* Blended too, so the speech slides between the middle of the ring and its
+     spot under the open pill instead of jumping between them. */
+  const top = Math.round(lerp(t.cy - bodyH / 2,
+                              t.cy + (NODE.bh * f.s) / 2 + 26 * f.s, focusT));
+
+  block.style.transform =
+    "translate3d(" + Math.round(t.cx - bodyW / 2) + "px," + top + "px,0)";
+
+  /* let the document grow when an open panel runs past the fold */
+  stage.style.height = Math.max(H, open ? top + block.offsetHeight + 24 : 0) + "px";
+
+  if (once) return;
+  requestAnimationFrame(frame);
+}
+
+function startLoop(){
+  if (looping || !orbiting) return;
+  looping = true;
+  last = 0;
+  requestAnimationFrame(frame);
+}
+
+/* -- 9. layout mode -------------------------------------------------------- */
+
+function applyMode(){
+  const next = wide.matches;
+  if (next === orbiting && root.classList.contains(next ? "orbit" : "list")) return;
+
+  orbiting = next;
+  root.classList.toggle("orbit", orbiting);
+  root.classList.toggle("list", !orbiting);
+
+  panels.forEach((p, k) => {
+    const on = k === focused;
+    p.hidden = !on;
+    p.classList.toggle("open", on);
+    p.classList.toggle("in", on);
+  });
+  introEl.hidden = orbiting && focused >= 0;
+  rowsEl.classList.toggle("busy", focused >= 0);
+  if (!introEl.hidden && revealed) introEl.classList.add("in");
+  nodes.forEach(n => n.classList.toggle("shown", revealed));
+
+  P.forEach(p => { p.seeded = false; p.ox = p.oy = 0; });
+  relayout(true);
+  if (orbiting) startLoop();
+}
+
+if (wide.addEventListener) wide.addEventListener("change", applyMode);
+else wide.addListener(applyMode);            /* Safari < 14 */
+
+let resizeJob;
+window.addEventListener("resize", () => {
+  fitCache = null; arcCache = null;
+  clearTimeout(resizeJob);
+  resizeJob = setTimeout(relayout, 120);
+}, { passive:true });
+
+window.addEventListener("orientationchange", () => {
+  fitCache = null; arcCache = null; relayout(true);
+});
+
+/* Pause the ring while the tab is hidden, or dt swallows one huge jump. */
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) looping = false;
+  else if (orbiting) startLoop();
+});
+
+/* -- 10. entrance ---------------------------------------------------------- */
+
+applyMode();      /* place everything before the first paint */
+
+/* One frame after layout settles, so nothing paints at pre-animation
+   coordinates — then everything arrives at once. */
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  revealed = true;
+  nodes.forEach(n => n.classList.add("shown"));
+  tethers.classList.add("in");
+  if (focused < 0) introEl.classList.add("in");
+  else panels[focused].classList.add("in");
+  /* hand opacity over to the loop once the entrance fade has played out */
+  setTimeout(() => nodes.forEach(n => n.classList.add("lit")),
+             reduced.matches ? 0 : 420);
+}));
+</script>
+</body>
+</html>
